@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>釜山旅記 2026 | 專屬 App</title>
+    <title>釜山旅記 2026 | Busan Trip</title>
     
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700;900&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
@@ -18,18 +19,24 @@
                     colors: { 
                         'at-beige': '#F7F4EB', 'at-green': '#A8C69F', 
                         'at-brown': '#8D775F', 'at-yellow': '#F9E5AF',
-                        'at-blue': '#A2D2FF'
+                        'at-blue': '#A2D2FF', 'at-sand': '#E0E5D5'
                     },
-                    borderRadius: { 'at': '24px' }
+                    fontFamily: { 'maru': ['"Zen Maru Gothic"', 'serif'] },
+                    borderRadius: { 'at': '28px' },
+                    boxShadow: { 'soft': '4px 4px 0px #E0E5D5' }
                 }
             }
         }
     </script>
     <style>
-        body { background-color: #F7F4EB; color: #8D775F; -webkit-tap-highlight-color: transparent; }
-        .at-card { background: white; border-radius: 24px; padding: 20px; box-shadow: 4px 4px 0px #E0E5D5; border: 2px solid transparent; }
+        body { background-color: #F7F4EB; color: #8D775F; font-family: 'Zen Maru Gothic', sans-serif; -webkit-tap-highlight-color: transparent; }
+        .at-card { background: white; border-radius: 28px; padding: 20px; box-shadow: 4px 4px 0px #E0E5D5; border: 2px solid #FFFFFF; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        .active-tab { color: #A8C69F; transform: scale(1.1); }
+        .active-tab { color: #A8C69F; transform: translateY(-5px); transition: all 0.3s; }
+        .date-btn-active { background-color: #A8C69F; color: white; box-shadow: 2px 2px 0px #8DA984; }
+        .boarding-pass { background: linear-gradient(135deg, #A8C69F 0%, #8DA984 100%); color: white; border-radius: 24px; position: relative; }
+        .boarding-pass::after { content: ''; position: absolute; left: -10px; top: 50%; width: 20px; height: 20px; background: #F7F4EB; border-radius: 50%; transform: translateY(-50%); }
+        .boarding-pass::before { content: ''; position: absolute; right: -10px; top: 50%; width: 20px; height: 20px; background: #F7F4EB; border-radius: 50%; transform: translateY(-50%); }
     </style>
 </head>
 <body>
@@ -38,117 +45,131 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
 
-        // --- 這裡未來放你的 Firebase 設定 ---
-        // const firebaseConfig = { ... }; 
-
         function App() {
             const [activeTab, setActiveTab] = useState('schedule');
+            const [selectedDate, setSelectedDate] = useState('06/06');
+
+            // 底部導航項目
+            const tabs = [
+                { id: 'schedule', icon: 'fa-calendar-day', label: '行程' },
+                { id: 'booking', icon: 'fa-ticket-alt', label: '預訂' },
+                { id: 'expense', icon: 'fa-coins', label: '記帳' },
+                { id: 'journal', icon: 'fa-camera', label: '日誌' },
+                { id: 'planning', icon: 'fa-clipboard-list', label: '準備' },
+                { id: 'members', icon: 'fa-users', label: '成員' }
+            ];
 
             return (
-                <div className="min-h-screen pb-28">
-                    {/* Top Header */}
-                    <header className="p-6 flex justify-between items-center">
+                <div className="max-w-md mx-auto min-h-screen pb-32">
+                    {/* Header */}
+                    <header className="p-6 flex justify-between items-end">
                         <div>
-                            <h1 className="text-2xl font-black text-[#5A4D3F]">釜山旅記 🇰🇷</h1>
-                            <p className="text-xs font-bold opacity-60">06/06 - 06/11</p>
+                            <h1 className="text-3xl font-black text-[#5A4D3F] tracking-tight">釜山旅記 <span className="text-at-blue">2026</span></h1>
+                            <p className="text-sm font-bold opacity-60">Busan Adventure Log</p>
                         </div>
-                        <div className="at-card py-2 px-4 flex items-center gap-2">
-                            <i className="fas fa-plane-departure text-at-green"></i>
-                            <span className="text-sm font-black">D-67</span>
+                        <div className="at-card py-2 px-4 flex flex-col items-center leading-none">
+                            <span className="text-[10px] font-black opacity-50 mb-1">D-DAY</span>
+                            <span className="text-lg font-black text-at-green">67</span>
                         </div>
                     </header>
 
-                    {/* 主要內容區 */}
-                    <main className="px-4">
-                        {activeTab === 'schedule' && <ScheduleView />}
+                    {/* 主要內容渲染切換 */}
+                    <main className="px-5">
+                        {activeTab === 'schedule' && <ScheduleView selectedDate={selectedDate} setSelectedDate={setSelectedDate} />}
                         {activeTab === 'booking' && <BookingView />}
                         {activeTab === 'expense' && <ExpenseView />}
-                        {activeTab === 'planning' && <PlanningView />}
                         {activeTab === 'journal' && <JournalView />}
+                        {activeTab === 'planning' && <PlanningView />}
                         {activeTab === 'members' && <MemberView />}
                     </main>
 
-                    {/* 底部導航列 (Bottom Nav) */}
-                    <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[95%] max-w-md bg-white/90 backdrop-blur-md h-20 rounded-[35px] shadow-2xl border border-at-beige flex justify-around items-center px-2 z-50">
-                        <NavIcon icon="fa-calendar-day" label="行程" id="schedule" active={activeTab} onClick={setActiveTab} />
-                        <NavIcon icon="fa-ticket-alt" label="預訂" id="booking" active={activeTab} onClick={setActiveTab} />
-                        <NavIcon icon="fa-coins" label="記帳" id="expense" active={activeTab} onClick={setActiveTab} />
-                        <NavIcon icon="fa-clipboard-list" label="準備" id="planning" active={activeTab} onClick={setActiveTab} />
-                        <NavIcon icon="fa-camera" label="日誌" id="journal" active={activeTab} onClick={setActiveTab} />
-                        <NavIcon icon="fa-users" label="成員" id="members" active={activeTab} onClick={setActiveTab} />
+                    {/* Bottom Nav */}
+                    <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] bg-white/90 backdrop-blur-lg h-20 rounded-[35px] shadow-2xl flex justify-around items-center px-4 z-50 border border-white">
+                        {tabs.map(tab => (
+                            <button 
+                                key={tab.id}
+                                onClick={() => setActiveTab(tab.id)}
+                                className={`flex flex-col items-center gap-1 transition-all ${activeTab === tab.id ? 'active-tab' : 'text-at-sand'}`}
+                            >
+                                <i className={`fas ${tab.icon} text-xl`}></i>
+                                <span className="text-[10px] font-black">{tab.label}</span>
+                            </button>
+                        ))}
                     </nav>
                 </div>
             );
         }
 
-        // --- 各個分頁的內容組件 (簡化示範) ---
+        // --- 子頁面組件 ---
 
-        const ScheduleView = () => (
-            <div className="space-y-6 animate-fade-in">
-                <div className="at-card bg-at-blue/10 border-at-blue/20">
-                    <p className="text-xs font-bold mb-1 uppercase tracking-wider">今日天氣預報</p>
-                    <div className="flex justify-between items-center">
-                        <div className="flex items-center gap-3">
-                            <i className="fas fa-sun text-3xl text-yellow-500"></i>
-                            <span className="text-2xl font-black">22°C</span>
+        const ScheduleView = ({ selectedDate, setSelectedDate }) => {
+            const dates = ['06/06', '06/07', '06/08', '06/09', '06/10', '06/11'];
+            return (
+                <div className="space-y-6 animate-in fade-in duration-500">
+                    {/* 橫向日期選擇器 */}
+                    <div className="flex gap-3 overflow-x-auto no-scrollbar py-2">
+                        {dates.map(d => (
+                            <button 
+                                key={d}
+                                onClick={() => setSelectedDate(d)}
+                                className={`flex-shrink-0 w-16 h-20 rounded-at flex flex-col items-center justify-center transition-all ${selectedDate === d ? 'date-btn-active' : 'bg-white shadow-soft'}`}
+                            >
+                                <span className="text-[10px] font-bold opacity-60">JUNE</span>
+                                <span className="text-xl font-black">{d.split('/')[1]}</span>
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* 天氣卡片 */}
+                    <div className="at-card bg-at-blue/20 border-at-blue/30 flex justify-between items-center">
+                        <div>
+                            <p className="text-xs font-bold text-at-brown/60 uppercase">Busan Weather</p>
+                            <h2 className="text-xl font-black">晴時多雲 22°C</h2>
                         </div>
-                        <span className="text-sm font-bold">釜山廣域市：晴時多雲</span>
+                        <i className="fas fa-cloud-sun text-4xl text-at-blue"></i>
+                    </div>
+
+                    {/* 行程列表 */}
+                    <div className="space-y-4 relative before:absolute before:left-4 before:top-0 before:w-0.5 before:h-full before:bg-at-sand/50">
+                        <ScheduleCard time="11:30" title="伍班長烤肉" desc="必吃肝連肉，記得配蒸蛋！" tag="美食" color="at-yellow" />
+                        <ScheduleCard time="14:00" title="海雲台藍線公園" desc="膠囊小火車，風景超級美" tag="景點" color="at-green" />
+                        <ScheduleCard time="19:00" title="廣安里無人機秀" desc="每週六限定，沙灘上看秀" tag="活動" color="at-blue" />
                     </div>
                 </div>
-                {/* 行程卡片 */}
-                <div className="at-card relative overflow-hidden">
-                    <div className="absolute top-0 left-0 w-2 h-full bg-at-green"></div>
-                    <div className="flex justify-between items-start mb-2">
-                        <span className="bg-at-beige px-2 py-1 rounded-lg text-[10px] font-black">11:30</span>
-                        <div className="flex gap-1">
-                            <span className="bg-red-100 text-red-500 text-[10px] font-bold px-2 py-0.5 rounded">#必吃美食</span>
-                        </div>
+            );
+        };
+
+        const ScheduleCard = ({ time, title, desc, tag, color }) => (
+            <div className="pl-10 relative">
+                <div className={`absolute left-2.5 top-2 w-3.5 h-3.5 rounded-full border-4 border-white bg-at-green shadow-sm`}></div>
+                <div className="at-card active:scale-[0.98] transition-transform">
+                    <div className="flex justify-between items-center mb-2">
+                        <span className="text-xs font-black opacity-40">{time}</span>
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full bg-${color} text-at-brown`}>#{tag}</span>
                     </div>
-                    <h3 className="text-lg font-black mb-1">伍班長烤肉</h3>
-                    <p className="text-xs opacity-70 mb-4">海雲台名店，肝連肉必點！</p>
-                    <button className="w-full bg-at-beige py-3 rounded-xl font-bold text-sm active:scale-95 transition-all">
-                        <i className="fas fa-location-arrow mr-2"></i> 導航至餐廳
-                    </button>
+                    <h3 className="font-black text-lg mb-1">{title}</h3>
+                    <p className="text-xs opacity-70 mb-3">{desc}</p>
+                    <div className="flex gap-2">
+                        <button className="flex-1 bg-at-beige py-2 rounded-xl text-xs font-bold"><i className="fas fa-map-marked-alt mr-1"></i> 導航</button>
+                        <button className="flex-1 bg-at-beige py-2 rounded-xl text-xs font-bold"><i className="fas fa-info-circle mr-1"></i> 攻略</button>
+                    </div>
                 </div>
             </div>
         );
 
         const BookingView = () => (
-            <div className="space-y-4">
-                <div className="bg-at-green rounded-at p-5 text-white shadow-at">
-                    <div className="flex justify-between border-b border-white/20 pb-3 mb-3">
-                        <span className="font-black italic">EVA AIR</span>
-                        <span className="text-xs opacity-80 uppercase">Boarding Pass</span>
+            <div className="space-y-5">
+                <h2 className="text-xl font-black px-1">我的憑證</h2>
+                <div className="boarding-pass p-6 shadow-lg">
+                    <div className="flex justify-between items-center mb-6 border-b border-white/20 pb-4">
+                        <span className="font-black italic text-lg">EVA AIR</span>
+                        <span className="text-[10px] font-bold bg-white/20 px-2 py-1 rounded">BR170</span>
                     </div>
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between items-center px-2">
                         <div className="text-center">
-                            <p className="text-[10px] opacity-70">TPE</p>
-                            <p className="text-2xl font-black">台北</p>
+                            <p className="text-xs opacity-70">TPE</p>
+                            <p className="text-3xl font-black tracking-tighter">台北</p>
                         </div>
-                        <i className="fas fa-plane"></i>
+                        <i className="fas fa-plane text-2xl"></i>
                         <div className="text-center">
-                            <p className="text-[10px] opacity-70">PUS</p>
-                            <p className="text-2xl font-black">釜山</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-
-        const ExpenseView = () => <div className="at-card text-center">記帳功能開發中...</div>;
-        const PlanningView = () => <div className="at-card text-center">行李清單開發中...</div>;
-        const JournalView = () => <div className="at-card text-center">旅遊日誌開發中...</div>;
-        const MemberView = () => <div className="at-card text-center">成員名單開發中...</div>;
-
-        const NavIcon = ({ icon, label, id, active, onClick }) => (
-            <button onClick={() => onClick(id)} className={`flex flex-col items-center gap-1 transition-all ${active === id ? 'active-tab' : 'text-gray-300'}`}>
-                <i className={`fas ${icon} text-xl`}></i>
-                <span className="text-[9px] font-black">{label}</span>
-            </button>
-        );
-
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-    </script>
-</body>
-</html>
+   
