@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>釜山旅記 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { 'at-beige': '#F7F4EB', 'at-green': '#A8C69F', 'at-brown': '#8D775F', 'at-yellow': '#F9E5AF' },
+                    borderRadius: { 'at': '24px' }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #F7F4EB; color: #8D775F; font-family: sans-serif; }
+        .shadow-at { box-shadow: 4px 4px 0px #E0E5D5; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="pb-24">
+    <header class="p-6 flex justify-between items-end">
+        <div>
+            <h1 class="text-3xl font-black text-[#5A4D3F]">釜山旅記</h1>
+            <p class="text-sm font-bold opacity-70">2026/06/06 出發</p>
+        </div>
+        <div class="bg-white/50 rounded-at p-3 shadow-at flex items-center gap-2">
+            <i class="fas fa-sun text-yellow-500"></i><span class="font-bold">22°C</span>
+        </div>
+    </header>
+
+    <div class="px-4 space-y-4">
+        <div class="bg-white rounded-at p-5 shadow-at border-2 border-transparent active:scale-95 transition-all">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-xs font-black bg-at-beige px-2 py-1 rounded-lg">11:30</span>
+                <span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded-full text-[10px]">SPOT</span>
+            </div>
+            <h3 class="text-lg font-bold">海雲台藍線公園</h3>
+            <div class="flex gap-2 my-2">
+                <span class="bg-red-100 text-red-500 text-[10px] font-bold px-2 py-0.5 rounded border border-red-200">#必排景點</span>
+            </div>
+            <p class="text-xs opacity-70 mb-4 italic">"記得提前預約膠囊小火車，風景超美！"</p>
+            <button onclick="window.open('https://www.google.com/maps/search/Blue+Line+Park')" class="w-full bg-[#E0E5D5] py-3 rounded-2xl font-black text-sm">立即導航</button>
+        </div>
+    </div>
+
+    <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] bg-white/90 backdrop-blur-md h-16 rounded-[32px] shadow-2xl border border-at-beige flex justify-around items-center px-4">
+        <div class="text-at-green flex flex-col items-center"><i class="fas fa-calendar-alt text-xl"></i><span class="text-[10px] font-bold">行程</span></div>
+        <div class="text-gray-300 flex flex-col items-center"><i class="fas fa-coins text-xl"></i><span class="text-[10px] font-bold">記帳</span></div>
+        <div class="text-gray-300 flex flex-col items-center"><i class="fas fa-camera-retro text-xl"></i><span class="text-[10px] font-bold">日誌</span></div>
+    </nav>
+</body>
+</html>
