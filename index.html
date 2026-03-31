@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>釜山旅記 2026 | Busan Trip</title>
-    
+    <title>釜山旅記 2026</title>
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -12,164 +11,153 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700;900&display=swap" rel="stylesheet">
 
+    <script type="importmap">
+    {
+        "imports": {
+            "firebase/app": "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js",
+            "firebase/firestore": "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"
+        }
+    }
+    </script>
+
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: { 
-                        'at-beige': '#F7F4EB', 'at-green': '#A8C69F', 
-                        'at-brown': '#8D775F', 'at-yellow': '#F9E5AF',
-                        'at-blue': '#A2D2FF', 'at-sand': '#E0E5D5'
-                    },
-                    fontFamily: { 'maru': ['"Zen Maru Gothic"', 'serif'] },
-                    borderRadius: { 'at': '28px' },
-                    boxShadow: { 'soft': '4px 4px 0px #E0E5D5' }
+                    colors: { 'at-beige': '#F7F4EB', 'at-green': '#A8C69F', 'at-brown': '#8D775F', 'at-yellow': '#F9E5AF', 'at-blue': '#A2D2FF' },
+                    fontFamily: { 'maru': ['"Zen Maru Gothic"', 'serif'] }
                 }
             }
         }
     </script>
     <style>
-        body { background-color: #F7F4EB; color: #8D775F; font-family: 'Zen Maru Gothic', sans-serif; -webkit-tap-highlight-color: transparent; }
-        .at-card { background: white; border-radius: 28px; padding: 20px; box-shadow: 4px 4px 0px #E0E5D5; border: 2px solid #FFFFFF; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
+        body { background: #F7F4EB; color: #8D775F; font-family: 'Zen Maru Gothic'; -webkit-tap-highlight-color: transparent; }
+        .at-card { background: white; border-radius: 28px; padding: 20px; box-shadow: 4px 4px 0px #E0E5D5; }
         .active-tab { color: #A8C69F; transform: translateY(-5px); transition: all 0.3s; }
-        .date-btn-active { background-color: #A8C69F; color: white; box-shadow: 2px 2px 0px #8DA984; }
         .boarding-pass { background: linear-gradient(135deg, #A8C69F 0%, #8DA984 100%); color: white; border-radius: 24px; position: relative; }
-        .boarding-pass::after { content: ''; position: absolute; left: -10px; top: 50%; width: 20px; height: 20px; background: #F7F4EB; border-radius: 50%; transform: translateY(-50%); }
-        .boarding-pass::before { content: ''; position: absolute; right: -10px; top: 50%; width: 20px; height: 20px; background: #F7F4EB; border-radius: 50%; transform: translateY(-50%); }
     </style>
 </head>
 <body>
     <div id="root"></div>
 
-    <script type="text/babel">
+    <script type="module" data-type="babel">
+        import { initializeApp } from "firebase/app";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "firebase/firestore";
+
         const { useState, useEffect } = React;
+
+        // 你的 Firebase 設定
+        const firebaseConfig = {
+            apiKey: "AIzaSyC4IbiHWsJE52xLhjf2eDodtO6UZKOgBhY",
+            authDomain: "busan2026-210a7.firebaseapp.com",
+            projectId: "busan2026-210a7",
+            storageBucket: "busan2026-210a7.firebasestorage.app",
+            messagingSenderId: "861407234236",
+            appId: "1:861407234236:web:95d5e38b3cedd8a8b2a8b9"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
         function App() {
             const [activeTab, setActiveTab] = useState('schedule');
-            const [selectedDate, setSelectedDate] = useState('06/06');
+            const [expenses, setExpenses] = useState([]);
+            const [amount, setAmount] = useState('');
+            const [item, setItem] = useState('');
 
-            // 底部導航項目
-            const tabs = [
-                { id: 'schedule', icon: 'fa-calendar-day', label: '行程' },
-                { id: 'booking', icon: 'fa-ticket-alt', label: '預訂' },
-                { id: 'expense', icon: 'fa-coins', label: '記帳' },
-                { id: 'journal', icon: 'fa-camera', label: '日誌' },
-                { id: 'planning', icon: 'fa-clipboard-list', label: '準備' },
-                { id: 'members', icon: 'fa-users', label: '成員' }
-            ];
+            // 即時讀取記帳資料
+            useEffect(() => {
+                const q = query(collection(db, "expenses"), orderBy("timestamp", "desc"));
+                const unsubscribe = onSnapshot(q, (snapshot) => {
+                    setExpenses(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+                });
+                return () => unsubscribe();
+            }, []);
+
+            const addExpense = async () => {
+                if (!amount || !item) return;
+                await addDoc(collection(db, "expenses"), {
+                    item, amount: Number(amount), timestamp: Date.now()
+                });
+                setAmount(''); setItem('');
+            };
 
             return (
                 <div className="max-w-md mx-auto min-h-screen pb-32">
-                    {/* Header */}
                     <header className="p-6 flex justify-between items-end">
-                        <div>
-                            <h1 className="text-3xl font-black text-[#5A4D3F] tracking-tight">釜山旅記 <span className="text-at-blue">2026</span></h1>
-                            <p className="text-sm font-bold opacity-60">Busan Adventure Log</p>
-                        </div>
-                        <div className="at-card py-2 px-4 flex flex-col items-center leading-none">
-                            <span className="text-[10px] font-black opacity-50 mb-1">D-DAY</span>
-                            <span className="text-lg font-black text-at-green">67</span>
-                        </div>
+                        <div><h1 className="text-3xl font-black text-[#5A4D3F]">釜山旅記</h1><p className="text-sm font-bold opacity-60">06/06 - 06/11</p></div>
+                        <div className="at-card py-2 px-4 text-at-green font-black">D-67</div>
                     </header>
 
-                    {/* 主要內容渲染切換 */}
                     <main className="px-5">
-                        {activeTab === 'schedule' && <ScheduleView selectedDate={selectedDate} setSelectedDate={setSelectedDate} />}
+                        {activeTab === 'schedule' && <ScheduleView />}
                         {activeTab === 'booking' && <BookingView />}
-                        {activeTab === 'expense' && <ExpenseView />}
-                        {activeTab === 'journal' && <JournalView />}
-                        {activeTab === 'planning' && <PlanningView />}
-                        {activeTab === 'members' && <MemberView />}
-                    </main>
+                        {activeTab === 'expense' && (
+                            <div className="space-y-4">
+                                <div className="at-card bg-at-brown text-white">
+                                    <p className="text-xs">總支出 (KRW)</p>
+                                    <h2 className="text-3xl font-black">₩ {expenses.reduce((acc, cur) => acc + cur.amount, 0).toLocaleString()}</h2>
+                                </div>
+                                <div className="at-card space-y-3">
+                                    <input value={item} onChange={e => setItem(e.target.value)} placeholder="消費項目" className="w-full p-3 bg-at-beige rounded-xl outline-none" />
+                                    <input value={amount} onChange={e => setAmount(e.target.value)} type="number" placeholder="金額 (KRW)" className="w-full p-3 bg-at-beige rounded-xl outline-none" />
+                                    <button onClick={addExpense} className="w-full bg-at-green text-white py-3 rounded-xl font-black">新增記帳</button>
+                                </div>
+                                <div className="space-y-2">
+                                    {expenses.map(exp => (
+                                        <div key={exp.id} className="at-card flex justify-between py-3">
+                                            <span className="font-bold">{exp.item}</span>
+                                            <span className="font-black text-red-400">₩ {exp.amount.toLocaleString()}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </header>
 
-                    {/* Bottom Nav */}
-                    <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] bg-white/90 backdrop-blur-lg h-20 rounded-[35px] shadow-2xl flex justify-around items-center px-4 z-50 border border-white">
-                        {tabs.map(tab => (
-                            <button 
-                                key={tab.id}
-                                onClick={() => setActiveTab(tab.id)}
-                                className={`flex flex-col items-center gap-1 transition-all ${activeTab === tab.id ? 'active-tab' : 'text-at-sand'}`}
-                            >
-                                <i className={`fas ${tab.icon} text-xl`}></i>
-                                <span className="text-[10px] font-black">{tab.label}</span>
-                            </button>
-                        ))}
+                    <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] bg-white h-20 rounded-[35px] shadow-2xl flex justify-around items-center px-4 z-50">
+                        <NavBtn id="schedule" icon="fa-calendar-day" label="行程" active={activeTab} set={setActiveTab} />
+                        <NavBtn id="booking" icon="fa-ticket-alt" label="預訂" active={activeTab} set={setActiveTab} />
+                        <NavBtn id="expense" icon="fa-coins" label="記帳" active={activeTab} set={setActiveTab} />
                     </nav>
                 </div>
             );
         }
 
-        // --- 子頁面組件 ---
-
-        const ScheduleView = ({ selectedDate, setSelectedDate }) => {
-            const dates = ['06/06', '06/07', '06/08', '06/09', '06/10', '06/11'];
-            return (
-                <div className="space-y-6 animate-in fade-in duration-500">
-                    {/* 橫向日期選擇器 */}
-                    <div className="flex gap-3 overflow-x-auto no-scrollbar py-2">
-                        {dates.map(d => (
-                            <button 
-                                key={d}
-                                onClick={() => setSelectedDate(d)}
-                                className={`flex-shrink-0 w-16 h-20 rounded-at flex flex-col items-center justify-center transition-all ${selectedDate === d ? 'date-btn-active' : 'bg-white shadow-soft'}`}
-                            >
-                                <span className="text-[10px] font-bold opacity-60">JUNE</span>
-                                <span className="text-xl font-black">{d.split('/')[1]}</span>
-                            </button>
-                        ))}
+        const ScheduleView = () => (
+            <div className="space-y-4">
+                <div className="at-card border-l-8 border-at-green">
+                    <div className="flex justify-between items-start mb-2">
+                        <span className="text-xs font-black opacity-40">11:30</span>
+                        <span className="text-[10px] bg-at-yellow px-2 py-0.5 rounded-full font-bold">#必吃美食</span>
                     </div>
-
-                    {/* 天氣卡片 */}
-                    <div className="at-card bg-at-blue/20 border-at-blue/30 flex justify-between items-center">
-                        <div>
-                            <p className="text-xs font-bold text-at-brown/60 uppercase">Busan Weather</p>
-                            <h2 className="text-xl font-black">晴時多雲 22°C</h2>
-                        </div>
-                        <i className="fas fa-cloud-sun text-4xl text-at-blue"></i>
-                    </div>
-
-                    {/* 行程列表 */}
-                    <div className="space-y-4 relative before:absolute before:left-4 before:top-0 before:w-0.5 before:h-full before:bg-at-sand/50">
-                        <ScheduleCard time="11:30" title="伍班長烤肉" desc="必吃肝連肉，記得配蒸蛋！" tag="美食" color="at-yellow" />
-                        <ScheduleCard time="14:00" title="海雲台藍線公園" desc="膠囊小火車，風景超級美" tag="景點" color="at-green" />
-                        <ScheduleCard time="19:00" title="廣安里無人機秀" desc="每週六限定，沙灘上看秀" tag="活動" color="at-blue" />
-                    </div>
-                </div>
-            );
-        };
-
-        const ScheduleCard = ({ time, title, desc, tag, color }) => (
-            <div className="pl-10 relative">
-                <div className={`absolute left-2.5 top-2 w-3.5 h-3.5 rounded-full border-4 border-white bg-at-green shadow-sm`}></div>
-                <div className="at-card active:scale-[0.98] transition-transform">
-                    <div className="flex justify-between items-center mb-2">
-                        <span className="text-xs font-black opacity-40">{time}</span>
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full bg-${color} text-at-brown`}>#{tag}</span>
-                    </div>
-                    <h3 className="font-black text-lg mb-1">{title}</h3>
-                    <p className="text-xs opacity-70 mb-3">{desc}</p>
-                    <div className="flex gap-2">
-                        <button className="flex-1 bg-at-beige py-2 rounded-xl text-xs font-bold"><i className="fas fa-map-marked-alt mr-1"></i> 導航</button>
-                        <button className="flex-1 bg-at-beige py-2 rounded-xl text-xs font-bold"><i className="fas fa-info-circle mr-1"></i> 攻略</button>
-                    </div>
+                    <h3 className="font-black text-lg">伍班長烤肉</h3>
+                    <p className="text-xs opacity-70 mb-4">海雲台名店，肝連肉必點！</p>
+                    <button className="w-full bg-at-beige py-2 rounded-xl font-bold text-xs" onClick={() => window.open('https://maps.google.com')}>立即導航</button>
                 </div>
             </div>
         );
 
         const BookingView = () => (
-            <div className="space-y-5">
-                <h2 className="text-xl font-black px-1">我的憑證</h2>
-                <div className="boarding-pass p-6 shadow-lg">
-                    <div className="flex justify-between items-center mb-6 border-b border-white/20 pb-4">
-                        <span className="font-black italic text-lg">EVA AIR</span>
-                        <span className="text-[10px] font-bold bg-white/20 px-2 py-1 rounded">BR170</span>
-                    </div>
-                    <div className="flex justify-between items-center px-2">
-                        <div className="text-center">
-                            <p className="text-xs opacity-70">TPE</p>
-                            <p className="text-3xl font-black tracking-tighter">台北</p>
-                        </div>
-                        <i className="fas fa-plane text-2xl"></i>
-                        <div className="text-center">
-   
+            <div className="boarding-pass p-6 shadow-lg">
+                <p className="font-black italic border-b border-white/20 pb-2 mb-4">EVA AIR BR170</p>
+                <div className="flex justify-between items-center px-2">
+                    <div className="text-center"><p className="text-3xl font-black">台北</p></div>
+                    <i className="fas fa-plane"></i>
+                    <div className="text-center"><p className="text-3xl font-black">釜山</p></div>
+                </div>
+            </div>
+        );
+
+        const NavBtn = ({ id, icon, label, active, set }) => (
+            <button onClick={() => set(id)} className={`flex flex-col items-center gap-1 ${active === id ? 'active-tab' : 'text-gray-300'}`}>
+                <i className={`fas ${icon} text-xl`}></i>
+                <span className="text-[10px] font-black">{label}</span>
+            </button>
+        );
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
