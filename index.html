@@ -3,161 +3,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>釜山旅記 2026</title>
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <title>釜山旅記 2026 | 森友風格手帳</title>
+    
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700;900&display=swap" rel="stylesheet">
 
-    <script type="importmap">
-    {
-        "imports": {
-            "firebase/app": "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js",
-            "firebase/firestore": "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"
-        }
-    }
-    </script>
-
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: { 'at-beige': '#F7F4EB', 'at-green': '#A8C69F', 'at-brown': '#8D775F', 'at-yellow': '#F9E5AF', 'at-blue': '#A2D2FF' },
-                    fontFamily: { 'maru': ['"Zen Maru Gothic"', 'serif'] }
+                    colors: { 
+                        'at-beige': '#F7F4EB', 'at-green': '#A8C69F', 
+                        'at-brown': '#8D775F', 'at-yellow': '#F9E5AF',
+                        'at-blue': '#A2D2FF', 'at-sand': '#E0E5D5',
+                        'at-red': '#FF8B8B'
+                    },
+                    borderRadius: { 'at': '28px' }
                 }
             }
         }
     </script>
     <style>
-        body { background: #F7F4EB; color: #8D775F; font-family: 'Zen Maru Gothic'; -webkit-tap-highlight-color: transparent; }
-        .at-card { background: white; border-radius: 28px; padding: 20px; box-shadow: 4px 4px 0px #E0E5D5; }
-        .active-tab { color: #A8C69F; transform: translateY(-5px); transition: all 0.3s; }
-        .boarding-pass { background: linear-gradient(135deg, #A8C69F 0%, #8DA984 100%); color: white; border-radius: 24px; position: relative; }
+        body { background-color: #F7F4EB; color: #8D775F; font-family: 'Zen Maru Gothic', sans-serif; overflow-x: hidden; }
+        .at-card { background: white; border-radius: 28px; padding: 20px; box-shadow: 4px 4px 0px #E0E5D5; border: 2px solid #FFFFFF; margin-bottom: 16px; transition: all 0.2s; }
+        .at-card:active { transform: scale(0.98); }
+        .nav-active { color: #A8C69F; transform: translateY(-4px); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .boarding-pass { background: linear-gradient(135deg, #A8C69F 0%, #8DA984 100%); color: white; border-radius: 24px; position: relative; overflow: hidden; }
+        input, select { background: #FDFCF8; border: 2px solid #E0E5D5; border-radius: 12px; padding: 8px 12px; outline: none; transition: border-color 0.2s; }
+        input:focus { border-color: #A8C69F; }
     </style>
 </head>
 <body>
     <div id="root"></div>
 
-    <script type="module" data-type="babel">
-        import { initializeApp } from "firebase/app";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "firebase/firestore";
-
+    <script type="text/babel">
         const { useState, useEffect } = React;
-
-        // 你的 Firebase 設定
-        const firebaseConfig = {
-            apiKey: "AIzaSyC4IbiHWsJE52xLhjf2eDodtO6UZKOgBhY",
-            authDomain: "busan2026-210a7.firebaseapp.com",
-            projectId: "busan2026-210a7",
-            storageBucket: "busan2026-210a7.firebasestorage.app",
-            messagingSenderId: "861407234236",
-            appId: "1:861407234236:web:95d5e38b3cedd8a8b2a8b9"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
 
         function App() {
             const [activeTab, setActiveTab] = useState('schedule');
-            const [expenses, setExpenses] = useState([]);
-            const [amount, setAmount] = useState('');
-            const [item, setItem] = useState('');
+            const [selectedDate, setSelectedDate] = useState('06/06');
+            
+            // --- 資料狀態管理 (暫存於 LocalStorage) ---
+            const [schedules, setSchedules] = useState(JSON.parse(localStorage.getItem('schedules')) || [
+                { id: 1, date: '06/06', time: '11:30', title: '伍班長烤肉', desc: '必吃肝連肉，記得配蒸蛋！', type: '美食', location: '해운대 오반장' },
+                { id: 2, date: '06/06', time: '14:00', title: '海雲台藍線公園', desc: '膠囊小火車，風景超級美', type: '景點', location: 'Blue Line Park' }
+            ]);
 
-            // 即時讀取記帳資料
+            const [expenses, setExpenses] = useState(JSON.parse(localStorage.getItem('expenses')) || []);
+
             useEffect(() => {
-                const q = query(collection(db, "expenses"), orderBy("timestamp", "desc"));
-                const unsubscribe = onSnapshot(q, (snapshot) => {
-                    setExpenses(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-                });
-                return () => unsubscribe();
-            }, []);
+                localStorage.setItem('schedules', JSON.stringify(schedules));
+                localStorage.setItem('expenses', JSON.stringify(expenses));
+            }, [schedules, expenses]);
 
-            const addExpense = async () => {
-                if (!amount || !item) return;
-                await addDoc(collection(db, "expenses"), {
-                    item, amount: Number(amount), timestamp: Date.now()
-                });
-                setAmount(''); setItem('');
+            // --- 新增行程功能 ---
+            const addSchedule = () => {
+                const title = prompt("景點/餐廳名稱？");
+                if(!title) return;
+                const newId = Date.now();
+                setSchedules([...schedules, { id: newId, date: selectedDate, time: '12:00', title, desc: '點擊編輯詳情', type: '景點', location: '' }]);
+            };
+
+            const deleteSchedule = (id) => {
+                if(confirm("確定要刪除這個行程嗎？")) {
+                    setSchedules(schedules.filter(s => s.id !== id));
+                }
             };
 
             return (
                 <div className="max-w-md mx-auto min-h-screen pb-32">
+                    {/* Header */}
                     <header className="p-6 flex justify-between items-end">
-                        <div><h1 className="text-3xl font-black text-[#5A4D3F]">釜山旅記</h1><p className="text-sm font-bold opacity-60">06/06 - 06/11</p></div>
-                        <div className="at-card py-2 px-4 text-at-green font-black">D-67</div>
+                        <div>
+                            <h1 className="text-3xl font-black text-[#5A4D3F] tracking-tight">釜山旅記 <span className="text-at-blue">2026</span></h1>
+                            <p className="text-xs font-bold opacity-60">D-67 • 06/06 出發</p>
+                        </div>
+                        <div className="at-card py-2 px-4 flex flex-col items-center leading-none">
+                            <span className="text-[10px] font-black opacity-50 mb-1">天氣</span>
+                            <i className="fas fa-sun text-at-yellow text-xl"></i>
+                        </div>
                     </header>
 
                     <main className="px-5">
-                        {activeTab === 'schedule' && <ScheduleView />}
-                        {activeTab === 'booking' && <BookingView />}
-                        {activeTab === 'expense' && (
-                            <div className="space-y-4">
-                                <div className="at-card bg-at-brown text-white">
-                                    <p className="text-xs">總支出 (KRW)</p>
-                                    <h2 className="text-3xl font-black">₩ {expenses.reduce((acc, cur) => acc + cur.amount, 0).toLocaleString()}</h2>
-                                </div>
-                                <div className="at-card space-y-3">
-                                    <input value={item} onChange={e => setItem(e.target.value)} placeholder="消費項目" className="w-full p-3 bg-at-beige rounded-xl outline-none" />
-                                    <input value={amount} onChange={e => setAmount(e.target.value)} type="number" placeholder="金額 (KRW)" className="w-full p-3 bg-at-beige rounded-xl outline-none" />
-                                    <button onClick={addExpense} className="w-full bg-at-green text-white py-3 rounded-xl font-black">新增記帳</button>
-                                </div>
-                                <div className="space-y-2">
-                                    {expenses.map(exp => (
-                                        <div key={exp.id} className="at-card flex justify-between py-3">
-                                            <span className="font-bold">{exp.item}</span>
-                                            <span className="font-black text-red-400">₩ {exp.amount.toLocaleString()}</span>
-                                        </div>
+                        {/* 分頁切換渲染 */}
+                        {activeTab === 'schedule' && (
+                            <div className="space-y-4 animate-in fade-in">
+                                {/* 橫向日期選擇 */}
+                                <div className="flex gap-3 overflow-x-auto no-scrollbar py-2">
+                                    {['06/06', '06/07', '06/08', '06/09', '06/10'].map(d => (
+                                        <button 
+                                            key={d} onClick={() => setSelectedDate(d)}
+                                            className={`flex-shrink-0 w-16 h-20 rounded-at flex flex-col items-center justify-center transition-all ${selectedDate === d ? 'bg-at-green text-white shadow-lg' : 'bg-white shadow-soft'}`}
+                                        >
+                                            <span className="text-[10px] font-bold opacity-60">JUNE</span>
+                                            <span className="text-xl font-black">{d.split('/')[1]}</span>
+                                        </button>
                                     ))}
                                 </div>
+
+                                <h2 className="text-xl font-black mt-4 flex justify-between items-center">
+                                    今日行程 
+                                    <button onClick={addSchedule} className="text-sm bg-at-green text-white px-3 py-1 rounded-full">+ 新增</button>
+                                </h2>
+
+                                {schedules.filter(s => s.date === selectedDate).map(item => (
+                                    <div key={item.id} className="at-card relative group">
+                                        <button onClick={() => deleteSchedule(item.id)} className="absolute -top-2 -right-2 bg-at-red text-white w-6 h-6 rounded-full text-xs opacity-0 group-hover:opacity-100 transition-opacity shadow-md">✕</button>
+                                        <div className="flex justify-between items-start mb-2">
+                                            <span className="text-xs font-black opacity-40">{item.time}</span>
+                                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${item.type === '美食' ? 'bg-at-yellow text-at-brown' : 'bg-at-blue text-white'}`}>#{item.type}</span>
+                                        </div>
+                                        <h3 className="font-black text-lg">{item.title}</h3>
+                                        <p className="text-xs opacity-70 mb-4">{item.desc}</p>
+                                        <div className="flex gap-2">
+                                            <button className="flex-1 bg-at-beige py-2 rounded-xl text-xs font-bold hover:bg-at-sand" onClick={() => window.open(`https://www.google.com/maps/search/${item.location}`)}><i className="fas fa-map-marked-alt mr-1 text-at-green"></i> 導航</button>
+                                            <button className="flex-1 bg-at-beige py-2 rounded-xl text-xs font-bold hover:bg-at-sand"><i className="fas fa-search mr-1 text-at-blue"></i> 攻略</button>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         )}
-                    </header>
 
-                    <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] bg-white h-20 rounded-[35px] shadow-2xl flex justify-around items-center px-4 z-50">
-                        <NavBtn id="schedule" icon="fa-calendar-day" label="行程" active={activeTab} set={setActiveTab} />
-                        <NavBtn id="booking" icon="fa-ticket-alt" label="預訂" active={activeTab} set={setActiveTab} />
-                        <NavBtn id="expense" icon="fa-coins" label="記帳" active={activeTab} set={setActiveTab} />
-                    </nav>
-                </div>
-            );
-        }
-
-        const ScheduleView = () => (
-            <div className="space-y-4">
-                <div className="at-card border-l-8 border-at-green">
-                    <div className="flex justify-between items-start mb-2">
-                        <span className="text-xs font-black opacity-40">11:30</span>
-                        <span className="text-[10px] bg-at-yellow px-2 py-0.5 rounded-full font-bold">#必吃美食</span>
-                    </div>
-                    <h3 className="font-black text-lg">伍班長烤肉</h3>
-                    <p className="text-xs opacity-70 mb-4">海雲台名店，肝連肉必點！</p>
-                    <button className="w-full bg-at-beige py-2 rounded-xl font-bold text-xs" onClick={() => window.open('https://maps.google.com')}>立即導航</button>
-                </div>
-            </div>
-        );
-
-        const BookingView = () => (
-            <div className="boarding-pass p-6 shadow-lg">
-                <p className="font-black italic border-b border-white/20 pb-2 mb-4">EVA AIR BR170</p>
-                <div className="flex justify-between items-center px-2">
-                    <div className="text-center"><p className="text-3xl font-black">台北</p></div>
-                    <i className="fas fa-plane"></i>
-                    <div className="text-center"><p className="text-3xl font-black">釜山</p></div>
-                </div>
-            </div>
-        );
-
-        const NavBtn = ({ id, icon, label, active, set }) => (
-            <button onClick={() => set(id)} className={`flex flex-col items-center gap-1 ${active === id ? 'active-tab' : 'text-gray-300'}`}>
-                <i className={`fas ${icon} text-xl`}></i>
-                <span className="text-[10px] font-black">{label}</span>
-            </button>
-        );
-
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-    </script>
-</body>
-</html>
+                        {activeTab === 'booking' && (
+                            <div className="space-y-4 animate-in slide-in-from-right">
+                                <h2 className="text-xl font-black">預訂憑證</h2>
+                                <div className="boarding-pass p-6 shadow-lg">
+                                    <div className="flex justify-between items-center mb-6 border-b border-white/20 pb-4">
+                                        <span className="font-black italic text-lg">EVA AIR</span>
+                                        <span className="text-[10px] font-bold bg-white/20 px-2 py-1 rounded">BR170</span>
+                                    </div>
+                                    <div className="flex justify-between items-center px-2">
+                                        <div className="text-center"><p className="text-xs opacity-70">TPE</p><p className="text-3xl font-black">台北</p></div>
+                                        <i className="fas fa-plane text-2xl animate-pulse"></i>
+                                        <div className="text-center"><p className="text-xs opacity-70">PUS</p><p className="text-3xl font-black">釜山</p></div>
+                                    </div>
+                                </div>
+                                <div className="at-card">
+                                    <h3 className="font-black mb-2 flex items-center gap-2"><i className="fas fa-hotel text-at-green"></i> 住宿：Signiel Busan</h3>
+                                    <p className="text-xs opacity-60">地址：Haeundae-gu, Busan</p>
+                                    <div className="mt-4 pt-4 border-t border-at-beige flex justify-between items-center">
+                                        <span className="text-xs font-bold">查看 PIN 碼</span>
+                                        <button className="bg-at-brown text-white px-4 py-1 rounded-full text-xs" onClick={() => { if(prompt("請輸入 PIN") === "007") alert("密碼正確：旅館 PIN 為 1234"); }}>解鎖</button>
+                   
