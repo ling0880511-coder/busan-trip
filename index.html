@@ -3,195 +3,390 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>琳和貓的自由行 - V3</title>
+    <title>琳和貓的自由行 - 旅遊 V10 全域連動終極版</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
     <style>
-        /* ================= V3 色票: 莫蘭迪 x 維尼 x 動森 ================= */
+        /* ================= 莫蘭迪色板 (Morandi Palette - 嚴格保留) ================= */
         :root {
-            --ac-bg: #F9F6F0;        /* 燕麥奶油白底色 */
-            --ac-card: #FFFFFF;      /* 卡片純白 */
-            --ac-green: #81A28A;     /* 莫蘭迪綠 (主色) */
-            --ac-green-dark: #5C7663;
-            --ac-brown: #5D4A3D;     /* 木質深咖 (主字體，加深) */
-            --ac-tan: #D6CFC4;       /* 淺卡其邊框 */
+            --ac-bg: #F4F0EA;          
+            --ac-card: #FFFFFF;        
+            --ac-brown: #5C544D;       
+            --ac-brown-light: #9E948A; 
+            --ac-tan: #DCD7D0;         
             
-            /* 新版標題與天氣藍 */
-            --ac-title-blue: #5C8198;
-            --ac-weather-blue: #E2ECF2;
-            --ac-weather-text: #3B5768;
-
-            --ac-yellow: #FCD667;    /* 維尼黃 */
+            --mo-green: #78A083;       
+            --mo-green-dark: #5A7E64;  
+            --mo-blue: #72B1D6;        
+            --mo-pink: #D4A5A5;        
+            --mo-purple: #B5A8B9;      /* 釜山跳色 */
+            --mo-orange: #D99C78;      
             
-            --soft-shadow: 0px 8px 24px rgba(93, 74, 61, 0.12); /* 增強軟陰影 */
-            --btn-shadow: #6D594B;   /* 按鈕實體陰影 */
-            --timeline-color: #D6CFC4;
+            /* V10 修改：低飽和度的小熊維尼黃 */
+            --mo-yellow-muted: #F0D582; 
+            /* 保留高飽和供特定警示或倒數 */
+            --mo-yellow: #FFD000;      
+            
+            --mo-teal: #4A8E8B;        
+            
+            --shadow-soft: 0 10px 28px rgba(92, 84, 77, 0.08);
+            --shadow-btn: 0 5px 0px var(--mo-green-dark);
+            --shadow-btn-yellow: 0 5px 0px #C9A944; /* 低飽和黃的陰影 */
+            
+            --modal-dynamic-bg: #FFFFFF;
         }
 
         * { box-sizing: border-box; font-family: 'Nunito', 'Noto Sans TC', sans-serif; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+        html, body { height: 100%; overflow: hidden; background-color: var(--ac-bg); color: var(--ac-brown); overscroll-behavior-y: none; }
         
-        html, body { height: 100vh; overflow: hidden; background-color: var(--ac-bg); color: var(--ac-brown); }
         body { 
-            background-image: radial-gradient(var(--ac-tan) 1.5px, transparent 1.5px);
-            background-size: 22px 22px;
-            display: flex; justify-content: center;
+            background-image: radial-gradient(rgba(220, 215, 208, 0.7) 2px, transparent 2px);
+            background-size: 24px 24px; display: flex; justify-content: center;
         }
 
         .app-container {
-            width: 100%; max-width: 430px; height: 100vh;
+            width: 100%; max-width: 430px; height: 100%;
             position: relative; display: flex; flex-direction: column;
-            box-shadow: 0 0 25px rgba(0,0,0,0.15); background: transparent;
+            box-shadow: 0 0 35px rgba(0,0,0,0.06); background: transparent;
         }
 
-        /* ================= 頂部標題列 ================= */
+        /* ================= Header ================= */
         header {
-            padding: 25px 20px 15px 20px;
-            display: flex; justify-content: space-between; align-items: center;
-            background: rgba(249, 246, 240, 0.95); backdrop-filter: blur(8px);
-            z-index: 50; flex-shrink: 0;
+            padding: 25px 20px 15px 20px; display: flex; justify-content: space-between; align-items: center;
+            background: rgba(244, 240, 234, 0.95); backdrop-filter: blur(12px); z-index: 50; flex-shrink: 0;
         }
-        .header-title h1 { font-size: 1.45rem; font-weight: 900; letter-spacing: 1px; color: var(--ac-title-blue); text-shadow: 0 2px 8px rgba(92,129,152,0.2);}
+        .header-title h1 { font-size: 1.5rem; font-weight: 900; color: var(--ac-brown); }
         .header-avatars { display: flex; gap: -8px; }
-        .avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--ac-card); border: 2px solid #FFF; display: flex; justify-content: center; align-items: center; font-size: 1.3rem; margin-left: -10px; box-shadow: var(--soft-shadow);}
+        /* 支援 V10 圖片連動 */
+        .avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--ac-card); border: 3px solid #FFF; display: flex; justify-content: center; align-items: center; font-size: 1.4rem; margin-left: -10px; box-shadow: var(--shadow-soft); overflow: hidden;}
+        .avatar img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* ================= 內容滾動區 ================= */
-        main { 
-            flex: 1; overflow-y: auto; overflow-x: hidden;
-            padding: 10px 20px 120px 20px; 
-            scroll-behavior: smooth; transition: scrollbar-color 0.3s;
-        }
-        main::-webkit-scrollbar { width: 6px; }
-        main::-webkit-scrollbar-track { background: transparent; }
-        main::-webkit-scrollbar-thumb { background: transparent; border-radius: 10px; }
-        main.is-scrolling::-webkit-scrollbar-thumb { background: rgba(214, 207, 196, 0.8); }
-
+        /* ================= 內容區 ================= */
+        main { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 10px 20px 120px 20px; scroll-behavior: smooth; }
+        main::-webkit-scrollbar { display: none; } 
         .page { display: none; animation: fadeIn 0.3s ease; }
         .page.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ================= 共用按鈕 (還原圖片2設計) ================= */
-        .btn-q { border: none; cursor: pointer; font-weight: 900; transition: all 0.15s ease; display: inline-flex; align-items: center; justify-content: center; }
-        .btn-add-yellow { 
-            background: var(--ac-yellow); 
-            color: var(--ac-brown); 
-            padding: 6px 18px; 
-            font-size: 0.95rem; 
-            border-radius: 30px; /* 圓角膠囊形 */
-            border: 3.5px solid #FFF; /* 白色內邊框 */
-            box-shadow: 0 4px 0px var(--btn-shadow); /* 咖啡色立體陰影 */
+        /* ================= 核心按鈕與微互動 (Scale) ================= */
+        .btn-q { border: none; cursor: pointer; font-weight: 900; transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.15s; display: inline-flex; align-items: center; justify-content: center; }
+        .scale-btn { transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1); cursor: pointer; }
+        .scale-btn:active { transform: scale(0.92); }
+        
+        .btn-primary-action { 
+            background: var(--mo-green); color: #FFF; padding: 10px 22px; font-size: 1rem; 
+            border-radius: 30px; border: 3px solid #FFF; box-shadow: var(--shadow-btn); text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
-        .btn-add-yellow:active { transform: translateY(4px); box-shadow: 0 0px 0px var(--btn-shadow); }
+        .btn-primary-action:active { transform: translateY(5px) scale(0.96); box-shadow: 0 0px 0px transparent; }
 
-        .ac-card { background: var(--ac-card); border-radius: 20px; padding: 20px; margin-bottom: 18px; box-shadow: var(--soft-shadow); position: relative; transition: 0.2s; }
-        .section-title { font-size: 1.2rem; font-weight: 900; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; color: var(--ac-brown); }
+        /* V10: 低飽和維尼黃按鈕 */
+        .btn-add-yellow-v10 { 
+            background: var(--mo-yellow-muted); color: var(--ac-brown); padding: 10px 22px; font-size: 1rem; 
+            border-radius: 30px; border: 3px solid #FFF; box-shadow: var(--shadow-btn-yellow); text-shadow: none;
+        }
+        .btn-add-yellow-v10:active { transform: translateY(5px) scale(0.96); box-shadow: 0 0px 0px transparent; }
+
+        .ac-card { background: var(--ac-card); border-radius: 24px; padding: 20px; margin-bottom: 20px; box-shadow: var(--shadow-soft); border: 2px solid transparent; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .section-title { font-size: 1.25rem; font-weight: 900; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; color: var(--ac-brown); }
+
+        .form-label { display: block; font-size: 0.85rem; font-weight: 900; margin-bottom: 8px; color: var(--ac-brown-light); }
+        .form-control { width: 100%; padding: 14px 15px; border-radius: 16px; border: 2px solid var(--ac-tan); font-size: 1rem; font-weight: 800; outline: none; background: #FFF; margin-bottom: 15px; color: var(--ac-brown); transition: 0.2s;}
+        .form-control:focus { border-color: var(--mo-green); box-shadow: 0 0 0 3px rgba(120, 160, 131, 0.2); }
+        .form-control:disabled { background: #F8F6F2; color: var(--ac-brown-light); font-weight: 900;}
+        .form-control::placeholder { color: #C4C0B8; font-weight: 600; } 
+
+        .scroll-nav { display: flex; background: var(--ac-card); border-radius: 20px; padding: 6px; margin-bottom: 20px; border: 2px solid var(--ac-tan); box-shadow: var(--shadow-soft); overflow-x: auto; }
+        .scroll-item { flex: 1; text-align: center; padding: 12px 0; border-radius: 16px; cursor: pointer; font-size: 0.95rem; font-weight: 900; color: var(--ac-brown-light); white-space: nowrap; min-width: 70px; transition: 0.2s;}
+        .scroll-item:active { transform: scale(0.9); }
+        .scroll-item.active { background: var(--mo-green); color: #FFF; box-shadow: 0 4px 10px rgba(120, 160, 131, 0.4); }
+
+        /* V10: 粉色 Tabs + 光澤特效 */
+        .scroll-nav-pink .scroll-item.active { 
+            background: var(--mo-pink); color: #FFF; 
+            box-shadow: 0 0 15px rgba(212, 165, 165, 0.6), inset 0 0 8px rgba(255,255,255,0.4); 
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+
+        /* ================= 玻璃纖維光澤特效 ================= */
+        .glowing-hover:hover, .glowing-hover:active {
+            border-color: var(--mo-yellow) !important;
+            box-shadow: 0 0 20px 2px rgba(255, 208, 0, 0.6), inset 0 0 10px rgba(255, 208, 0, 0.2) !important;
+            transform: scale(0.98);
+        }
         
-        .form-label { display: block; font-size: 0.85rem; font-weight: 800; margin-bottom: 6px; color: var(--ac-title-blue); }
-        .form-control { width: 100%; padding: 14px 15px; border-radius: 16px; border: 2px solid var(--ac-tan); font-size: 1rem; font-weight: 700; outline: none; background: #FFF; margin-bottom: 15px;}
+        .glowing-border {
+            border-color: var(--mo-yellow) !important;
+            box-shadow: 0 0 20px 2px rgba(255, 208, 0, 0.6), inset 0 0 10px rgba(255, 208, 0, 0.2) !important;
+            transform: scale(0.98);
+        }
 
-        /* ================= 橫向滾動日期 ================= */
-        .date-scroller { display: flex; gap: 12px; overflow-x: auto; padding: 5px 0 15px 0; scrollbar-width: none; scroll-behavior: smooth; }
+        /* ================= 模組 1: 行程 (V10 綠色選擇器 & 地圖) ================= */
+        .date-scroller { display: flex; gap: 8px; overflow-x: auto; padding: 5px 0 15px 0; scrollbar-width: none; scroll-behavior: smooth; margin: 0 -5px; }
         .date-scroller::-webkit-scrollbar { display: none; }
-        .date-tab { min-width: 68px; text-align: center; padding: 12px 5px; border-radius: 18px; border: 2px solid var(--ac-tan); cursor: pointer; transition: 0.3s; color: var(--ac-tan); }
-        .date-tab .day { font-size: 0.75rem; font-weight: 800; display: block; margin-bottom: 4px; }
-        .date-tab .date { font-size: 1.2rem; font-weight: 900; }
-        .date-tab.active { background: var(--ac-green); border-color: var(--ac-green); color: #FFF; box-shadow: 0 6px 16px rgba(129, 162, 138, 0.4); transform: translateY(-3px); }
+        /* 日期選擇器 V10：背景草地綠，縮小尺寸 */
+        .date-tab { 
+            min-width: 56px; text-align: center; padding: 6px 4px; border-radius: 16px; 
+            background: var(--mo-green); border: 2px solid transparent; cursor: pointer; 
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); color: #FFF; opacity: 0.6;
+            transform: scale(0.92); margin: 0 2px;
+        }
+        .date-tab .day { font-size: 0.7rem; font-weight: 900; display: block; margin-bottom: 2px; }
+        .date-tab .date { font-size: 1.05rem; font-weight: 900; }
+        .date-tab:active { transform: scale(0.85); }
+        /* Active 狀態：深綠實線 + 綠色玻璃光澤 */
+        .date-tab.active { 
+            opacity: 1; border-color: var(--mo-green-dark); 
+            box-shadow: 0 0 15px 2px rgba(120, 160, 131, 0.5), inset 0 0 8px rgba(120, 160, 131, 0.3); 
+            transform: scale(1.05); 
+        }
 
-        /* ================= 天氣卡片 (藍色系) ================= */
-        .weather-card { background: linear-gradient(135deg, #FFF 0%, var(--ac-weather-blue) 100%); border: 2px solid #D1E1EB; display: flex; flex-direction: column; gap: 10px; color: var(--ac-weather-text);}
-        .weather-top { display: flex; justify-content: space-between; align-items: flex-start; }
-        .weather-icons { display: flex; gap: 15px; background: rgba(255,255,255,0.8); padding: 8px 15px; border-radius: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
-        .weather-icons div { text-align: center; font-size: 0.7rem; font-weight: 900; color: #5C8198; }
-        .weather-icons div span { font-size: 1.4rem; display: block; margin-bottom: 2px; }
+        /* 鎖定保留 V9 設定：天氣藍色漸層與倒數維尼黃 */
+        .weather-card { border: 2px solid var(--mo-blue); display: flex; flex-direction: column; gap: 10px; background: linear-gradient(135deg, #E6F0F9 0%, #D4E6F1 100%); box-shadow: 0 8px 20px rgba(114, 177, 214, 0.15);}
+        .weather-top { display: flex; justify-content: space-between; align-items: center; }
+        .weather-info { color: var(--ac-brown); font-weight: 900;}
 
-        /* ================= 倒數進度條 (還原 Image 1) ================= */
-        .progress-box { position: relative; margin: 15px 0 25px 0; background: var(--ac-card); padding: 15px 20px; border-radius: 20px; box-shadow: var(--soft-shadow); border: 1px solid var(--ac-tan);}
-        .progress-bg { height: 16px; background: #FFF; border-radius: 20px; margin-top: 15px; margin-bottom: 5px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); border: 1.5px solid var(--ac-brown); position: relative;}
-        .progress-fill { height: 100%; background: var(--ac-yellow); width: 0%; transition: width 1s cubic-bezier(0.2, 0.8, 0.2, 1); border-radius: 20px;}
-        /* 飛機在數據條上 */
-        .runner-icon { position: absolute; top: 50%; transform: translateY(-50%); transition: left 1s cubic-bezier(0.2, 0.8, 0.2, 1); font-size: 1.3rem; margin-left: -12px; z-index: 5;}
+        .progress-box { position: relative; margin: 10px 0 25px 0; background: var(--ac-card); padding: 16px 20px; border-radius: 24px; box-shadow: var(--shadow-soft); border: 2px solid var(--ac-tan);}
+        .progress-bg { height: 16px; background: #F4F0EA; border-radius: 20px; margin: 12px 0; border: 2px solid var(--ac-tan); position: relative;}
+        .progress-fill { height: 100%; background: var(--mo-yellow); width: 0%; border-radius: 20px;}
+        .runner-icon { position: absolute; top: 50%; transform: translateY(-50%); left: 0%; font-size: 1.6rem; margin-left: -16px; z-index: 5; filter: drop-shadow(2px 4px 4px rgba(0,0,0,0.15));}
 
-        /* ================= 行程時間軸 ================= */
         .timeline-wrapper { position: relative; margin-top: 10px; padding-left: 20px; padding-bottom: 20px; }
-        .timeline-wrapper::before { content: ''; position: absolute; left: 6px; top: 15px; bottom: 0; width: 3px; background: var(--timeline-color); border-radius: 2px; }
+        .timeline-wrapper::before { content: ''; position: absolute; left: 6px; top: 15px; bottom: 0; width: 4px; background: var(--ac-tan); border-radius: 2px; }
         .timeline-item { position: relative; margin-bottom: 20px; }
-        .timeline-dot { position: absolute; left: -20.5px; top: 15px; width: 15px; height: 15px; border-radius: 50%; background: var(--ac-card); border: 4px solid var(--ac-green); z-index: 2; transition: 0.3s;}
+        .timeline-dot { position: absolute; left: -21px; top: 18px; width: 16px; height: 16px; border-radius: 50%; background: var(--ac-card); border: 4px solid var(--mo-green); z-index: 2; transition: 0.3s;}
         
-        .event-card { border-radius: 20px; padding: 16px; box-shadow: var(--soft-shadow); border: 2px solid transparent; display: flex; flex-direction: column; gap: 8px; position: relative; cursor: pointer; transition: 0.2s; background: var(--ac-card); }
-        .event-card:active { transform: scale(0.98); }
-        
+        .event-card { border-radius: 20px; padding: 18px; box-shadow: var(--shadow-soft); border: 2px solid transparent; display: flex; flex-direction: column; gap: 8px; position: relative; cursor: pointer; transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); background: var(--ac-card); }
+        .event-card:active { transform: scale(0.96); }
         .event-header { display: flex; align-items: center; gap: 12px; }
         
-        /* 完美修正的時間按鈕 */
-        .time-picker-wrapper { position: relative; display: inline-block; }
-        .time-display-btn { 
-            background: #F0EBE1; color: var(--ac-brown); padding: 6px 12px; border-radius: 12px; 
-            font-size: 1.05rem; font-weight: 900; border: none; box-shadow: 0 2px 0 var(--ac-tan);
-            display: flex; align-items: center; justify-content: center; pointer-events: none; /* 讓點擊穿透到 input */
-        }
-        .time-picker-wrapper input[type="time"] { 
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            opacity: 0; cursor: pointer; z-index: 10;
-        }
-
+        .time-picker-wrapper { position: relative; display: inline-block; cursor: pointer;}
+        .time-display-btn { background: #F4F0EA; color: var(--ac-brown); padding: 8px 14px; border-radius: 14px; font-size: 1.05rem; font-weight: 900; border: none; pointer-events: none; box-shadow: 0 2px 0 #DCD7D0; }
+        .time-picker-wrapper input[type="time"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 10;}
         .event-title { font-size: 1.15rem; font-weight: 900; color: var(--ac-brown); flex: 1; }
         
-        /* 展開詳情與照片 */
-        .event-detail { display: none; margin-top: 10px; padding-top: 15px; border-top: 2px dashed rgba(214, 207, 196, 0.6); animation: fadeIn 0.3s; }
-        .event-note { font-size: 0.9rem; color: #666; font-weight: 700; background: rgba(255,255,255,0.7); padding: 10px 12px; border-radius: 12px; margin-bottom: 12px;}
-        .photo-upload-box { border: 2px dashed var(--ac-tan); background: rgba(255,255,255,0.8); height: 120px; border-radius: 16px; display: flex; justify-content: center; align-items: center; color: var(--ac-tan); font-size: 1.5rem; cursor: pointer; margin-bottom: 10px; overflow: hidden; position: relative; }
+        .event-detail { display: none; margin-top: 10px; padding-top: 15px; border-top: 2px dashed rgba(220, 215, 208, 0.8); animation: fadeIn 0.3s; }
+        .event-note { font-size: 0.95rem; color: var(--ac-brown-light); font-weight: 700; background: rgba(244,240,234,0.7); padding: 12px; border-radius: 14px; margin-bottom: 12px;}
+        .photo-upload-box { border: 3px dashed var(--ac-tan); background: #FDFCF9; height: 140px; border-radius: 18px; display: flex; justify-content: center; align-items: center; color: var(--ac-brown-light); font-size: 1.5rem; cursor: pointer; margin-bottom: 10px; overflow: hidden; position: relative; transition: 0.2s;}
+        .photo-upload-box:active { transform: scale(0.95); background: #F4F1E1; }
         .photo-upload-box img { width: 100%; height: 100%; object-fit: cover; }
         
         .event-actions { text-align: right; margin-top: 5px; }
-        .event-actions span { cursor: pointer; margin-left: 20px; font-size: 1.2rem; color: #BDB5AA; transition: 0.2s;}
-        .event-actions span:hover { color: var(--ac-brown); transform: scale(1.1); display: inline-block;}
+        .event-actions span { cursor: pointer; margin-left: 20px; font-size: 1.2rem; color: var(--ac-brown-light); transition: 0.2s;}
+        .event-actions span:hover { color: var(--mo-pink); transform: scale(1.2); display: inline-block;}
 
-        /* 自訂顏色選擇器 */
-        .color-picker-group { display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none;}
-        .color-picker-group::-webkit-scrollbar { display: none; }
-        .color-dot { width: 35px; height: 35px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; flex-shrink: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: 0.2s;}
-        .color-dot.active { border-color: var(--ac-brown); transform: scale(1.1); }
+        /* V10: 地圖縮圖 UI */
+        .map-thumbnail { width: 100%; height: 100px; border-radius: 14px; background: url('https://images.unsplash.com/photo-1524661135-423995f22d0b?w=400&q=80') center/cover; position: relative; cursor: pointer; margin-top: 10px; border: 2px solid var(--ac-tan); box-shadow: var(--shadow-soft);}
+        .map-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.3); border-radius: 12px; display: flex; justify-content: center; align-items: center; color: #FFF; font-weight: 900; font-size: 1.1rem; opacity: 0; transition: 0.2s;}
+        .map-thumbnail:hover .map-overlay { opacity: 1; }
 
-        /* ================= 其他頁面 (預定/會計/日誌/成員) 還原 V1 設計 ================= */
-        .scroll-nav { display: flex; background: var(--ac-card); border-radius: 20px; padding: 6px; margin-bottom: 20px; border: 1px solid var(--ac-tan); box-shadow: var(--soft-shadow); overflow-x: auto; }
-        .scroll-item { flex: 1; text-align: center; padding: 12px 0; border-radius: 16px; cursor: pointer; font-size: 0.95rem; font-weight: 800; color: var(--ac-brown); white-space: nowrap; min-width: 70px; transition: 0.2s;}
-        .scroll-item.active { background: var(--ac-title-blue); color: white; box-shadow: 0 4px 10px rgba(92,129,152, 0.3); }
+        /* ================= 模組 2: 預定票務 (V10 區塊跳色 & 5151 密碼鎖) ================= */
+        .editable-mode .editable-field { border-bottom: 2px dashed var(--mo-yellow); padding: 0 4px; border-radius: 4px; cursor: text; transition: 0.2s;}
+        .editable-mode .editable-field:focus { background: rgba(255, 208, 0, 0.2); outline: none;}
 
-        .boarding-pass { background: #FDFDFD; border-top: 15px solid var(--ac-title-blue); border-radius: 24px; text-align: center; }
-        .bp-code { font-size: 2.8rem; font-weight: 900; letter-spacing: 2px; margin: 10px 0; color: var(--ac-brown); }
-        .bp-route { display: flex; justify-content: space-between; align-items: center; margin: 20px 0; }
-        .bp-route h2 { margin: 0; font-size: 2.2rem; }
-        .bp-tag { background: var(--ac-green); color: white; padding: 2px 10px; border-radius: 10px; font-size: 0.75rem; font-weight: 800;}
-        .bp-details { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: left; font-size: 0.85rem; font-weight: 700; margin-top: 20px; border-top: 2px dashed #EEE; padding-top: 20px; }
+        /* V10 機票區塊跳色：草地綠 Header */
+        .flight-card { background: #FFF; border-radius: 24px; padding: 0; overflow: hidden; border: 2px solid var(--ac-tan); box-shadow: var(--shadow-soft); margin-bottom: 20px; position: relative; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);}
+        .fc-top-bg { background: var(--mo-green); height: 50px; width: 100%; position: absolute; top: 0; left: 0; z-index: 0; border-bottom: 2px dashed rgba(255,255,255,0.3);}
+        .fc-content { position: relative; z-index: 1; padding: 15px 20px 20px 20px; }
         
-        .hotel-card img { width: 100%; height: 180px; object-fit: cover; border-radius: 16px; margin-bottom: 15px; border: 2px solid var(--ac-brown); }
-        .acc-total-card { background: var(--ac-yellow); text-align: center; border-color: #E6C555; box-shadow: 0 6px 0px #E6C555; }
-        .currency-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
-        .cur-tab { flex: 1; text-align: center; padding: 10px; border: 2px solid var(--ac-tan); border-radius: 16px; font-weight: 900; cursor: pointer; }
-        .cur-tab.active { border-color: var(--ac-title-blue); color: var(--ac-title-blue); background: rgba(92,129,152, 0.1); }
-        .avatar-select { display: flex; gap: 10px; margin-bottom: 15px; }
-        .ava-opt { width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.2rem; background: #FFF; border: 2px solid var(--ac-tan); opacity: 0.4; cursor: pointer; transition: 0.2s;}
-        .ava-opt.selected { opacity: 1; border-color: var(--ac-title-blue); transform: scale(1.1); background: rgba(92,129,152, 0.1); }
-        .bill-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 2px dashed var(--ac-tan); border-radius: 0; box-shadow: none; background: transparent; margin-bottom: 0;}
+        .fc-header { display: flex; justify-content: space-between; align-items: center; color: #FFF; font-weight: 900; font-size: 1rem; margin-bottom: 20px;}
+        .fc-badge { background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 8px; color: #FFF; font-size: 0.75rem;}
+        
+        /* 桃園(粉) / 釜山(紫) 大圓角跳色標籤 */
+        .fc-route-box { background: #F8F9FA; border-radius: 24px; padding: 25px 20px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.02); display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border: 1px solid var(--ac-tan);}
+        .fc-route-point { text-align: center; }
+        .fc-route-point h2 { margin: 0; font-size: 2.8rem; color: var(--ac-brown); letter-spacing: 2px; }
+        .fc-route-point .time { font-weight: 900; font-size: 1.2rem; margin: 5px 0; color: var(--ac-brown);}
+        .fc-route-tag { display: inline-block; color: white; padding: 6px 16px; border-radius: 20px; font-size: 0.9rem; font-weight: 900; box-shadow: var(--shadow-soft);}
+        .tag-tpe { background: var(--mo-pink); }
+        .tag-pus { background: var(--mo-purple); }
+        
+        .fc-duration { text-align: center; color: var(--ac-brown-light); font-weight: 800; font-size: 0.8rem; flex: 1; position: relative;}
+        .fc-duration .line { width: 80%; height: 2px; border-bottom: 2px dashed var(--mo-blue); margin: 8px auto; position: relative;}
+        .fc-duration .line i { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); color: var(--mo-blue); font-size: 1.4rem; background: #F8F9FA; padding: 0 8px;}
+        
+        .fc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .fc-grid-item { border: 2px solid #F4F0EA; border-radius: 16px; padding: 12px; text-align: center; background: #FFF;}
+        .fc-grid-title { font-size: 0.7rem; color: var(--ac-brown-light); font-weight: 900; margin-bottom: 5px;}
+        .fc-grid-val { font-size: 0.95rem; font-weight: 900; color: var(--ac-brown);}
 
-        /* ================= 彈出視窗 ================= */
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(93, 74, 61, 0.6); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: flex-end; z-index: 1000;}
-        .ac-modal { background: var(--ac-bg); width: 100%; max-width: 430px; border-radius: 30px 30px 0 0; padding: 25px 25px 40px 25px; box-shadow: 0 -10px 30px rgba(0,0,0,0.2); animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1); max-height: 90vh; overflow-y: auto;}
+        /* 編輯按鈕：天空藍 */
+        .btn-edit-blue { background: var(--mo-blue); color: #FFF; border: 3px solid #FFF; box-shadow: 0 4px 0px rgba(114, 177, 214, 0.8); }
+
+        .hotel-card2 { background: #FFF; border-radius: 24px; padding: 0; overflow: hidden; border: 2px solid var(--ac-tan); box-shadow: var(--shadow-soft); margin-bottom: 20px; position: relative; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); cursor: pointer;}
+        .hc-img-wrapper { position: relative; width: 100%; height: 200px; }
+        .hc-img-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+        .hc-tag-loc { position: absolute; top: 15px; left: 15px; background: #007AFF; color: #FFF; padding: 6px 15px; border-radius: 20px; font-weight: 900; font-size: 0.85rem; box-shadow: 0 4px 10px rgba(0,122,255,0.3);}
+        
+        .hc-body { padding: 20px; }
+        .hc-title { font-size: 1.4rem; font-weight: 900; color: var(--ac-brown); margin: 0 0 5px 0;}
+        .hc-address { font-size: 0.85rem; font-weight: 800; color: var(--ac-brown-light); margin-bottom: 20px;}
+        
+        .hc-checkin-box { display: flex; justify-content: space-between; align-items: center; border: 2px solid #F4F0EA; border-left: 6px solid var(--mo-blue); border-radius: 16px; padding: 15px; margin-bottom: 20px; background: #FCFBFA; }
+        .hc-ci-col { display: flex; flex-direction: column; gap: 4px; }
+        .hc-ci-title { font-size: 0.7rem; font-weight: 900; color: var(--ac-brown-light); text-transform: uppercase;}
+        .hc-ci-date { font-size: 1.1rem; font-weight: 900; color: var(--ac-brown);}
+        .hc-ci-time { font-size: 0.9rem; font-weight: 800; color: var(--mo-blue);}
+        .hc-ci-mid { text-align: center; color: var(--ac-tan); font-weight: 900; font-size: 0.8rem; }
+        
+        .hc-price-area { display: flex; justify-content: space-between; align-items: flex-end; }
+        .hc-ref { background: #F4F0EA; color: var(--ac-brown-light); padding: 6px 12px; border-radius: 8px; font-weight: 900; font-size: 0.8rem; border: 1px dashed var(--ac-tan);}
+        .hc-price-right { text-align: right; }
+        /* 價格色彩對調：Total 深咖, 均分 警告紅 */
+        .hc-price-total { font-size: 1.6rem; font-weight: 900; color: var(--ac-brown); margin-bottom: 5px;}
+        .hc-price-total span { font-size: 0.9rem; color: var(--ac-brown-light); }
+        .hc-price-split { font-size: 0.85rem; font-weight: 800; color: var(--mo-pink); margin-bottom: 5px;}
+        .hc-price-night { display: inline-block; background: #F1F4F6; color: var(--mo-blue); padding: 4px 10px; border-radius: 8px; font-size: 0.85rem; font-weight: 900;}
+
+        /* ================= 模組 3: 帳務系統 (V10 優化) ================= */
+        /* 記帳標題深咖啡色 */
+        .acc-title-brown { color: var(--ac-brown) !important; }
+
+        /* 鎖定：匯率 */
+        .exchange-box { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; background: linear-gradient(135deg, #E6EEF2 0%, #DCE7ED 100%); padding: 15px; border-radius: 24px; box-shadow: inset 0 2px 5px rgba(255,255,255,0.5), 0 8px 15px rgba(155, 174, 196, 0.2);}
+        .exc-input-group { flex: 1; background: #FFF; border: 2px solid transparent; border-radius: 16px; padding: 15px; text-align: center; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.03);}
+        .exc-input-group:focus-within { border-color: var(--mo-yellow); transform: scale(1.02); box-shadow: 0 8px 15px rgba(255, 208, 0, 0.2);}
+        .exc-currency { font-size: 0.8rem; font-weight: 900; color: var(--mo-blue); margin-bottom: 5px;}
+        .exc-input-group input { width: 100%; border: none; background: transparent; text-align: center; font-size: 1.8rem; font-weight: 900; color: var(--ac-brown); outline: none;}
+        .exc-icon { font-size: 1.5rem; color: var(--mo-blue); }
+        
+        .quick-conv-board { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .qc-item { background: #FFF; border: 2px solid var(--ac-tan); border-radius: 12px; padding: 10px; display: flex; justify-content: space-between; font-weight: 900; color: var(--ac-brown); box-shadow: 0 2px 5px rgba(0,0,0,0.02);}
+        .qc-item span { color: var(--ac-brown-light); font-size: 0.85rem;}
+
+        .currency-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
+        .cur-tab { flex: 1; text-align: center; padding: 12px; border: 2px solid var(--ac-tan); border-radius: 16px; font-weight: 900; cursor: pointer; transition: 0.2s; color: var(--ac-brown-light);}
+        .cur-tab.active { border-color: var(--mo-yellow-muted); color: var(--ac-brown); background: rgba(240, 213, 130, 0.3); transform: scale(1.05);}
+
+        .ava-select-group { display: flex; gap: 15px; margin-bottom: 15px;}
+        .ava-opt { 
+            width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; flex-direction: column;
+            font-size: 1.4rem; background: #FFF; border: 3px solid var(--ac-tan); cursor: pointer; transition: 0.2s;
+            opacity: 0.4; filter: grayscale(100%); position: relative;
+        }
+        /* V10 修改：Active 時為藍色框線 */
+        .ava-opt.active { opacity: 1; filter: grayscale(0%); border-color: var(--mo-blue); transform: scale(1.1); box-shadow: 0 4px 10px rgba(114, 177, 214, 0.3); }
+        .ava-name { position: absolute; bottom: -20px; font-size: 0.75rem; font-weight: 900; color: var(--ac-brown); }
+
+        /* V10 支付方式 UI 同步幣別選擇器 */
+        .method-tabs { display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none;}
+        .method-tabs::-webkit-scrollbar { display: none; }
+        .m-tab { padding: 10px 15px; border: 2px solid var(--ac-tan); border-radius: 14px; font-weight: 900; cursor: pointer; transition: 0.2s; color: var(--ac-brown-light); font-size: 0.9rem; white-space: nowrap;}
+        .m-tab.active { border-color: var(--mo-yellow-muted); color: var(--ac-brown); background: rgba(240, 213, 130, 0.3); transform: scale(1.05);}
+
+        /* 鎖定：明細 */
+        .settlement-card { background: #FCFBFA; border: 2px dashed #8B5A5A; border-radius: 20px; padding: 15px; margin-bottom: 15px; display: none; animation: fadeIn 0.3s;}
+        .settlement-title { font-weight: 900; color: #8B5A5A; font-size: 0.9rem; margin-bottom: 10px; display: flex; align-items: center; gap: 5px;}
+        .settlement-item { background: #FFF; padding: 10px; border-radius: 12px; font-weight: 900; font-size: 0.95rem; color: var(--ac-brown); margin-bottom: 8px; border: 1px solid var(--ac-tan); display: flex; justify-content: space-between; align-items: center;}
+        .settlement-amount { color: var(--mo-pink); font-size: 1.1rem;}
+
+        .acc-total-card { background: var(--mo-yellow-muted); text-align: center; border: none; box-shadow: 0 8px 20px rgba(240, 213, 130, 0.4); color: var(--ac-brown); padding: 25px; border-radius: 24px; border: 3px solid #FFF; margin-bottom: 20px;}
+        .acc-total-card .title { font-weight: 900; color: #9A8446; font-size: 0.95rem;}
+        .highlight-name { color: #FFF; background: rgba(0,0,0,0.15); padding: 2px 8px; border-radius: 8px; font-size: 1.05rem;}
+        .acc-total-card .amount { font-size: 3rem; font-weight: 900; margin: 5px 0;}
+        
+        .filter-tags-container { display: flex; background: #F8F6F2; border-radius: 30px; padding: 4px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid var(--ac-tan);}
+        .f-tag-pill { flex: 1; text-align: center; padding: 10px 0; border-radius: 26px; font-weight: 900; font-size: 0.9rem; cursor: pointer; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); color: var(--ac-brown-light); }
+        .f-tag-pill.active { background: var(--ac-card); color: var(--mo-yellow); box-shadow: 0 4px 10px rgba(0,0,0,0.05); transform: scale(1.02); }
+
+        .bill-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 2px dashed var(--ac-tan); cursor: pointer; transition: 0.2s;}
+        .bill-item:last-child { border-bottom: none; }
+        .bill-item:active { transform: scale(0.98); background: #F8F6F2; border-radius: 12px;}
+        .bill-icon { width: 44px; height: 44px; border-radius: 14px; background: #F8F6F2; display: flex; justify-content: center; align-items: center; font-size: 1.4rem; color: var(--ac-brown); border: 1px solid var(--ac-tan);}
+        .bill-date { font-size: 0.75rem; background: var(--mo-blue); color: #FFF; padding: 2px 8px; border-radius: 8px; font-weight: 900; display: inline-block; margin-bottom: 4px;}
+
+        /* V10: 明細日期分隔線 */
+        .date-divider { display: inline-block; background: #EAF0F4; color: var(--mo-blue); border: 2px solid #FFF; box-shadow: var(--shadow-soft); padding: 4px 12px; border-radius: 20px; font-weight: 900; margin: 15px 0 5px 0; font-size: 0.8rem;}
+
+        /* ================= 模組 4: 日誌 (鎖定保留 V4 設定) ================= */
+        .diary-date-badge { display: inline-block; background: #EAF0F4; color: var(--mo-blue); border: 2px solid #FFF; box-shadow: var(--shadow-soft); padding: 6px 16px; border-radius: 20px; font-weight: 900; margin: 15px 0 10px 0; font-size: 0.85rem;}
+        .diary-card { background: var(--ac-card); border-radius: 24px; padding: 20px; margin-bottom: 15px; box-shadow: var(--shadow-soft); border: 2px solid transparent;}
+        .diary-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px;}
+        .diary-content { font-size: 0.95rem; font-weight: 800; color: var(--ac-brown); line-height: 1.5; margin-bottom: 15px; white-space: pre-wrap;}
+        .diary-photos { display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; padding-bottom: 5px;}
+        .diary-photos::-webkit-scrollbar { display: none; }
+        .diary-img { width: 100px; height: 100px; border-radius: 16px; object-fit: cover; flex-shrink: 0; border: 1px solid var(--ac-tan);}
+        .diary-upload-grid { display: flex; gap: 10px; flex-wrap: wrap;}
+        .diary-upload-box { width: 80px; height: 80px; border: 2px dashed var(--ac-tan); border-radius: 14px; background: #F8F6F2; display: flex; justify-content: center; align-items: center; color: var(--ac-tan); font-size: 1.5rem; cursor: pointer;}
+        .diary-upload-box img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px;}
+
+        /* ================= 模組 5: 快樂成員 (全新開發) ================= */
+        .member-card { background: var(--ac-card); border-radius: 24px; padding: 20px; margin-bottom: 15px; box-shadow: var(--shadow-soft); border: 2px solid var(--ac-tan); display: flex; align-items: center; gap: 15px; position: relative;}
+        .member-avatar { width: 65px; height: 65px; border-radius: 50%; object-fit: cover; border: 3px solid #FFF; box-shadow: var(--shadow-soft); flex-shrink: 0; background: #F4F0EA; display: flex; justify-content: center; align-items: center; font-size: 2rem;}
+        .member-info { flex: 1; }
+        .member-name { font-size: 1.3rem; font-weight: 900; color: var(--ac-brown); margin: 0 0 2px 0;}
+        .member-aka { font-size: 0.85rem; font-weight: 800; color: var(--ac-brown-light); background: #F8F6F2; padding: 2px 8px; border-radius: 8px; display: inline-block;}
+        .member-quote { font-size: 0.9rem; color: var(--mo-blue); font-weight: 700; margin-top: 8px; font-style: italic;}
+        .member-actions { position: absolute; top: 15px; right: 15px; display: flex; gap: 10px; color: var(--ac-tan); font-size: 1.1rem; }
+
+        /* ================= 共用遊戲通知風 Modal ================= */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(92, 84, 77, 0.6); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 1000;}
+        .ac-modal { 
+            background: var(--modal-dynamic-bg); 
+            width: 90%; max-width: 360px; border-radius: 28px; padding: 25px; 
+            border: 4px solid var(--ac-brown);
+            box-shadow: 0 15px 0px rgba(0,0,0,0.1), inset 0 0 0 3px rgba(255,255,255,0.5); 
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            max-height: 85vh; overflow-y: auto; position: relative;
+            transition: background 0.4s ease;
+        }
+        @keyframes popIn { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        /* 顏色選擇器 - 防裁切縮小版 */
+        .color-picker-wrapper { background: rgba(255,255,255,0.6); border-radius: 20px; padding: 12px 15px; margin-bottom: 20px; border: 2px dashed rgba(94, 75, 60, 0.3);}
+        .color-picker-group { display: flex; gap: 15px; overflow-x: auto; padding: 10px 5px; scrollbar-width: none; align-items: center;}
+        .color-picker-group::-webkit-scrollbar { display: none; }
+        .color-dot { width: 32px; height: 32px; border-radius: 50%; cursor: pointer; border: 3px solid #FFF; flex-shrink: 0; transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s;}
+        .color-dot:active { transform: scale(0.8); }
+        .color-dot.active { border-color: var(--ac-brown); transform: scale(1.2); box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
+
+        .modal-btn { flex: 1; padding: 14px; border-radius: 20px; font-weight: 900; font-size: 1.05rem; border: 3px solid #FFF; }
+        .modal-btn-cancel { background: #E8DFD5; color: var(--ac-brown); box-shadow: 0 5px 0px #C6B6A5; }
+        .modal-btn-save { background: var(--mo-green); color: white; box-shadow: var(--shadow-btn); }
+        .modal-btn:active { transform: translateY(5px) scale(0.95); box-shadow: 0 0px 0px transparent !important; }
+
+        /* 刪除確認 Modal 專用 */
+        .delete-icon-bg { width: 60px; height: 60px; background: var(--mo-pink); border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 15px auto; font-size: 1.8rem; color: #FFF; border: 3px solid #FFF; box-shadow: var(--shadow-soft);}
+
+        /* 住宿詳細資訊 Modal (全螢幕展開) */
+        #modal-hotel-detail-content {
+            background: #FFF; width: 100%; max-width: 430px; height: 90vh; border-radius: 24px 24px 0 0; padding: 0; 
+            border: none; box-shadow: 0 -15px 35px rgba(0,0,0,0.2); position: absolute; bottom: 0;
+            animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1); overflow: hidden; display: flex; flex-direction: column;
+        }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        .modal-handle { width: 50px; height: 6px; background: var(--ac-tan); border-radius: 10px; margin: 0 auto 20px auto; }
+        .hd-close { position: absolute; top: 20px; right: 20px; width: 36px; height: 36px; background: rgba(0,0,0,0.5); color: #FFF; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.2rem; z-index: 10; cursor: pointer; backdrop-filter: blur(4px); transition: 0.2s;}
+        .hd-close:active { transform: scale(0.9); }
+
+        /* 動態 Toast */
+        .toast {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9);
+            background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);
+            padding: 20px 30px; border-radius: 24px; box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            border: 3px solid var(--mo-green); display: flex; flex-direction: column; align-items: center; gap: 10px;
+            opacity: 0; pointer-events: none; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 2000;
+        }
+        .toast.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        .toast i { font-size: 3rem; color: var(--mo-green); }
+        .toast span { font-weight: 900; color: var(--ac-brown); font-size: 1.2rem; }
 
         /* ================= 底部導覽列 ================= */
         nav {
             position: fixed; bottom: 0; width: 100%; max-width: 430px;
-            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            background: rgba(253, 251, 244, 0.95); backdrop-filter: blur(10px);
             display: flex; justify-content: space-around;
-            padding: 10px 10px 25px 10px; border-top: 1px solid rgba(214, 207, 196, 0.5);
-            border-radius: 30px 30px 0 0; box-shadow: 0 -5px 20px rgba(0,0,0,0.04);
-            z-index: 100;
+            padding: 10px 10px 25px 10px; border-radius: 30px 30px 0 0; 
+            border-top: 3px solid var(--ac-tan); z-index: 100;
         }
-        .nav-item { text-align: center; color: #A8A096; font-size: 0.7rem; font-weight: 800; cursor: pointer; flex: 1; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center;}
-        .nav-icon { font-size: 1.4rem; margin-bottom: 4px; padding: 8px 15px; border-radius: 20px; transition: 0.3s; }
+        .nav-item { text-align: center; color: #BDB5AA; font-size: 0.7rem; font-weight: 900; cursor: pointer; flex: 1; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center;}
+        .nav-icon { font-size: 1.4rem; margin-bottom: 4px; padding: 8px 15px; border-radius: 20px; transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .nav-item:active .nav-icon { transform: scale(0.8); }
         .nav-item.active { color: var(--ac-brown); transform: translateY(-4px); }
-        .nav-item.active .nav-icon { background: var(--ac-yellow); color: var(--ac-brown); box-shadow: 0 4px 10px rgba(252, 214, 103, 0.4); font-size: 1.5rem; }
+        /* V10 底部 Active 狀態為低飽和黃 + 玻璃光澤 */
+        .nav-item.active .nav-icon { 
+            background: var(--mo-yellow-muted); color: var(--ac-brown); 
+            box-shadow: 0 0 15px 2px rgba(240, 213, 130, 0.5), inset 0 0 8px rgba(240, 213, 130, 0.3);
+            font-size: 1.4rem; border: 2px solid #FFF;
+        }
     </style>
 </head>
 <body>
@@ -199,154 +394,491 @@
 <div class="app-container">
     <header>
         <div class="header-title"><h1>琳和貓的自由行</h1></div>
-        <div class="header-avatars"><div class="avatar">👩</div><div class="avatar">🐱</div></div>
+        <div class="header-avatars" id="header-avatars-container">
+            </div>
     </header>
 
     <main id="main-scroll">
         <div id="page-itinerary" class="page active">
-            
             <div class="date-scroller" id="date-scroller"></div>
-
             <div class="ac-card weather-card" id="weather-section"></div>
 
-            <div class="progress-box" onclick="playHaptic(); animateCountdown()">
+            <div class="progress-box" onclick="playHaptic(); triggerCountdownAnimation()">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div style="font-weight: 900; font-size: 1.05rem; color: var(--ac-title-blue);"><i class="fa-solid fa-plane-departure" style="margin-right:5px;"></i>距離釜山倒數</div>
-                    <div style="font-weight: 900; font-size: 1.05rem; color: var(--ac-brown);" id="countdown-status">計算中...</div>
+                    <div style="font-weight: 900; font-size: 1.05rem; color: var(--ac-brown);">距離釜山倒數</div>
+                    <div style="font-weight: 900; font-size: 1.05rem; color: var(--mo-orange);" id="countdown-status"></div>
                 </div>
-                
-                <div class="progress-bg">
-                    <div class="progress-fill" id="itinerary-progress"></div>
-                    <div class="runner-icon" id="runner">✈️</div>
-                </div>
-                <div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 900; color: var(--ac-title-blue);">
-                    <div id="countdown-days-text">剩餘計算中...</div>
-                    <div id="countdown-percent">0%</div>
+                <div class="progress-bg"><div class="progress-fill" id="itinerary-progress"></div><div class="runner-icon" id="runner">✈️</div></div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 900; color: var(--ac-brown-light);">
+                    <div id="countdown-days-text">計算中...</div><div id="countdown-percent">0%</div>
                 </div>
             </div>
 
             <div class="section-title">
                 <span>當日行程</span>
-                <button class="btn-q btn-add-yellow" onclick="playHaptic(); openItineraryModal()">+ 新增</button>
+                <button class="btn-q btn-add-yellow-v10 scale-btn" onclick="playHaptic(); openItineraryModal()">+ 新增</button>
             </div>
 
             <div class="timeline-wrapper" id="timeline-container"></div>
         </div>
-
+        
         <div id="page-booking" class="page">
-            <div class="scroll-nav">
+            <div class="scroll-nav scroll-nav-pink">
                 <div class="scroll-item active" onclick="playHaptic(); switchSubTab('booking', 'flight', this)">✈️ 機票</div>
                 <div class="scroll-item" onclick="playHaptic(); switchSubTab('booking', 'hotel', this)">🏠 住宿</div>
-                <div class="scroll-item" onclick="playHaptic(); switchSubTab('booking', 'voucher', this)">🎫 憑證</div>
+                <div class="scroll-item" onclick="playHaptic(); switchSubTab('booking', 'voucher', this)">🎫 票卷</div>
             </div>
-
+            
             <div id="booking-flight">
-                <div class="ac-card boarding-pass">
-                    <div style="font-weight: 900; color: #888;">釜山航空</div>
-                    <div class="bp-code">BX 796</div>
-                    <div class="bp-route">
-                        <div>
-                            <h2>KHH</h2><div style="font-weight: 900; margin: 5px 0;">15:00</div><span class="bp-tag">高雄</span>
+                <div class="flight-card glowing-hover" id="flight-outbound" onclick="requirePin('flight-outbound')">
+                    <div class="fc-top-bg"></div>
+                    <div class="fc-content">
+                        <div class="fc-header"><span>大韓航空</span> <span class="fc-badge">同一張訂單</span></div>
+                        <div class="fc-number"><span class="editable-field">KE 2086</span></div>
+                        <div class="fc-route-box">
+                            <div class="fc-route-point">
+                                <h2><span class="editable-field">TPE</span></h2>
+                                <div style="font-size: 0.75rem; color: var(--ac-brown-light); font-weight: 900; margin-top: -3px;"><span class="editable-field">桃園</span></div>
+                                <div class="time"><span class="editable-field">12:00</span></div>
+                            </div>
+                            <div class="fc-duration">
+                                <span>02h30m</span><div class="line"><i class="fa-solid fa-plane"></i></div><span><span class="editable-field">2026/06/06</span></span>
+                            </div>
+                            <div class="fc-route-point">
+                                <h2><span class="editable-field">PUS</span></h2>
+                                <div style="font-size: 0.75rem; color: var(--ac-brown-light); font-weight: 900; margin-top: -3px;"><span class="editable-field">釜山</span></div>
+                                <div class="time"><span class="editable-field">15:30</span></div>
+                            </div>
                         </div>
-                        <div style="color: var(--ac-title-blue); font-size: 1.5rem;"><i class="fa-solid fa-plane"></i><br><small style="font-size: 0.6rem; color:#888;">02h25m</small></div>
-                        <div>
-                            <h2>PUS</h2><div style="font-weight: 900; margin: 5px 0;">18:25</div><span class="bp-tag" style="background: #E8A87C;">釜山</span>
+                        <div class="fc-grid">
+                            <div class="fc-grid-item" style="grid-column: span 2;"><div class="fc-grid-title">BAGGAGE</div><div class="fc-grid-val"><i class="fa-solid fa-suitcase" style="color:var(--mo-yellow);"></i> <span class="editable-field">23kg</span> &nbsp;&nbsp; <i class="fa-solid fa-briefcase" style="color:var(--mo-blue);"></i> <span class="editable-field">10kg</span></div></div>
+                            <div class="fc-grid-item"><div class="fc-grid-title">AIRCRAFT</div><div class="fc-grid-val"><i class="fa-solid fa-plane" style="color:var(--mo-pink);"></i> <span class="editable-field">A321neo</span></div></div>
+                            <div class="fc-grid-item"><div class="fc-grid-title">PRICE (One Way)</div><div class="fc-grid-val">NT$ <span class="editable-field">4,432</span></div></div>
                         </div>
+                        <button class="btn-q btn-edit-blue scale-btn btn-edit-trigger" style="width: 100%; padding:12px; border-radius:20px; font-size:1rem;" onclick="requirePin('flight-outbound'); event.stopPropagation();"><i class="fa-solid fa-pen"></i> 編輯去程航班</button>
                     </div>
-                    <div class="bp-details">
-                        <div><b>BAGGAGE</b><br><i class="fa-solid fa-suitcase"></i> 15kg</div>
-                        <div><b>AIRCRAFT</b><br>✈️ A321</div>
-                        <div><b>PRICE</b><br>NT$ 8,863 /人</div>
-                        <div><b>DATE</b><br>2026/06/06</div>
+                </div>
+
+                <div class="flight-card glowing-hover" id="flight-inbound" onclick="requirePin('flight-inbound')">
+                    <div class="fc-top-bg"></div>
+                    <div class="fc-content">
+                        <div class="fc-header"><span>大韓航空</span> <span class="fc-badge">同一張訂單</span></div>
+                        <div class="fc-number"><span class="editable-field">KE 2085</span></div>
+                        <div class="fc-route-box">
+                            <div class="fc-route-point">
+                                <h2><span class="editable-field">PUS</span></h2>
+                                <div style="font-size: 0.75rem; color: var(--ac-brown-light); font-weight: 900; margin-top: -3px;"><span class="editable-field">釜山</span></div>
+                                <div class="time"><span class="editable-field">09:00</span></div>
+                            </div>
+                            <div class="fc-duration">
+                                <span>02h30m</span><div class="line"><i class="fa-solid fa-plane" style="transform: scaleX(-1);"></i></div><span><span class="editable-field">2026/06/11</span></span>
+                            </div>
+                            <div class="fc-route-point">
+                                <h2><span class="editable-field">TPE</span></h2>
+                                <div style="font-size: 0.75rem; color: var(--ac-brown-light); font-weight: 900; margin-top: -3px;"><span class="editable-field">桃園</span></div>
+                                <div class="time"><span class="editable-field">10:30</span></div>
+                            </div>
+                        </div>
+                        <div class="fc-grid">
+                            <div class="fc-grid-item" style="grid-column: span 2;"><div class="fc-grid-title">BAGGAGE</div><div class="fc-grid-val"><i class="fa-solid fa-suitcase" style="color:var(--mo-yellow);"></i> <span class="editable-field">23kg</span> &nbsp;&nbsp; <i class="fa-solid fa-briefcase" style="color:var(--mo-blue);"></i> <span class="editable-field">10kg</span></div></div>
+                            <div class="fc-grid-item"><div class="fc-grid-title">AIRCRAFT</div><div class="fc-grid-val"><i class="fa-solid fa-plane" style="color:var(--mo-pink);"></i> <span class="editable-field">A321neo</span></div></div>
+                            <div class="fc-grid-item"><div class="fc-grid-title">PRICE (One Way)</div><div class="fc-grid-val">NT$ <span class="editable-field">4,431</span></div></div>
+                        </div>
+                        <button class="btn-q btn-edit-blue scale-btn btn-edit-trigger" style="width: 100%; padding:12px; border-radius:20px; font-size:1rem;" onclick="requirePin('flight-inbound'); event.stopPropagation();"><i class="fa-solid fa-pen"></i> 編輯回程航班</button>
                     </div>
                 </div>
             </div>
 
             <div id="booking-hotel" style="display:none;">
-                <div class="ac-card hotel-card">
-                    <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80" alt="Hotel">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <h3 style="margin: 0;">POP ( Seomyeon )</h3><span style="background: var(--ac-bg); padding: 5px 10px; border-radius: 10px; font-weight: 900; font-size: 0.8rem;">📍 부산진구</span>
+                <div class="hotel-card2 glowing-hover scale-btn" id="hotel-stay" onclick="openHotelDetailModal()">
+                    <div class="hc-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80" alt="Hotel Cover">
+                        <div class="hc-tag-loc"><i class="fa-solid fa-location-dot"></i> <span class="editable-field">釜山 西面</span></div>
                     </div>
-                    <div style="margin-top: 15px;">
-                        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 900; margin-bottom: 5px;"><span>入住: 06/06</span> <span>退房: 06/11</span></div>
-                        <div style="height:8px; background:#EEE; border-radius:10px;"><div style="width: 100%; height:100%; background: var(--ac-green); border-radius:10px;"></div></div>
+                    <div class="hc-body">
+                        <h2 class="hc-title"><span class="editable-field">釜山 Airbnb - Pop</span></h2>
+                        <p class="hc-address">📍 近商圏、精華區、車站、超市 (點擊查看詳細)</p>
+                        
+                        <div class="hc-checkin-box">
+                            <div class="hc-ci-col">
+                                <span class="hc-ci-title">Check-in</span>
+                                <span class="hc-ci-date"><span class="editable-field">2026-06-06</span></span>
+                                <span class="hc-ci-time"><span class="editable-field">15:00</span></span>
+                            </div>
+                            <div class="hc-ci-mid">5<br>Nights<br>➔</div>
+                            <div class="hc-ci-col" style="text-align: right;">
+                                <span class="hc-ci-title">Check-out</span>
+                                <span class="hc-ci-date"><span class="editable-field">2026-06-11</span></span>
+                                <span class="hc-ci-time" style="color:var(--mo-pink);"><span class="editable-field">13:00</span></span>
+                            </div>
+                        </div>
+
+                        <div class="hc-price-area">
+                            <div class="hc-ref">Ref: <span class="editable-field">B-88645</span></div>
+                            <div class="hc-price-right">
+                                <div class="hc-price-total"><span>Total</span> <span style="font-size:1.6rem; color:var(--ac-brown);">NT$</span> <span class="editable-field" style="font-size:1.6rem; font-weight:900; color:var(--ac-brown);">16,156</span></div>
+                                <div class="hc-price-split">每人均分 NT$ <span class="editable-field">8,078</span></div>
+                                <div class="hc-price-night">每人每晚 NT$ <span class="editable-field">1,615</span></div>
+                            </div>
+                        </div>
+                        <button class="btn-q btn-edit-blue scale-btn btn-edit-trigger" style="width: 100%; margin-top: 15px; padding:12px; border-radius:20px; font-size:1rem;" onclick="requirePin('hotel-stay'); event.stopPropagation();"><i class="fa-solid fa-pen"></i> 編輯住宿資訊</button>
                     </div>
                 </div>
             </div>
-            <div id="booking-voucher" style="display:none;"><div class="ac-card" style="text-align:center; padding: 40px; font-weight:900;">🎫 尚無憑證資料</div></div>
+            
+            <div id="booking-voucher" style="display:none;">
+                <div class="section-title"><span>所有票卷</span><button class="btn-q btn-add-yellow-v10 scale-btn" onclick="playHaptic(); openVoucherModal()">+ 新增</button></div>
+                <div id="voucher-container">
+                    <div class="ac-card" style="text-align:center; padding: 40px; font-weight:900; color:var(--ac-brown-light);">🎫 尚無票卷資料</div>
+                </div>
+            </div>
         </div>
 
         <div id="page-accounting" class="page">
-            <div class="scroll-nav">
+            <div class="scroll-nav scroll-nav-pink">
                 <div class="scroll-item" onclick="playHaptic(); switchSubTab('acc', 'calc', this)">💱 匯率</div>
                 <div class="scroll-item active" onclick="playHaptic(); switchSubTab('acc', 'record', this)">✍️ 記帳</div>
-                <div class="scroll-item" onclick="playHaptic(); switchSubTab('acc', 'detail', this)">🧾 明細</div>
+                <div class="scroll-item" onclick="playHaptic(); switchSubTab('acc', 'detail', this)" id="tab-acc-detail">🧾 明細</div>
             </div>
+            
+            <div id="acc-calc" style="display: none;">
+                <div class="ac-card">
+                    <h3 style="margin-top:0; color: var(--ac-brown); text-align: center; margin-bottom:20px;" class="acc-title-brown">💱 即時匯率換算</h3>
+                    <div style="font-size:0.8rem; font-weight:900; color:var(--ac-brown-light); text-align:center; margin-bottom:15px;">預設匯率 1 KRW = 0.023 TWD</div>
+                    
+                    <div class="exchange-box scale-btn" onclick="playHaptic()">
+                        <div class="exc-input-group">
+                            <div class="exc-currency">韓元 (KRW)</div>
+                            <input type="number" id="exc-krw" placeholder="0" oninput="calcExchange('krw')" onfocus="this.value=''; calcExchange('krw')">
+                        </div>
+                        <div class="exc-icon"><i class="fa-solid fa-right-left"></i></div>
+                        <div class="exc-input-group">
+                            <div class="exc-currency">台幣 (TWD)</div>
+                            <input type="number" id="exc-twd" placeholder="0" oninput="calcExchange('twd')" onfocus="this.value=''; calcExchange('twd')">
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 30px;">
+                        <h4 style="font-size:0.9rem; color:var(--ac-brown-light); margin-bottom:10px;"><i class="fa-solid fa-bolt"></i> 常用面額速查</h4>
+                        <div class="quick-conv-board">
+                            <div class="qc-item scale-btn" onclick="playHaptic(); document.getElementById('exc-krw').value=1000; calcExchange('krw');">₩ 1,000 <span>NT$ 23</span></div>
+                            <div class="qc-item scale-btn" onclick="playHaptic(); document.getElementById('exc-krw').value=5000; calcExchange('krw');">₩ 5,000 <span>NT$ 115</span></div>
+                            <div class="qc-item scale-btn" onclick="playHaptic(); document.getElementById('exc-krw').value=10000; calcExchange('krw');">₩ 10,000 <span>NT$ 230</span></div>
+                            <div class="qc-item scale-btn" onclick="playHaptic(); document.getElementById('exc-krw').value=12500; calcExchange('krw');">₩ 12,500 <span>NT$ 288</span></div>
+                            <div class="qc-item scale-btn" onclick="playHaptic(); document.getElementById('exc-krw').value=50000; calcExchange('krw');" style="grid-column: span 2; text-align:center; display:block;">₩ 50,000 <span style="margin-left:10px;">NT$ 1,150</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div id="acc-record">
                 <div class="ac-card">
-                    <h3 style="margin-top:0; color: #E8A87C; text-align: center;">💰 記帳輸入</h3>
-                    <label class="form-label">日期</label><input type="date" class="form-control" value="2026-06-06">
+                    <h3 style="margin-top:0; color: var(--ac-brown); text-align: center; margin-bottom: 20px;" class="acc-title-brown">💰 記帳輸入</h3>
+                    
+                    <label class="form-label">日期</label>
+                    <input type="date" class="form-control" id="exp-date" value="2026-06-06">
+
                     <label class="form-label">幣別</label>
-                    <div class="currency-tabs"><div class="cur-tab active">KRW</div><div class="cur-tab">TWD</div></div>
-                    <label class="form-label">金額</label><input type="number" class="form-control" placeholder="0">
-                    <label class="form-label">消費項目</label><input type="text" class="form-control" placeholder="例如：午餐">
-                    <button class="btn-q" style="background: var(--ac-green); color: white; width: 100%; padding: 15px; font-size: 1.1rem; border-radius:16px;">✔ 記一筆</button>
+                    <div class="currency-tabs">
+                        <div class="cur-tab active scale-btn" onclick="setExpCurrency('KRW', this)">KRW</div>
+                        <div class="cur-tab scale-btn" onclick="setExpCurrency('TWD', this)">TWD</div>
+                        <div class="cur-tab scale-btn" onclick="setExpCurrency('USD', this)">USD</div>
+                    </div>
+
+                    <div style="display:flex; gap:10px;">
+                        <div style="flex:1;">
+                            <label class="form-label"><span style="color:var(--mo-pink);">*</span> 金額</label>
+                            <input type="number" class="form-control" id="exp-amount" placeholder="0" oninput="calcApproxTwd()" style="font-size:1.2rem; font-weight:900;">
+                        </div>
+                        <div style="flex:1;">
+                            <label class="form-label">約合台幣</label>
+                            <input type="text" class="form-control" id="exp-approx-twd" value="0" disabled>
+                        </div>
+                    </div>
+
+                    <label class="form-label">支付方式</label>
+                    <div class="method-tabs">
+                        <div class="m-tab active scale-btn" onclick="selectMethod(this)">現金</div>
+                        <div class="m-tab scale-btn" onclick="selectMethod(this)">信用卡</div>
+                        <div class="m-tab scale-btn" onclick="selectMethod(this)">WOWPASS</div>
+                        <div class="m-tab scale-btn" onclick="selectMethod(this)">行動支付</div>
+                    </div>
+
+                    <label class="form-label">地點 (選填)</label>
+                    <input type="text" class="form-control" id="exp-loc" placeholder="📍 例如：便利商店">
+
+                    <label class="form-label"><span style="color:var(--mo-pink);">*</span> 消費項目</label>
+                    <input type="text" class="form-control" id="exp-title" placeholder="例如：午餐">
+
+                    <div style="background: #FCFBFA; padding: 15px; border-radius: 16px; margin-top: 10px; border: 2px dashed var(--ac-tan);">
+                        <label class="form-label"><span style="color:var(--mo-pink);">*</span> 誰付款的？ (單選)</label>
+                        <div class="ava-select-group" id="payer-group-container"></div>
+
+                        <label class="form-label" style="margin-top:25px;">誰要分攤？ (不選視為個人帳)</label>
+                        <div class="ava-select-group" id="split-group-container"></div>
+                    </div>
+
+                    <button class="btn-q btn-edit-blue scale-btn" style="width: 100%; padding: 16px; font-size: 1.1rem; margin-top: 20px; border-radius:20px;" onclick="saveExpense()">✔ 記一筆</button>
                 </div>
             </div>
+
             <div id="acc-detail" style="display: none;">
-                <div class="ac-card acc-total-card"><div style="font-weight: 900; color: #8A6600;">總支出 (TWD)</div><div style="font-size: 2.8rem; font-weight: 900; color: var(--ac-brown); margin: 5px 0;">NT$ 12,450</div></div>
-                <div class="section-title">帳務明細</div>
-                <div class="ac-card bill-item">
-                    <div style="display: flex; align-items: center; gap: 10px;"><div class="avatar" style="margin:0; width:40px; height:40px;">🐱</div><div><div style="font-weight: 900; font-size: 1.1rem;">雪夜覓燒肉</div><span style="font-size: 0.7rem; background: #EEE; padding: 2px 6px; border-radius: 8px;">信用卡</span></div></div>
-                    <div style="text-align: right;"><div style="font-weight: 900; font-size: 1.1rem; color: var(--ac-brown);">₩ 80,000</div><div style="font-size: 0.75rem; color: #888;">≈ NT$ 1,840</div></div>
+                <div id="settlement-card" class="settlement-card">
+                    <div class="settlement-title"><i class="fa-solid fa-scale-balanced"></i> 內部結算結果</div>
+                    <div id="settlement-content"></div>
                 </div>
+
+                <div class="ac-card acc-total-card">
+                    <div class="title"><span id="detail-filter-name" class="highlight-name">全體</span> 的支出 (TWD)</div>
+                    <div id="detail-total-amount" class="amount">NT$ 0</div>
+                    <div style="font-size:0.8rem; color:#A8904D; font-weight:900; background:rgba(255,255,255,0.8); padding:4px 10px; border-radius:10px; display:inline-block;">預設匯率 1 : 0.023</div>
+                </div>
+                
+                <div class="filter-tags-container" id="expense-filter-container"></div>
+
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; font-weight:900; color:var(--ac-brown-light); font-size:0.85rem;">
+                    <div>帳務明細 (依日期分群，點擊可編輯)</div>
+                    <div id="detail-day-subtotal">本日小計: NT$ 0</div>
+                </div>
+
+                <div class="ac-card" style="padding: 10px 20px;" id="expense-list-container">
+                    </div>
             </div>
-            <div id="acc-calc" style="display: none;"><div class="ac-card" style="text-align:center; padding: 40px; font-weight:900;">💱 匯率換算建置中...</div></div>
         </div>
 
         <div id="page-diary" class="page">
-            <div class="section-title">📖 旅行日誌<button class="btn-q btn-add-yellow" onclick="playHaptic()">✏️ 寫日誌</button></div>
-            <div class="ac-card">
-                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;"><div class="avatar" style="margin:0; width: 35px; height: 35px;">👩</div><div style="font-weight: 900;">琳 <span style="font-size:0.7rem; color:#888; margin-left:5px;">2026-06-06</span></div></div>
-                <p style="font-weight: 800; font-size: 0.95rem;">第一天抵達釜山！雪夜覓燒肉真的超級好吃😆</p>
-                <div style="display: flex; gap: 10px; overflow-x: auto;"><div class="photo-upload-box" style="width: 100px; height: 100px; margin:0;"><i class="fa-regular fa-image"></i></div></div>
-            </div>
+            <div class="section-title"><span>旅行日誌</span><button class="btn-q btn-edit-blue scale-btn" style="border-radius:20px; padding:8px 18px;" onclick="playHaptic(); openDiaryModal()"><i class="fa-solid fa-pen-nib"></i> 寫日誌</button></div>
+            <div style="font-size:0.85rem; color:var(--ac-brown-light); font-weight:800; margin-top:-10px; margin-bottom:20px;">紀錄旅途中的每一個精彩瞬間</div>
+            <div id="diary-container"></div>
         </div>
-
+        
         <div id="page-member" class="page">
-            <div class="section-title">🥳 快樂成員<button class="btn-q btn-add-yellow" onclick="playHaptic()">+ 新增</button></div>
-            <div class="ac-card" style="display: flex; align-items: center; gap: 15px;"><div class="avatar" style="margin:0; width: 60px; height: 60px; font-size: 2rem;">👩</div><div><h3 style="margin:0;">琳</h3><div style="font-size:0.85rem; font-weight:800; color:#888;">女 / 財務大臣</div></div></div>
+            <div class="section-title">
+                <div>
+                    <div>快樂成員</div>
+                    <div style="font-size:0.75rem; color:var(--ac-brown-light); font-weight:800; margin-top:2px;">說好不吵架，吵架的請吃一頓飯!</div>
+                </div>
+                <button class="btn-q btn-add-yellow-v10 scale-btn" onclick="playHaptic(); openMemberModal()">+ 新增成員</button>
+            </div>
+            
+            <div id="member-container"></div>
         </div>
     </main>
 
-    <div class="modal-overlay" id="modal-itinerary">
-        <div class="ac-modal">
-            <div class="modal-handle"></div>
-            <h2 style="margin-top:0; text-align: center; color: var(--ac-title-blue);" id="modal-itinerary-title">📝 新增行程</h2>
-            <input type="hidden" id="form-item-id">
-            
-            <label class="form-label">選擇日期</label>
-            <input type="date" class="form-control" id="form-date" value="2026-06-06">
-            
-            <label class="form-label">行程時間 (24小時制)</label>
-            <input type="time" class="form-control" id="form-time" value="12:00" required>
-            
-            <label class="form-label"><span style="color:#E2858E;">*</span> 行程標題</label>
-            <input type="text" class="form-control" id="form-title" placeholder="例如：海雲台看海 🌊">
-            
-            <label class="form-label">備註與地點 (選填)</label>
-            <textarea class="form-control" id="form-note" rows="2" placeholder="備註內容..."></textarea>
-            
-            <label class="form-label">標記顏色 (選填)</label>
-            <div class="color-picker-group" id="color-picker-group">
-                </div>
-
-            <div style="display: flex; gap: 15px; margin-top: 5px;">
-                <button class="btn-q" style="flex:1; background: #EBE6DF; padding: 15px; border-radius:16px; color: var(--ac-brown);" onclick="playHaptic(); closeModal('modal-itinerary')">取消</button>
-                <button class="btn-q" style="flex:1; background: var(--ac-green); color: white; padding: 15px; border-radius:16px;" onclick="playHaptic(); saveItinerary()">✔ 發布</button>
+    <div class="modal-overlay" id="modal-pin">
+        <div class="ac-modal" style="text-align:center; max-width: 320px; background: rgba(255,255,255,0.9); backdrop-filter: blur(15px);">
+            <div style="font-size:3.5rem; color:var(--mo-yellow); margin-bottom:10px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));"><i class="fa-solid fa-lock"></i></div>
+            <h2 style="margin-top:0; color: var(--ac-brown); font-weight: 900; font-size:1.6rem;">安全解鎖</h2>
+            <p style="color: var(--ac-brown-light); font-weight: 800; margin-bottom: 25px; font-size:0.95rem;">請輸入安全碼 (5151)</p>
+            <input type="hidden" id="pin-target">
+            <input type="password" id="pin-input" class="form-control" style="text-align:center; font-size:1.8rem; letter-spacing:15px; font-weight:900; padding:10px; background:#FFF;" maxlength="4" placeholder="••••">
+            <div style="display: flex; gap: 15px; margin-top: 10px;">
+                <button class="btn-q modal-btn modal-btn-cancel scale-btn" onclick="playHaptic(); closeModal('modal-pin')">取消</button>
+                <button class="btn-q modal-btn modal-btn-save scale-btn" style="background:var(--mo-blue); box-shadow:0 5px 0 #5B95B8;" onclick="playHaptic(); verifyPin()">解鎖</button>
             </div>
         </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-hotel-detail" style="align-items: flex-end;">
+        <div class="ac-modal" id="modal-hotel-detail-content">
+            <div class="hd-close scale-btn" onclick="playHaptic(); closeModal('modal-hotel-detail')"><i class="fa-solid fa-xmark"></i></div>
+            <div style="height: 35%; width: 100%; position: relative;">
+                <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80" style="width: 100%; height: 100%; object-fit: cover;">
+                <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 50%; background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);"></div>
+                <div style="position: absolute; bottom: 20px; left: 20px; color: #FFF;">
+                    <span style="background: rgba(255,255,255,0.3); padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: 900; backdrop-filter: blur(4px);">釜山</span>
+                    <h2 style="margin: 5px 0 0 0; font-size: 1.6rem; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">Airbnb Pop (西面)</h2>
+                </div>
+            </div>
+            <div style="flex: 1; padding: 20px; overflow-y: auto; background: #FFF;">
+                <div style="background: #F8F6F2; padding: 15px; border-radius: 16px; margin-bottom: 20px; border: 1px solid var(--ac-tan);">
+                    <div style="font-size: 0.8rem; color: var(--mo-green); font-weight: 900; margin-bottom: 5px;"><i class="fa-solid fa-map-location-dot"></i> 住宿特點</div>
+                    <div style="font-weight: 800; color: var(--ac-brown);">📍 近商圏、精華區、車站、超市</div>
+                </div>
+                <div style="border: 2px solid var(--ac-tan); border-radius: 16px; padding: 15px; margin-bottom: 20px;">
+                    <div style="font-size: 0.8rem; color: var(--mo-orange); font-weight: 900; margin-bottom: 10px;"><i class="fa-solid fa-list-check"></i> 住宿設施</div>
+                    <ul style="margin:0; padding-left:20px; color:var(--ac-brown-light); font-weight: 700; line-height: 1.6;">
+                        <li>5張床 / 2間廁所</li><li>免費行李寄存</li><li>27坪大空間</li><li>免費接送服務</li><li>下午 1 點退房</li><li>步行 5 分鐘到西面站</li>
+                    </ul>
+                </div>
+                <div style="background: #F8F6F2; padding: 15px; border-radius: 16px; margin-bottom: 20px; border: 1px dashed var(--ac-tan); display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 0.85rem; color: var(--ac-brown-light); font-weight: 900;">訂單編號</span>
+                    <span style="font-weight: 900; color: var(--ac-brown);">B-88645</span>
+                </div>
+                
+                <div style="border-top: 2px dashed var(--ac-tan); padding-top: 15px; margin-top: 10px;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 5px;">
+                        <span style="font-weight: 900; color: var(--ac-brown-light);">總額 (Total)</span>
+                        <span style="font-weight: 900; color: var(--ac-brown); font-size: 1.4rem;">NT$ 16,156</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                        <span style="font-weight: 800; color: var(--ac-brown-light); font-size: 0.9rem;">每人均分 (2人)</span>
+                        <span style="font-weight: 900; color: var(--mo-pink);">NT$ 8,078</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-weight: 800; color: var(--ac-brown-light); font-size: 0.9rem;">每人每晚 (5晚)</span>
+                        <span style="font-weight: 900; color: var(--mo-blue);">NT$ 1,615</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-voucher">
+        <div class="ac-modal" id="modal-voucher-content-box">
+            <h2 style="margin-top:0; margin-bottom: 20px; text-align: center; color: var(--ac-brown); font-weight: 900;" id="modal-voucher-title">新增票卷</h2>
+            <input type="hidden" id="voucher-item-id">
+            
+            <label class="form-label">票卷名稱 <span style="color:var(--mo-pink);">*</span></label>
+            <input type="text" class="form-control" id="voucher-title" placeholder="例如：釜山通行證 Visit Busan Pass">
+            
+            <div style="display:flex; gap:10px;">
+                <div style="flex:1;"><label class="form-label">使用日期</label><input type="date" class="form-control" id="voucher-date"></div>
+                <div style="flex:1;"><label class="form-label">有效期限</label><input type="date" class="form-control" id="voucher-expire"></div>
+            </div>
+            
+            <label class="form-label">票卷代碼 / 備註</label>
+            <input type="text" class="form-control" id="voucher-code" placeholder="輸入 QR Code 編號或取票備註">
+            
+            <label class="form-label">上傳票卷截圖</label>
+            <div style="display:flex; gap:10px; overflow-x:auto; scrollbar-width:none; padding-bottom:5px;" id="voucher-upload-preview"></div>
+            <input type="file" id="voucher-file-input" accept="image/*" style="display:none;" onchange="handleVoucherPhotoUpload(event)">
+
+            <div style="display: flex; gap: 15px; margin-top: 20px;">
+                <button class="btn-q modal-btn modal-btn-cancel scale-btn" onclick="playHaptic(); closeModal('modal-voucher')">取消</button>
+                <button class="btn-q modal-btn modal-btn-save scale-btn" onclick="playHaptic(); saveVoucher()">✔ 儲存</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-member-edit">
+        <div class="ac-modal" style="background: #FFF;">
+            <h2 style="margin-top:0; margin-bottom: 20px; text-align: center; color: var(--ac-brown); font-weight: 900;" id="modal-member-title">新增成員</h2>
+            <input type="hidden" id="member-item-id">
+            
+            <div style="display:flex; justify-content:center; margin-bottom:20px;">
+                <div style="position:relative;">
+                    <div id="member-upload-preview" class="member-avatar scale-btn" style="width:100px; height:100px; cursor:pointer;" onclick="document.getElementById('member-file-input').click()">
+                        <i class="fa-solid fa-camera" style="color:var(--ac-tan);"></i>
+                    </div>
+                    <div style="position:absolute; bottom:0; right:0; background:var(--mo-blue); color:#FFF; width:30px; height:30px; border-radius:50%; display:flex; justify-content:center; align-items:center; font-size:0.9rem; border:2px solid #FFF; pointer-events:none;"><i class="fa-solid fa-plus"></i></div>
+                </div>
+            </div>
+            <input type="file" id="member-file-input" accept="image/*" style="display:none;" onchange="handleMemberPhotoUpload(event)">
+            
+            <div style="display:flex; gap:10px;">
+                <div style="flex:1;">
+                    <label class="form-label">名稱 <span style="color:var(--mo-pink);">*</span></label>
+                    <input type="text" class="form-control" id="member-name" placeholder="例：琳">
+                </div>
+                <div style="flex:1;">
+                    <label class="form-label">Aka 代號</label>
+                    <input type="text" class="form-control" id="member-aka" placeholder="例：財務大臣">
+                </div>
+            </div>
+
+            <label class="form-label">想說的話</label>
+            <textarea class="form-control" id="member-quote" rows="2" placeholder="留下旅行宣言..."></textarea>
+
+            <div style="display: flex; gap: 15px; margin-top: 10px;">
+                <button class="btn-q modal-btn modal-btn-cancel scale-btn" onclick="playHaptic(); closeModal('modal-member-edit')">取消</button>
+                <button class="btn-q modal-btn modal-btn-save scale-btn" onclick="playHaptic(); saveMember()">✔ 儲存</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-expense-edit">
+        <div class="ac-modal" style="background: #FFF;">
+            <h2 style="margin-top:0; margin-bottom: 20px; text-align: center; color: var(--ac-brown); font-weight: 900;"><i class="fa-solid fa-pen"></i> 編輯帳務</h2>
+            <input type="hidden" id="edit-exp-id">
+            
+            <label class="form-label">日期</label>
+            <input type="date" class="form-control" id="edit-exp-date">
+            
+            <div style="display:flex; gap:10px;">
+                <div style="flex:1;"><label class="form-label">金額 (KRW)</label><input type="number" class="form-control" id="edit-exp-amount" oninput="calcApproxTwdEdit()"></div>
+                <div style="flex:1;"><label class="form-label">約合台幣 (TWD)</label><input type="text" class="form-control" id="edit-exp-twd" disabled></div>
+            </div>
+
+            <label class="form-label">地點與消費項目</label>
+            <div style="display:flex; gap:10px;"><input type="text" class="form-control" id="edit-exp-loc" placeholder="地點"><input type="text" class="form-control" id="edit-exp-title" placeholder="項目"></div>
+
+            <div style="background: #FCFBFA; padding: 15px; border-radius: 16px; margin-top: 10px; border: 2px dashed var(--ac-tan);">
+                <label class="form-label">付款人 (單選)</label>
+                <div class="ava-select-group" id="edit-payer-group-container" style="display: flex; gap: 15px; margin-bottom: 15px; overflow-x:auto; padding-bottom:5px;"></div>
+                <label class="form-label">分攤人 (複選)</label>
+                <div class="ava-select-group" id="edit-split-group-container" style="display: flex; gap: 15px; overflow-x:auto; padding-bottom:5px;"></div>
+            </div>
+
+            <div style="display: flex; gap: 15px; margin-top: 20px;">
+                <button class="btn-q modal-btn modal-btn-cancel scale-btn" onclick="playHaptic(); closeModal('modal-expense-edit')">取消</button>
+                <button class="btn-q modal-btn modal-btn-save scale-btn" onclick="playHaptic(); saveExpenseEdit()">✔ 儲存修改</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-itinerary">
+        <div class="ac-modal" id="modal-content-box">
+            <h2 style="margin-top:0; margin-bottom: 20px; text-align: center; color: var(--ac-brown); font-weight: 900;" id="modal-itinerary-title">新增行程</h2>
+            <input type="hidden" id="form-item-id">
+            <label class="form-label">選擇日期</label><input type="date" class="form-control" id="form-date">
+            <label class="form-label">行程時間</label><input type="time" class="form-control" id="form-time" required>
+            <label class="form-label">行程標題 <span style="color:var(--mo-pink);">*</span></label><input type="text" class="form-control" id="form-title" placeholder="例如：海雲台看海 🌊">
+            <label class="form-label">地點地址 (貼上自動顯示地圖)</label><input type="text" class="form-control" id="form-loc" placeholder="貼上完整地址..." oninput="checkMapThumbnail()">
+            
+            <div id="map-preview-container" style="display:none;"></div>
+
+            <label class="form-label" style="margin-top:10px;">備註內容</label><textarea class="form-control" id="form-note" rows="2" placeholder="選填..."></textarea>
+            
+            <label class="form-label">上傳照片</label>
+            <div style="display:flex; gap:10px; overflow-x:auto; scrollbar-width:none; padding-bottom:5px;" id="iti-upload-preview"></div>
+            <input type="file" id="iti-file-input" accept="image/*" style="display:none;" onchange="handleItiPhotoUpload(event)">
+
+            <label class="form-label" style="margin-top:15px;">主題顏色</label>
+            <div class="color-picker-wrapper"><div class="color-picker-group" id="color-picker-group"></div></div>
+            
+            <button class="btn-q scale-btn" style="width: 100%; padding: 12px; border-radius: 16px; background: #E8F4FA; color: var(--mo-blue); border: 2px solid var(--mo-blue); font-size: 0.95rem; margin-bottom: 15px;" onclick="openMap()"><i class="fa-solid fa-map-location-dot"></i> 開啟地圖導航</button>
+
+            <div style="display: flex; gap: 15px;">
+                <button class="btn-q modal-btn modal-btn-cancel scale-btn" onclick="playHaptic(); closeModal('modal-itinerary')">取消</button>
+                <button class="btn-q modal-btn modal-btn-save scale-btn" onclick="playHaptic(); saveItinerary()">✔ 儲存</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-diary">
+        <div class="ac-modal" style="background: #FFF; max-height: 90vh;">
+            <h2 style="margin-top:0; margin-bottom: 20px; text-align: center; color: var(--ac-brown); font-weight: 900;" id="diary-modal-title"><i class="fa-solid fa-book"></i> 寫新日誌</h2>
+            <input type="hidden" id="diary-edit-id">
+            <label class="form-label">日期</label><input type="date" class="form-control" id="diary-date">
+            <label class="form-label">記錄人</label>
+            <div class="ava-select-group" id="diary-author-group-container" style="display: flex; gap: 15px; margin-bottom: 15px; justify-content: center; overflow-x:auto;"></div>
+            <label class="form-label" style="margin-top: 25px;">內容</label><textarea class="form-control" id="diary-content" rows="4" placeholder="寫下今天的趣事..."></textarea>
+            <label class="form-label">照片 (最多5張)</label>
+            <div style="display:flex; gap:10px; overflow-x:auto; scrollbar-width:none; padding-bottom:5px;" id="diary-upload-preview"></div>
+            <input type="file" id="diary-file-input" accept="image/*" multiple style="display:none;" onchange="handleDiaryPhotoUpload(event)">
+            <div style="display: flex; gap: 15px; margin-top: 20px;">
+                <button class="btn-q modal-btn modal-btn-cancel scale-btn" onclick="playHaptic(); closeModal('modal-diary')">取消</button>
+                <button class="btn-q modal-btn modal-btn-save scale-btn" onclick="playHaptic(); saveDiary()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-delete">
+        <div class="ac-modal" style="text-align: center; max-width: 320px;">
+            <div class="delete-icon-bg"><i class="fa-solid fa-trash-can"></i></div>
+            <h2 style="margin-top:0; color: var(--ac-brown); font-weight: 900;">確認刪除？</h2>
+            <p style="color: var(--ac-brown-light); font-weight: 700; margin-bottom: 25px;">這個項目刪除後就找不回來囉！</p>
+            <div style="display: flex; gap: 15px;">
+                <button class="btn-q modal-btn modal-btn-cancel scale-btn" onclick="playHaptic(); closeModal('modal-delete')">再想想</button>
+                <button class="btn-q modal-btn scale-btn" style="background: var(--mo-pink); color: white; box-shadow: 0 5px 0px #B58C8C;" onclick="playHaptic(); executeDelete()">確認刪除</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast-msg">
+        <i class="fa-solid fa-circle-check"></i>
+        <span id="toast-text">儲存成功</span>
     </div>
 
     <nav>
@@ -359,318 +891,631 @@
 </div>
 
 <script>
-    const mainScroll = document.getElementById('main-scroll');
-    let scrollTimeout;
-    mainScroll.addEventListener('scroll', () => {
-        mainScroll.classList.add('is-scrolling');
-        clearTimeout(scrollTimeout);
-        scrollTimeout = setTimeout(() => { mainScroll.classList.remove('is-scrolling'); }, 1000);
-    });
-
-    function playHaptic() { if (navigator.vibrate) navigator.vibrate(15); }
-
-    // 莫蘭迪色系配置 (含原色白)
-    const morandiColors = [
-        { name: 'white', hex: '#FFFFFF', dot: '#CDE0E9' },
-        { name: 'red', hex: '#F2D5D4', dot: '#D8A09F' },
-        { name: 'orange', hex: '#F8E6D2', dot: '#DDAA82' },
-        { name: 'yellow', hex: '#FDF1C4', dot: '#DCC370' },
-        { name: 'green', hex: '#DCE8DE', dot: '#8BAF91' },
-        { name: 'blue', hex: '#DCE7ED', dot: '#88A9BB' },
-        { name: 'indigo', hex: '#D7DCE8', dot: '#919BB1' },
-        { name: 'purple', hex: '#EAE0E8', dot: '#BCA4BB' }
-    ];
+    // ================= 全域變數與系統鎖定 =================
+    const EXCHANGE_RATE = 0.023; const EXCHANGE_RATE_USD = 32; 
+    let currentExpFilter = 'all'; let currentExpCurrency = 'KRW';
     let selectedFormColor = 'white';
+    let deleteTargetType = ''; let itemToDelete = null;
+    let animationFrameId;
+
+    const themeColors = [
+        { name: 'white', hex: '#FFFFFF', dot: '#DCD7D0' }, { name: 'yellow', hex: '#FDFBF5', dot: '#E2C87A' },
+        { name: 'green', hex: '#F3F6F4', dot: '#78A083' }, { name: 'blue', hex: '#F5F7FA', dot: '#9BAEC4' }, { name: 'pink', hex: '#FAF5F5', dot: '#D4A5A5' }     
+    ];
 
     const tripDates = [
-        { date: '2026-06-06', day: 'DAY 1', week: '六' }, { date: '2026-06-07', day: 'DAY 2', week: '日' },
-        { date: '2026-06-08', day: 'DAY 3', week: '一' }, { date: '2026-06-09', day: 'DAY 4', week: '二' },
-        { date: '2026-06-10', day: 'DAY 5', week: '三' }, { date: '2026-06-11', day: 'DAY 6', week: '四' }
+        { date: '2026-06-06', day: 'DAY 1', week: '六', loc: '西面' }, { date: '2026-06-07', day: 'DAY 2', week: '日', loc: '海雲台' },
+        { date: '2026-06-08', day: 'DAY 3', week: '一', loc: '海雲台' }, { date: '2026-06-09', day: 'DAY 4', week: '二', loc: '廣安里' },
+        { date: '2026-06-10', day: 'DAY 5', week: '三', loc: '西面' }, { date: '2026-06-11', day: 'DAY 6', week: '四', loc: '西面' }
     ];
 
-    const weatherDataMap = {
-        '2026-06-06': { loc: '釜山 西面', txt: '晴時多雲', m: '☀️', a: '⛅', n: '☁️', tip: '建議帶件薄外套，晚上吃燒肉注意溫差！👗' },
-        '2026-06-07': { loc: '釜山 海雲台', txt: '大晴天', m: '☀️', a: '☀️', n: '☀️', tip: '去樂天世界與海邊，陽光強烈請務必防曬！🕶️' },
-        '2026-06-08': { loc: '釜山 海雲台', txt: '多雲', m: '☁️', a: '⛅', n: '☁️', tip: '搭海岸列車吹風很舒服，天氣涼爽適合拍照！📷' },
-        '2026-06-09': { loc: '釜山 廣安里', txt: '多雲時陰', m: '⛅', a: '☁️', n: '☁️', tip: '海邊看夕陽風大，晚上吃海鮮注意保暖。🧣' },
-        '2026-06-10': { loc: '釜山 西面', txt: '短暫陣雨', m: '☁️', a: '🌧️', n: '☁️', tip: '有降雨機率，逛地下街剛好，記得攜帶雨具！🌂' },
-        '2026-06-11': { loc: '釜山 機場', txt: '晴朗', m: '☀️', a: '☀️', n: '☀️', tip: '準備回程！帶著愉悅的心情與滿滿的戰利品。🎒' }
-    };
+    let membersData = [
+        { id: 1, name: '琳', aka: '財務大臣', quote: '買買買，錢不是問題！', img: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&q=80', fallback: '👩' },
+        { id: 2, name: '貓', aka: '導航雷達', quote: '跟著我走絕對不會迷路', img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&q=80', fallback: '🐱' }
+    ];
 
     let itineraryData = [
-        { id: 101, date: '2026-06-06', time: '15:30', title: '下機後搭車至西面', note: '車程約30分', img: null, color: 'white' },
-        { id: 102, date: '2026-06-06', time: '18:00', title: '雪夜覓-燒肉', note: '晚餐訂位大名:Wang lin (步行約10分)', img: null, color: 'purple' },
-        { id: 103, date: '2026-06-06', time: '20:00', title: '逛街買東西+消夜', note: '買衣服+回住宿休息', img: null, color: 'white' },
-        { id: 201, date: '2026-06-07', time: '08:00', title: '前往海雲台', note: '車程約50分', img: null, color: 'white' },
-        { id: 202, date: '2026-06-07', time: '09:00', title: '巨大牛骨湯', note: '早午餐', img: null, color: 'yellow' },
-        { id: 204, date: '2026-06-07', time: '12:00', title: 'X The Sky + 最高星巴克', note: '開始計算釜山 pass 48hr', img: null, color: 'white' },
-        { id: 206, date: '2026-06-07', time: '14:00', title: '玩滑車+樂天世界', note: 'Skyline Luge', img: null, color: 'white' },
-        { id: 207, date: '2026-06-07', time: '18:40', title: '廣安木燒肉', note: '晚餐', img: null, color: 'purple' },
-        { id: 304, date: '2026-06-08', time: '12:10', title: '大海鮑魚粥', note: '午餐', img: null, color: 'blue' },
-        { id: 604, date: '2026-06-11', time: '09:00', title: '飛回台中!', note: '15:30到', img: null, color: 'white' }
+        { id: 1, date: '2026-06-06', time: '15:30', title: '下機後搭車至西面', note: '搭免費接駁前往住宿(車程約30分)', img: null, loc: '', color: 'white' },
+        { id: 2, date: '2026-06-06', time: '18:00', title: '雪夜覓-燒肉', note: '晚餐 訂位大名:Wang lin', img: null, loc: '', color: 'pink' },
+        { id: 3, date: '2026-06-07', time: '14:00', title: '玩滑車+樂天世界', note: 'Skyline Luge', img: null, loc: '', color: 'green' }
     ];
 
-    let currentDateSelect = '2026-06-06';
-    let progressInterval;
+    let expenses = [
+        { id: 1, date: '2026-06-06', title: '雪夜覓燒肉', loc: '西面', method: '信用卡', amountKrw: 80000, amountTwd: 1840, payer: '琳', splitters: ['琳', '貓'], splitAmountTwd: 920 },
+        { id: 2, date: '2026-06-07', title: '巨大牛骨湯', loc: '海雲台', method: '現金', amountKrw: 30000, amountTwd: 690, payer: '貓', splitters: ['琳', '貓'], splitAmountTwd: 345 }
+    ];
 
-    function renderDateScroller() {
-        document.getElementById('date-scroller').innerHTML = tripDates.map(t => {
-            const displayDate = t.date.substring(5).replace('-', '/'); 
-            const isActive = t.date === currentDateSelect ? 'active' : '';
-            return `<div class="date-tab ${isActive}" id="date-tab-${t.date}" onclick="playHaptic(); selectDate('${t.date}')"><span class="day">${t.day}</span><span class="date">${displayDate}</span></div>`;
-        }).join('');
-    }
+    let diaryData = [
+        { id: 1, date: '2026-06-08', author: '貓', content: '終於抵達釜山啦！\n西面真的好好逛，雪夜覓燒肉超好吃！', images: ['https://images.unsplash.com/photo-1580651315530-69c8e0026377?w=500&q=80'] },
+        { id: 2, date: '2026-06-06', author: '琳', content: '出發去機場，好期待！✈️', images: [] }
+    ];
 
-    function selectDate(dateStr) {
-        currentDateSelect = dateStr;
-        renderDateScroller();
-        setTimeout(() => {
-            const activeTab = document.getElementById('date-tab-' + dateStr);
-            if (activeTab) activeTab.scrollIntoView({ behavior: 'smooth', inline: 'center' });
-        }, 50);
-        updateWeather();
-        renderTimeline();
-        animateCountdown(); // 切換日期重新播放動畫
-    }
+    let vouchersData = [];
 
-    function updateWeather() {
-        const w = weatherDataMap[currentDateSelect];
-        document.getElementById('weather-section').innerHTML = `
-            <div class="weather-top">
-                <div>
-                    <div style="font-weight: 900; margin-bottom: 5px; color: var(--ac-title-blue);"><i class="fa-solid fa-location-dot"></i> ${w.loc}</div>
-                    <div style="font-size: 1.4rem; font-weight: 900;">${w.txt}</div>
-                </div>
-                <div class="weather-icons">
-                    <div><span>${w.m}</span>早</div><div><span>${w.a}</span>中</div><div><span>${w.n}</span>晚</div>
-                </div>
-            </div>
-            <div style="font-size: 0.85rem; font-weight: 900; color: #5C8198; background: rgba(255,255,255,0.7); padding: 8px 12px; border-radius: 12px;">💡 穿搭提醒：${w.tip}</div>
-        `;
-    }
-
-    function renderTimeline() {
-        const container = document.getElementById('timeline-container');
-        let todaysEvents = itineraryData.filter(e => e.date === currentDateSelect).sort((a, b) => a.time.localeCompare(b.time));
-
-        if(todaysEvents.length === 0) {
-            container.innerHTML = `<div style="text-align:center; padding: 40px; color: #A8A096; font-weight: 800;">當日尚無行程 🍃</div>`;
-            return;
-        }
-
-        container.innerHTML = todaysEvents.map(event => {
-            const cInfo = morandiColors.find(c => c.name === event.color) || morandiColors[0];
-            return `
-            <div class="timeline-item">
-                <div class="timeline-dot" style="border-color: ${cInfo.dot};"></div>
-                <div class="event-card" style="background-color: ${cInfo.hex}; border-color: ${cInfo.name === 'white' ? 'transparent' : cInfo.dot};" onclick="toggleEventDetail(${event.id})">
-                    <div class="event-header">
-                        <div class="time-picker-wrapper" onclick="event.stopPropagation()">
-                            <div class="time-display-btn">${event.time}</div>
-                            <input type="time" value="${event.time}" onchange="updateEventTime(${event.id}, this.value)">
-                        </div>
-                        <span class="event-title">${event.title}</span>
-                        <i class="fa-solid fa-chevron-down" style="color:rgba(93, 74, 61, 0.4);"></i>
-                    </div>
-                    
-                    <div class="event-detail" id="detail-${event.id}">
-                        ${event.note ? `<div class="event-note">${event.note}</div>` : ''}
-                        
-                        <div class="photo-upload-box" onclick="event.stopPropagation(); triggerUpload(${event.id})">
-                            ${event.img ? `<img src="${event.img}">` : '<i class="fa-solid fa-camera"></i> <span style="font-size:0.9rem; margin-left:10px; font-weight:800;">點擊上傳照片</span>'}
-                        </div>
-                        <input type="file" id="upload-${event.id}" accept="image/*" style="display:none;" onchange="handleImageUpload(event, ${event.id})">
-
-                        <div class="event-actions">
-                            <span onclick="event.stopPropagation(); playHaptic(); openItineraryModal(${event.id})"><i class="fa-solid fa-pen-to-square"></i></span>
-                            <span onclick="event.stopPropagation(); playHaptic(); deleteItinerary(${event.id})"><i class="fa-solid fa-trash-can"></i></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `}).join('');
-    }
-
-    function toggleEventDetail(id) {
-        playHaptic();
-        const detail = document.getElementById(`detail-${id}`);
-        detail.style.display = (detail.style.display === 'block') ? 'none' : 'block';
-    }
-
-    function updateEventTime(id, newTime) {
-        const event = itineraryData.find(e => e.id === id);
-        if(event) { event.time = newTime; renderTimeline(); }
-    }
-
-    function triggerUpload(id) { playHaptic(); document.getElementById(`upload-${id}`).click(); }
-    
-    function handleImageUpload(event, id) {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const item = itineraryData.find(x => x.id === id);
-                if(item) item.img = e.target.result;
-                renderTimeline();
-                setTimeout(() => { document.getElementById(`detail-${id}`).style.display = 'block'; }, 50);
-            }
-            reader.readAsDataURL(file);
-        }
-    }
-
-    // ================= 動態倒數計時 =================
-    function animateCountdown() {
-        clearInterval(progressInterval);
-        
-        const today = new Date(); 
-        const targetDate = new Date('2026-06-06T00:00:00');
-        const totalDays = 60; 
-        
-        const diffTime = targetDate - today;
-        let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        let targetPercent = 0;
-        
-        if (diffDays <= 0) { targetPercent = 100; diffDays = 0; } 
-        else { targetPercent = Math.max(0, Math.min(100, ((totalDays - diffDays) / totalDays) * 100)); }
-
-        const fill = document.getElementById('itinerary-progress');
-        const runner = document.getElementById('runner');
-        const percentText = document.getElementById('countdown-percent');
-        const daysText = document.getElementById('countdown-days-text');
-        const statusText = document.getElementById('countdown-status');
-        
-        // 歸零重繪
-        fill.style.transition = 'none'; runner.style.transition = 'none';
-        fill.style.width = '0%'; runner.style.left = '0%';
-        fill.offsetHeight; 
-        
-        fill.style.transition = 'width 1.2s cubic-bezier(0.2, 0.8, 0.2, 1)';
-        runner.style.transition = 'left 1.2s cubic-bezier(0.2, 0.8, 0.2, 1)';
-        
-        setTimeout(() => {
-            fill.style.width = `${targetPercent}%`;
-            runner.style.left = `${targetPercent}%`; // 飛機與進度條完美對齊
-        }, 50);
-
-        // 數字跳動動畫 (從總天數快跑下來)
-        let currentPercent = 0;
-        let currentDays = totalDays; 
-        
-        progressInterval = setInterval(() => {
-            currentPercent += 3;
-            currentDays -= Math.ceil(totalDays/30);
-            
-            if(currentPercent >= targetPercent) {
-                currentPercent = targetPercent;
-                currentDays = diffDays;
-                clearInterval(progressInterval);
-            }
-            
-            percentText.innerText = `${Math.round(currentPercent)}%`;
-            daysText.innerText = `剩餘 ${Math.max(currentDays, diffDays)} 天`;
-            
-            if (currentDays <= 0) {
-                statusText.innerText = "出發囉！🎉";
-                statusText.style.color = "#E8A87C";
-                daysText.innerText = "";
-            } else {
-                statusText.innerText = "";
-            }
-        }, 30);
-    }
-
-    // ================= Modal 邏輯 =================
-    function buildColorPicker() {
-        const group = document.getElementById('color-picker-group');
-        group.innerHTML = morandiColors.map(c => `
-            <div class="color-dot ${selectedFormColor === c.name ? 'active' : ''}" 
-                 style="background-color: ${c.hex}; ${c.name==='white' ? 'border: 1px solid #CCC;' : ''}" 
-                 onclick="selectColor('${c.name}')">
-            </div>
-        `).join('');
-    }
-
-    function selectColor(name) {
-        selectedFormColor = name;
-        buildColorPicker();
-        playHaptic();
-    }
-
-    function openItineraryModal(id = null) {
-        const modal = document.getElementById('modal-itinerary');
-        if (id) {
-            const event = itineraryData.find(e => e.id === id);
-            document.getElementById('modal-itinerary-title').innerText = "✏️ 編輯行程";
-            document.getElementById('form-item-id').value = event.id;
-            document.getElementById('form-date').value = event.date;
-            document.getElementById('form-time').value = event.time;
-            document.getElementById('form-title').value = event.title;
-            document.getElementById('form-note').value = event.note || "";
-            selectedFormColor = event.color || 'white';
-        } else {
-            document.getElementById('modal-itinerary-title').innerText = "📝 新增行程";
-            document.getElementById('form-item-id').value = "";
-            document.getElementById('form-date').value = currentDateSelect; 
-            document.getElementById('form-time').value = "12:00";
-            document.getElementById('form-title').value = "";
-            document.getElementById('form-note').value = "";
-            selectedFormColor = 'white'; // 預設白色
-        }
-        buildColorPicker();
-        modal.style.display = 'flex';
-    }
-
+    // ================= 基礎工具 =================
+    function playHaptic() { if (navigator.vibrate) navigator.vibrate(15); }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-
-    function saveItinerary() {
-        const id = document.getElementById('form-item-id').value;
-        const date = document.getElementById('form-date').value;
-        const time = document.getElementById('form-time').value;
-        const title = document.getElementById('form-title').value.trim();
-        const note = document.getElementById('form-note').value.trim();
-
-        if(!title) { alert("⚠️ 請填寫行程標題喔！"); return; }
-
-        if (id) {
-            const index = itineraryData.findIndex(e => e.id == id);
-            itineraryData[index] = { ...itineraryData[index], date, time, title, note, color: selectedFormColor };
-        } else {
-            itineraryData.push({ id: Date.now(), date, time, title, note, img: null, color: selectedFormColor });
-        }
-
-        closeModal('modal-itinerary');
-        if(date !== currentDateSelect && tripDates.find(t=>t.date===date)) selectDate(date);
-        else renderTimeline();
+    function showToast(msg = '儲存成功') {
+        document.getElementById('toast-text').innerText = msg;
+        const toast = document.getElementById('toast-msg');
+        toast.style.opacity = '1'; toast.style.transform = 'translate(-50%, -50%) scale(1)';
+        setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translate(-50%, -50%) scale(0.9)'; }, 2000);
     }
-
-    function deleteItinerary(id) {
-        if(confirm("確定要刪除這個行程嗎？🗑️")) {
-            itineraryData = itineraryData.filter(e => e.id !== id);
-            renderTimeline();
-        }
-    }
-
-    // ================= 頁面切換 =================
     function switchPage(pageId, el) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(pageId).classList.add('active');
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         el.classList.add('active');
-        if(pageId === 'page-itinerary') animateCountdown();
+        if(pageId === 'page-itinerary') triggerCountdownAnimation();
     }
-    
     function switchSubTab(group, target, el) {
         document.querySelectorAll(`[id^="${group}-"]`).forEach(p => p.style.display = 'none');
         document.getElementById(`${group}-${target}`).style.display = 'block';
         el.parentElement.querySelectorAll('.scroll-item').forEach(n => n.classList.remove('active'));
         el.classList.add('active');
     }
+
+    function applyNeonGlow(el) { el.classList.add('glowing-border'); playHaptic(); }
+    function removeNeonGlow(el) { setTimeout(() => { el.classList.remove('glowing-border'); }, 200); }
+    function openMap() { playHaptic(); window.open('https://maps.google.com/?q=Busan', '_blank'); }
+
+    // ================= 全域頭像同步 (Global Avatar Sync) =================
+    function renderGlobalAvatars() {
+        document.getElementById('header-avatars-container').innerHTML = membersData.map(m => `
+            <div class="avatar">${m.img ? `<img src="${m.img}">` : m.fallback}</div>
+        `).join('');
+
+        const renderExpenseAvatars = (isActiveAll = false, isRadio = false, baseClass = '', toggleFunc = '') => {
+            return membersData.map((m, i) => {
+                const activeClass = (isActiveAll || (isRadio && i===0)) ? 'active' : '';
+                const styleStr = activeClass === 'active' 
+                    ? `border-color:var(--mo-green); opacity:1; filter:grayscale(0%);` 
+                    : `border-color:var(--ac-tan); opacity:0.4; filter:grayscale(100%);`;
+                const avatarContent = m.img ? `<img src="${m.img}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">` : `<div style="margin-top:10px;">${m.fallback}</div>`;
+                return `
+                <div class="ava-opt ${baseClass} ${activeClass} scale-btn" data-val="${m.name}" onclick="${toggleFunc}(this)" style="${styleStr}">
+                    ${avatarContent}
+                    <div class="ava-name">${m.name}</div>
+                </div>`;
+            }).join('');
+        };
+        document.getElementById('payer-group-container').innerHTML = renderExpenseAvatars(false, true, 'payer-opt', 'togglePayer');
+        document.getElementById('split-group-container').innerHTML = renderExpenseAvatars(true, false, 'split-opt', 'toggleSplit');
+        document.getElementById('edit-payer-group-container').innerHTML = renderExpenseAvatars(false, true, 'edit-payer-opt', 'toggleEditPayer');
+        document.getElementById('edit-split-group-container').innerHTML = renderExpenseAvatars(true, false, 'edit-split-opt', 'toggleEditSplit');
+
+        document.getElementById('expense-filter-container').innerHTML = `
+            <div class="f-tag-pill active scale-btn" onclick="filterExpenses('all', this)">全體</div>
+            ${membersData.map(m => `<div class="f-tag-pill scale-btn" onclick="filterExpenses('${m.name}', this)">${m.name}</div>`).join('')}
+        `;
+
+        document.getElementById('diary-author-group-container').innerHTML = membersData.map((m, i) => {
+            const activeClass = i === 0 ? 'active' : '';
+            const styleStr = activeClass === 'active' ? `border-color:var(--mo-green); opacity:1; filter:grayscale(0%);` : `border-color:var(--ac-tan); opacity:0.4; filter:grayscale(100%);`;
+            const avatarContent = m.img ? `<img src="${m.img}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">` : `<div style="margin-top:10px;">${m.fallback}</div>`;
+            return `
+            <div class="ava-opt diary-author-opt ${activeClass} scale-btn" data-val="${m.name}" onclick="toggleDiaryAuthor(this)" style="${styleStr}">
+                ${avatarContent}
+                <div class="ava-name">${m.name}</div>
+            </div>`;
+        }).join('');
+
+        document.getElementById('member-container').innerHTML = membersData.map(m => {
+            const avatarContent = m.img ? `<img src="${m.img}" class="member-avatar">` : `<div class="member-avatar">${m.fallback}</div>`;
+            return `
+            <div class="member-card">
+                ${avatarContent}
+                <div class="member-info">
+                    <h2 class="member-name">${m.name}</h2>
+                    ${m.aka ? `<span class="member-aka">${m.aka}</span>` : ''}
+                    ${m.quote ? `<div class="member-quote">"${m.quote}"</div>` : ''}
+                </div>
+                <div class="member-actions">
+                    <i class="fa-solid fa-pen-to-square scale-btn" onclick="openMemberModal(${m.id})"></i>
+                    <i class="fa-solid fa-trash-can scale-btn" onclick="confirmDelete('member', ${m.id})"></i>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    // ================= 模組 1: 行程 V10 =================
+    let currentDateSelect = '2026-06-06';
     
+    let touchStartX = 0; let touchEndX = 0;
+    const pageItinerary = document.getElementById('page-itinerary');
+    pageItinerary.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, {passive: true});
+    pageItinerary.addEventListener('touchend', e => {
+        touchEndX = e.changedTouches[0].screenX;
+        const threshold = 60; const currentIndex = tripDates.findIndex(t => t.date === currentDateSelect);
+        if (touchEndX < touchStartX - threshold && currentIndex < tripDates.length - 1) selectDate(tripDates[currentIndex + 1].date);
+        if (touchEndX > touchStartX + threshold && currentIndex > 0) selectDate(tripDates[currentIndex - 1].date);
+    }, {passive: true});
+
+    function renderDateScroller() {
+        document.getElementById('date-scroller').innerHTML = tripDates.map(t => {
+            const displayDate = t.date.substring(5).replace('-', '/'); 
+            const isActive = t.date === currentDateSelect ? 'active' : '';
+            return `<div class="date-tab scale-btn ${isActive}" id="date-tab-${t.date}" onclick="playHaptic(); selectDate('${t.date}')"><span class="day">${t.day}</span><span class="date">${displayDate}</span></div>`;
+        }).join('');
+    }
+    function selectDate(dateStr) {
+        currentDateSelect = dateStr; renderDateScroller();
+        const activeTab = document.getElementById('date-tab-' + dateStr);
+        if (activeTab) activeTab.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+        fetchGeolocationWeather(); renderTimeline(); triggerCountdownAnimation();
+    }
+    function fetchGeolocationWeather() {
+        const container = document.getElementById('weather-section');
+        container.innerHTML = `<div style="text-align:center; padding:15px; color:var(--ac-brown-light); font-weight:700;"><i class="fa-solid fa-spinner fa-spin"></i> 獲取當地天氣中...</div>`;
+        const currentLocObj = tripDates.find(t => t.date === currentDateSelect);
+        const locName = currentLocObj ? currentLocObj.loc : '釜山';
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(position => {
+                setTimeout(() => { renderWeatherCard(`📍 釜山 ${locName} (即時)`, "晴朗無雲", "☀️", "☀️", "🌙", "天氣超棒，適合出遊！"); }, 600);
+            }, () => { setTimeout(() => { renderWeatherCard(`📍 釜山 (預設)`, "晴時多雲", "☀️", "⛅", "☁️", "無法獲取定位，顯示預設天氣。"); }, 500); });
+        } else { renderWeatherCard("釜山 (預設)", "未知", "❓", "❓", "❓", "設備不支援定位。"); }
+    }
+    function renderWeatherCard(loc, txt, m, a, n, tip) {
+        document.getElementById('weather-section').innerHTML = `
+            <div class="weather-top"><div class="weather-info"><div style="font-size:0.85rem; margin-bottom: 4px; color: var(--mo-blue);">${loc}</div><div style="font-size: 1.4rem; color: var(--ac-brown);">${txt}</div></div>
+            <div style="display:flex; gap:10px; background:#FFF; padding:8px 12px; border-radius:16px; border: 2px solid #EAF4FA;"><div style="text-align:center; font-size:0.75rem; color:var(--ac-brown-light); font-weight:800;"><span>${m}</span><br>早</div><div style="text-align:center; font-size:0.75rem; color:var(--ac-brown-light); font-weight:800;"><span>${a}</span><br>中</div><div style="text-align:center; font-size:0.75rem; color:var(--ac-brown-light); font-weight:800;"><span>${n}</span><br>晚</div></div></div>
+            <div style="font-size: 0.85rem; font-weight: 800; color: #4B6E3F; background: var(--ac-green-light); padding: 10px 15px; border-radius: 16px; margin-top:8px;">💡 ${tip}</div>
+        `;
+    }
+
+    let currentItiImage = null;
+    function renderTimeline() {
+        const container = document.getElementById('timeline-container');
+        let todaysEvents = itineraryData.filter(e => e.date === currentDateSelect).sort((a, b) => a.time.localeCompare(b.time));
+        if(todaysEvents.length === 0) { container.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--ac-brown-light); font-weight: 800;">當日尚無行程 🍃</div>`; return; }
+        container.innerHTML = todaysEvents.map(event => {
+            const cInfo = themeColors.find(c => c.name === event.color) || themeColors[0];
+            return `
+            <div class="timeline-item">
+                <div class="timeline-dot" style="border-color: ${cInfo.dot};"></div>
+                <div class="event-card" style="background-color: ${cInfo.hex}; border-color: ${cInfo.name === 'white' ? 'transparent' : cInfo.dot};" onclick="toggleEventDetail(${event.id})">
+                    <div class="event-header">
+                        <div class="time-picker-wrapper" onclick="event.stopPropagation()"><div class="time-display-btn">${event.time}</div><input type="time" value="${event.time}" onchange="updateEventTime(${event.id}, this.value)"></div>
+                        <span class="event-title">${event.title}</span><i class="fa-solid fa-chevron-down" style="color:var(--ac-tan);"></i>
+                    </div>
+                    <div class="event-detail" id="detail-${event.id}">
+                        ${event.note ? `<div class="event-note">${event.note}</div>` : ''}
+                        ${event.loc ? `<div class="map-thumbnail" onclick="openMap(); event.stopPropagation();"><div class="map-overlay"><i class="fa-solid fa-location-arrow" style="margin-right:8px;"></i> 導航</div></div>` : ''}
+                        ${event.img ? `<img src="${event.img}" style="width:100%; height:140px; object-fit:cover; border-radius:18px; margin-bottom:10px; border:1px solid var(--ac-tan); margin-top:10px;">` : ''}
+                        <div class="event-actions"><span onclick="event.stopPropagation(); playHaptic(); openItineraryModal(${event.id})"><i class="fa-solid fa-pen-to-square"></i></span><span onclick="event.stopPropagation(); playHaptic(); confirmDelete('itinerary', ${event.id})"><i class="fa-solid fa-trash-can"></i></span></div>
+                    </div>
+                </div>
+            </div>`}).join('');
+    }
+
+    function toggleEventDetail(id) { playHaptic(); const detail = document.getElementById(`detail-${id}`); detail.style.display = (detail.style.display === 'block') ? 'none' : 'block'; }
+    function updateEventTime(id, newTime) { const event = itineraryData.find(e => e.id === id); if(event) { event.time = newTime; renderTimeline(); } }
+
+    function easeOutQuart(t) { return 1 - (--t) * t * t * t; }
+    function triggerCountdownAnimation() {
+        if(animationFrameId) cancelAnimationFrame(animationFrameId);
+        const startDate = new Date('2026-04-01T00:00:00').getTime(); const targetDate = new Date('2026-06-06T00:00:00').getTime(); const today = new Date().getTime(); 
+        let targetPercent = 0; let diffDays = Math.ceil((targetDate - today) / (1000 * 60 * 60 * 24));
+        if (today >= targetDate) { targetPercent = 100; diffDays = 0; } else if (today <= startDate) { targetPercent = 0; } else { targetPercent = ((today - startDate) / (targetDate - startDate)) * 100; }
+        const fill = document.getElementById('itinerary-progress'); const runner = document.getElementById('runner'); const percentText = document.getElementById('countdown-percent'); const daysText = document.getElementById('countdown-days-text'); const statusText = document.getElementById('countdown-status');
+        const duration = 2000; const start = performance.now(); const startDays = 60; 
+        function animate(time) {
+            let timeFraction = (time - start) / duration; if (timeFraction > 1) timeFraction = 1;
+            let progress = easeOutQuart(timeFraction); let currentPercent = progress * targetPercent; let currentDays = startDays - (progress * (startDays - diffDays));
+            fill.style.width = `${currentPercent}%`; runner.style.left = `${currentPercent}%`; percentText.innerText = `${Math.round(currentPercent)}%`; daysText.innerText = `剩餘 ${Math.round(currentDays)} 天`;
+            if (timeFraction < 1) { animationFrameId = requestAnimationFrame(animate); } else { if (diffDays <= 0) { statusText.innerText = "出發囉！🎉"; daysText.innerText = ""; } else { statusText.innerText = ""; } }
+        }
+        animationFrameId = requestAnimationFrame(animate);
+    }
+
+    function checkMapThumbnail() {
+        const val = document.getElementById('form-loc').value.trim();
+        const container = document.getElementById('map-preview-container');
+        if(val.length > 3) {
+            container.innerHTML = `<div class="map-thumbnail" onclick="openMap()"><div class="map-overlay"><i class="fa-solid fa-location-arrow" style="margin-right:8px;"></i> 開啟導航</div></div>`;
+            container.style.display = 'block';
+        } else { container.style.display = 'none'; }
+    }
+
+    function handleItiPhotoUpload(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                currentItiImage = e.target.result;
+                document.getElementById('iti-upload-preview').innerHTML = `<div style="position:relative; flex-shrink:0;"><img src="${currentItiImage}" style="width:70px; height:70px; object-fit:cover; border-radius:12px; border: 1px solid var(--ac-tan);"><div style="position:absolute; top:-5px; right:-5px; background:var(--mo-pink); color:#FFF; width:20px; height:20px; border-radius:50%; display:flex; justify-content:center; align-items:center; font-size:0.7rem; font-weight:900; cursor:pointer;" onclick="currentItiImage=null; renderItiUploadPreview();">X</div></div>`;
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+    function renderItiUploadPreview() {
+        if(currentItiImage) {
+            document.getElementById('iti-upload-preview').innerHTML = `<div style="position:relative; flex-shrink:0;"><img src="${currentItiImage}" style="width:70px; height:70px; object-fit:cover; border-radius:12px; border: 1px solid var(--ac-tan);"><div style="position:absolute; top:-5px; right:-5px; background:var(--mo-pink); color:#FFF; width:20px; height:20px; border-radius:50%; display:flex; justify-content:center; align-items:center; font-size:0.7rem; font-weight:900; cursor:pointer;" onclick="currentItiImage=null; renderItiUploadPreview();">X</div></div>`;
+        } else {
+            document.getElementById('iti-upload-preview').innerHTML = `<div class="scale-btn" onclick="document.getElementById('iti-file-input').click()" style="width: 70px; height: 70px; border: 2px dashed var(--ac-tan); border-radius: 12px; background: #F8F6F2; display: flex; justify-content: center; align-items: center; color: var(--ac-tan); font-size: 1.5rem; flex-shrink:0;">+</div>`;
+        }
+    }
+
+    function buildColorPicker() {
+        const group = document.getElementById('color-picker-group');
+        group.innerHTML = themeColors.map(c => `
+            <div class="color-dot scale-btn ${selectedFormColor === c.name ? 'active' : ''}" style="background-color: ${c.dot}; ${c.name==='white' ? 'border: 3px solid #DCD7D0;' : ''}" onclick="selectColor('${c.name}')"></div>
+        `).join('');
+    }
+    function selectColor(name) { selectedFormColor = name; const activeColor = themeColors.find(c => c.name === name); document.documentElement.style.setProperty('--modal-dynamic-bg', activeColor.hex); buildColorPicker(); playHaptic(); }
+    
+    function openItineraryModal(id = null) {
+        const modal = document.getElementById('modal-itinerary');
+        if (id) {
+            const event = itineraryData.find(e => e.id === id);
+            document.getElementById('modal-itinerary-title').innerText = "編輯行程"; document.getElementById('form-item-id').value = event.id; document.getElementById('form-date').value = event.date; document.getElementById('form-time').value = event.time; document.getElementById('form-title').value = event.title; document.getElementById('form-note').value = event.note || ""; document.getElementById('form-loc').value = event.loc || ""; selectedFormColor = event.color || 'white'; currentItiImage = event.img || null;
+        } else {
+            document.getElementById('modal-itinerary-title').innerText = "新增行程"; document.getElementById('form-item-id').value = ""; document.getElementById('form-date').value = currentDateSelect; document.getElementById('form-time').value = "12:00"; document.getElementById('form-title').value = ""; document.getElementById('form-note').value = ""; document.getElementById('form-loc').value = ""; selectedFormColor = 'white'; currentItiImage = null;
+        }
+        checkMapThumbnail(); renderItiUploadPreview();
+        const activeColor = themeColors.find(c => c.name === selectedFormColor); document.documentElement.style.setProperty('--modal-dynamic-bg', activeColor.hex); buildColorPicker(); modal.style.display = 'flex';
+    }
+
+    function saveItinerary() {
+        const id = document.getElementById('form-item-id').value; const date = document.getElementById('form-date').value; const time = document.getElementById('form-time').value; const title = document.getElementById('form-title').value.trim(); const note = document.getElementById('form-note').value.trim(); const loc = document.getElementById('form-loc').value.trim();
+        if(!title) { alert("⚠️ 行程標題為必填！"); return; }
+        if (id) { const index = itineraryData.findIndex(e => e.id == id); itineraryData[index] = { ...itineraryData[index], date, time, title, note, loc, color: selectedFormColor, img: currentItiImage }; } 
+        else { itineraryData.push({ id: Date.now(), date, time, title, note, loc, img: currentItiImage, color: selectedFormColor }); }
+        closeModal('modal-itinerary'); showToast('儲存成功');
+        if(date !== currentDateSelect && tripDates.find(t=>t.date===date)) selectDate(date); else renderTimeline();
+    }
+
+
+    // ================= 模組 2: 預定票務 (V10) =================
+    function requirePin(targetId) {
+        document.getElementById('pin-target').value = targetId; document.getElementById('pin-input').value = '';
+        document.getElementById('modal-pin').style.display = 'flex'; setTimeout(() => document.getElementById('pin-input').focus(), 100);
+    }
+    function verifyPin() {
+        const pin = document.getElementById('pin-input').value;
+        if(pin === '5151') {
+            playHaptic(); const targetId = document.getElementById('pin-target').value;
+            const card = document.getElementById(targetId); card.classList.add('editable-mode');
+            card.querySelectorAll('.editable-field').forEach(field => { field.setAttribute('contenteditable', 'true'); field.addEventListener('keypress', (e) => { if(e.key === 'Enter') e.preventDefault(); }); });
+            const btn = card.querySelector('.btn-edit-trigger');
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> 儲存修改';
+            btn.style.background = 'var(--mo-green)'; btn.style.color = '#FFF'; btn.style.boxShadow = '0 4px 0 var(--mo-green-dark)';
+            btn.onclick = function(e) { e.stopPropagation(); lockCard(targetId, this); };
+            closeModal('modal-pin');
+        } else { alert('❌ 密碼錯誤！'); document.getElementById('pin-input').value = ''; document.getElementById('pin-input').focus(); }
+    }
+    function lockCard(cardId, btn) {
+        playHaptic(); const card = document.getElementById(cardId); card.classList.remove('editable-mode');
+        card.querySelectorAll('.editable-field').forEach(field => field.setAttribute('contenteditable', 'false'));
+        btn.innerHTML = '<i class="fa-solid fa-pen"></i> 編輯資訊';
+        btn.style.background = 'var(--mo-teal)'; btn.style.color = '#FFF'; btn.style.boxShadow = '0 4px 0 #3A605D';
+        btn.onclick = function(e) { e.stopPropagation(); requirePin(cardId); };
+        showToast('儲存成功');
+    }
+    function openHotelDetailModal() { playHaptic(); document.getElementById('modal-hotel-detail').style.display = 'flex'; }
+
+    let currentVoucherImage = null;
+    function openVoucherModal() {
+        playHaptic(); document.getElementById('voucher-item-id').value = ""; document.getElementById('voucher-title').value = ""; document.getElementById('voucher-date').value = currentDateSelect; document.getElementById('voucher-expire').value = ""; document.getElementById('voucher-code').value = ""; currentVoucherImage = null; renderVoucherUploadPreview(); document.getElementById('modal-voucher').style.display = 'flex';
+    }
+    function handleVoucherPhotoUpload(event) {
+        const file = event.target.files[0];
+        if (file) { const reader = new FileReader(); reader.onload = function(e) { currentVoucherImage = e.target.result; renderVoucherUploadPreview(); }; reader.readAsDataURL(file); }
+    }
+    function renderVoucherUploadPreview() {
+        if(currentVoucherImage) {
+            document.getElementById('voucher-upload-preview').innerHTML = `<div style="position:relative; flex-shrink:0;"><img src="${currentVoucherImage}" style="width:70px; height:70px; object-fit:cover; border-radius:12px; border: 1px solid var(--ac-tan);"><div style="position:absolute; top:-5px; right:-5px; background:var(--mo-pink); color:#FFF; width:20px; height:20px; border-radius:50%; display:flex; justify-content:center; align-items:center; font-size:0.7rem; font-weight:900; cursor:pointer;" onclick="currentVoucherImage=null; renderVoucherUploadPreview();">X</div></div>`;
+        } else {
+            document.getElementById('voucher-upload-preview').innerHTML = `<div class="scale-btn" onclick="document.getElementById('voucher-file-input').click()" style="width: 70px; height: 70px; border: 2px dashed var(--ac-tan); border-radius: 12px; background: #F8F6F2; display: flex; justify-content: center; align-items: center; color: var(--ac-tan); font-size: 1.5rem; flex-shrink:0;">+</div>`;
+        }
+    }
+    function saveVoucher() {
+        const title = document.getElementById('voucher-title').value.trim();
+        if(!title) { alert('請填寫票卷名稱'); return; }
+        
+        const date = document.getElementById('voucher-date').value; const expire = document.getElementById('voucher-expire').value; const code = document.getElementById('voucher-code').value;
+        vouchersData.unshift({ id: Date.now(), title, date, expire, code, img: currentVoucherImage });
+        
+        closeModal('modal-voucher'); showToast('票卷儲存成功'); renderVouchers();
+    }
+    function renderVouchers() {
+        const container = document.getElementById('voucher-container');
+        if(vouchersData.length === 0) { container.innerHTML = `<div class="ac-card" style="text-align:center; padding: 40px; font-weight:900; color:var(--ac-brown-light);">🎫 尚無票卷資料</div>`; return; }
+        
+        container.innerHTML = vouchersData.map(v => `
+            <div class="ac-card" style="display:flex; gap:15px; align-items:center; padding:15px;">
+                ${v.img ? `<img src="${v.img}" style="width:60px; height:60px; border-radius:12px; object-fit:cover;">` : `<div style="width:60px; height:60px; border-radius:12px; background:#F8F6F2; display:flex; justify-content:center; align-items:center; font-size:1.5rem;">🎫</div>`}
+                <div style="flex:1;">
+                    <div style="font-weight:900; color:var(--ac-brown); font-size:1.1rem; margin-bottom:5px;">${v.title}</div>
+                    <div style="font-size:0.8rem; color:var(--ac-brown-light); font-weight:800;">使用: ${v.date} ${v.expire ? ` | 期限: ${v.expire}` : ''}</div>
+                    ${v.code ? `<div style="background:#F4F0EA; padding:4px 8px; border-radius:8px; font-size:0.8rem; font-weight:900; display:inline-block; margin-top:5px; border:1px dashed var(--ac-tan);">代碼: ${v.code}</div>` : ''}
+                </div>
+                <div class="scale-btn" onclick="confirmDelete('voucher', ${v.id})" style="color:var(--ac-tan); font-size:1.2rem;"><i class="fa-solid fa-trash-can"></i></div>
+            </div>
+        `).join('');
+    }
+
+
+    // ================= 模組 3: 帳務系統核心 =================
+    function setExpCurrency(curr, el) {
+        playHaptic();
+        document.querySelectorAll('.cur-tab').forEach(e => { e.classList.remove('active'); e.style.background='transparent'; e.style.borderColor='var(--ac-tan)'; e.style.color='var(--ac-brown-light)';});
+        el.classList.add('active'); el.style.background='rgba(226, 200, 122, 0.2)'; el.style.borderColor='var(--mo-yellow)'; el.style.color='var(--ac-brown)';
+        currentExpCurrency = curr; calcApproxTwd();
+    }
+    function calcExchange(source) {
+        const krwInput = document.getElementById('exc-krw'); const twdInput = document.getElementById('exc-twd');
+        if(source === 'krw') { twdInput.value = Math.round((parseFloat(krwInput.value) || 0) * EXCHANGE_RATE); } 
+        else { krwInput.value = Math.round((parseFloat(twdInput.value) || 0) / EXCHANGE_RATE); }
+    }
+    function calcApproxTwd() { 
+        const amt = parseFloat(document.getElementById('exp-amount').value) || 0; let twd = 0;
+        if(currentExpCurrency === 'KRW') twd = Math.round(amt * EXCHANGE_RATE); else if(currentExpCurrency === 'USD') twd = Math.round(amt * EXCHANGE_RATE_USD); else twd = amt;
+        document.getElementById('exp-approx-twd').value = `≈ NT$ ${twd.toLocaleString()}`; 
+    }
+    function calcApproxTwdEdit() { 
+        const krw = parseFloat(document.getElementById('edit-exp-amount').value) || 0; 
+        document.getElementById('edit-exp-twd').value = `≈ NT$ ${Math.round(krw * EXCHANGE_RATE).toLocaleString()}`; 
+    }
+
+    function selectMethod(el) { 
+        playHaptic(); document.querySelectorAll('.m-tab').forEach(t => { t.classList.remove('active'); t.style.background='transparent'; t.style.borderColor='var(--ac-tan)'; t.style.color='var(--ac-brown-light)';}); 
+        el.classList.add('active'); el.style.background='var(--mo-green)'; el.style.borderColor='var(--mo-green)'; el.style.color='#FFF';
+    }
+
+    function togglePayer(el) { playHaptic(); document.querySelectorAll('.payer-opt').forEach(opt => { opt.classList.remove('active'); opt.style.borderColor="var(--ac-tan)"; opt.style.opacity="0.4"; opt.style.filter="grayscale(100%)";}); el.classList.add('active'); el.style.borderColor="var(--mo-green)"; el.style.opacity="1"; el.style.filter="grayscale(0%)";}
+    function toggleSplit(el) { playHaptic(); el.classList.toggle('active'); if(el.classList.contains('active')) { el.style.borderColor="var(--mo-green)"; el.style.opacity="1"; el.style.filter="grayscale(0%)"; } else { el.style.borderColor="var(--ac-tan)"; el.style.opacity="0.4"; el.style.filter="grayscale(100%)"; } }
+    function toggleEditPayer(el) { playHaptic(); document.querySelectorAll('.edit-payer-opt').forEach(opt => { opt.classList.remove('active'); opt.style.borderColor="var(--ac-tan)"; opt.style.opacity="0.4"; opt.style.filter="grayscale(100%)";}); el.classList.add('active'); el.style.borderColor="var(--mo-green)"; el.style.opacity="1"; el.style.filter="grayscale(0%)";}
+    function toggleEditSplit(el) { playHaptic(); el.classList.toggle('active'); if(el.classList.contains('active')) { el.style.borderColor="var(--mo-green)"; el.style.opacity="1"; el.style.filter="grayscale(0%)"; } else { el.style.borderColor="var(--ac-tan)"; el.style.opacity="0.4"; el.style.filter="grayscale(100%)"; } }
+
+    function saveExpense() {
+        const amt = parseFloat(document.getElementById('exp-amount').value); const title = document.getElementById('exp-title').value.trim();
+        if(!amt || amt <= 0) { alert('⚠️ 請輸入有效的消費金額！'); return; } if(!title) { alert('⚠️ 請輸入消費項目！'); return; }
+        const date = document.getElementById('exp-date').value; const loc = document.getElementById('exp-loc').value.trim(); const method = document.querySelector('.m-tab.active').innerText; const payer = document.querySelector('.payer-opt.active').dataset.val; const splitters = Array.from(document.querySelectorAll('.split-opt.active')).map(el => el.dataset.val);
+        
+        let amountTwd = 0; if(currentExpCurrency === 'KRW') amountTwd = Math.round(amt * EXCHANGE_RATE); else if(currentExpCurrency === 'USD') amountTwd = Math.round(amt * EXCHANGE_RATE_USD); else amountTwd = amt;
+        let amountKrw = (currentExpCurrency === 'KRW') ? amt : Math.round(amountTwd / EXCHANGE_RATE);
+        const splitAmountTwd = splitters.length > 0 ? Math.round(amountTwd / splitters.length) : 0;
+
+        expenses.unshift({ id: Date.now(), date, title, loc, method, amountKrw, amountTwd, payer, splitters, splitAmountTwd });
+        playHaptic(); showToast('已新增一筆');
+        document.getElementById('exp-amount').value = ''; document.getElementById('exp-title').value = ''; document.getElementById('exp-loc').value = ''; document.getElementById('exp-approx-twd').value = '0';
+        renderExpenses(); setTimeout(() => { switchSubTab('acc', 'detail', document.getElementById('tab-acc-detail')); }, 600);
+    }
+
+    function openExpenseEdit(id) {
+        playHaptic(); const exp = expenses.find(e => e.id === id); if(!exp) return;
+        document.getElementById('edit-exp-id').value = exp.id; document.getElementById('edit-exp-date').value = exp.date; document.getElementById('edit-exp-amount').value = exp.amountKrw; document.getElementById('edit-exp-twd').value = `≈ NT$ ${exp.amountTwd.toLocaleString()}`; document.getElementById('edit-exp-loc').value = exp.loc || ''; document.getElementById('edit-exp-title').value = exp.title;
+        document.querySelectorAll('.edit-payer-opt').forEach(opt => { opt.classList.remove('active'); opt.style.borderColor="var(--ac-tan)"; opt.style.opacity="0.4"; opt.style.filter="grayscale(100%)"; if(opt.dataset.val === exp.payer) { opt.classList.add('active'); opt.style.borderColor="var(--mo-green)"; opt.style.opacity="1"; opt.style.filter="grayscale(0%)"; }});
+        document.querySelectorAll('.edit-split-opt').forEach(opt => { opt.classList.remove('active'); opt.style.borderColor="var(--ac-tan)"; opt.style.opacity="0.4"; opt.style.filter="grayscale(100%)"; if(exp.splitters.includes(opt.dataset.val)) { opt.classList.add('active'); opt.style.borderColor="var(--mo-green)"; opt.style.opacity="1"; opt.style.filter="grayscale(0%)"; }});
+        document.getElementById('modal-expense-edit').style.display = 'flex';
+    }
+
+    function saveExpenseEdit() {
+        const id = parseInt(document.getElementById('edit-exp-id').value); const amountKrw = parseFloat(document.getElementById('edit-exp-amount').value); const title = document.getElementById('edit-exp-title').value.trim();
+        if(!amountKrw || amountKrw <= 0) { alert('⚠️ 金額無效！'); return; } if(!title) { alert('⚠️ 項目無效！'); return; }
+        const expIndex = expenses.findIndex(e => e.id === id);
+        if(expIndex > -1) {
+            const date = document.getElementById('edit-exp-date').value; const loc = document.getElementById('edit-exp-loc').value.trim(); const payer = document.querySelector('.edit-payer-opt.active').dataset.val; const splitters = Array.from(document.querySelectorAll('.edit-split-opt.active')).map(el => el.dataset.val); const amountTwd = Math.round(amountKrw * EXCHANGE_RATE); const splitAmountTwd = splitters.length > 0 ? Math.round(amountTwd / splitters.length) : 0;
+            expenses[expIndex] = { ...expenses[expIndex], date, title, loc, amountKrw, amountTwd, payer, splitters, splitAmountTwd };
+            closeModal('modal-expense-edit'); renderExpenses(); showToast('修改成功');
+        }
+    }
+
+    function filterExpenses(filterName, el) { 
+        playHaptic(); document.querySelectorAll('.f-tag-pill').forEach(tag => { tag.classList.remove('active'); tag.style.background='transparent'; tag.style.color='var(--ac-brown-light)';}); 
+        el.classList.add('active'); el.style.background='var(--ac-card)'; el.style.color='var(--mo-yellow)'; currentExpFilter = filterName; renderExpenses(); 
+    }
+
+    function calculateSettlement() {
+        let balances = { "琳": 0, "貓": 0 };
+        expenses.forEach(exp => {
+            if (!exp.splitters || exp.splitters.length === 0) return; 
+            if (exp.amountTwd <= 0) return;
+            balances[exp.payer] += exp.amountTwd; 
+            exp.splitters.forEach(person => { balances[person] -= exp.splitAmountTwd; });
+        });
+        let debtors = []; let creditors = [];
+        for (let person in balances) { let bal = Math.round(balances[person]); if (bal < -1) debtors.push({ person, amount: -bal }); else if (bal > 1) creditors.push({ person, amount: bal }); }
+        let settlements = []; let i = 0, j = 0;
+        while (i < debtors.length && j < creditors.length) {
+            let debtor = debtors[i]; let creditor = creditors[j]; let amount = Math.min(debtor.amount, creditor.amount);
+            settlements.push(`<div class="settlement-item"><span>${debtor.person} 需給 ${creditor.person}</span><span class="settlement-amount">NT$ ${amount.toLocaleString()}</span></div>`);
+            debtor.amount -= amount; creditor.amount -= amount; if (debtor.amount === 0) i++; if (creditor.amount === 0) j++;
+        }
+        return settlements;
+    }
+
+    function renderExpenses() {
+        const container = document.getElementById('expense-list-container'); const filterTitle = document.getElementById('detail-filter-name'); const totalElem = document.getElementById('detail-total-amount'); const settlementCard = document.getElementById('settlement-card'); const subtotalElem = document.getElementById('detail-day-subtotal');
+        expenses.sort((a, b) => new Date(b.date) - new Date(a.date)); 
+        let totalDisplay = 0; let filtered = [];
+        filterTitle.innerText = currentExpFilter === 'all' ? '全體' : currentExpFilter;
+
+        expenses.forEach(exp => {
+            let includeInList = false; let myAmt = 0;
+            if (currentExpFilter === 'all') { includeInList = true; myAmt = exp.amountTwd; } 
+            else { if (exp.splitters.length > 0 && exp.splitters.includes(currentExpFilter)) { includeInList = true; myAmt = exp.splitAmountTwd; } else if (exp.splitters.length === 0 && exp.payer === currentExpFilter) { includeInList = true; myAmt = exp.amountTwd; } }
+            if (includeInList) { filtered.push(exp); totalDisplay += myAmt; }
+        });
+
+        totalElem.innerText = `NT$ ${totalDisplay.toLocaleString()}`;
+
+        if(currentExpFilter === 'all' && expenses.some(e => e.splitters.length > 0)) {
+            const results = calculateSettlement();
+            if(results.length > 0) { document.getElementById('settlement-content').innerHTML = results.join(''); settlementCard.style.display = 'block'; } 
+            else { document.getElementById('settlement-content').innerHTML = `<div style="text-align:center; font-size:0.85rem; color:#8B5A5A;">目前無任何債務，大家不互欠！🎉</div>`; settlementCard.style.display = 'block'; }
+        } else { settlementCard.style.display = 'none'; }
+
+        if(filtered.length === 0) { container.innerHTML = `<div style="text-align:center; padding:30px; color:var(--ac-brown-light); font-weight:800;">尚無記帳資料 💸</div>`; subtotalElem.innerText = `本日小計: NT$ 0`; return; }
+
+        const grouped = filtered.reduce((acc, curr) => { if(!acc[curr.date]) acc[curr.date] = []; acc[curr.date].push(curr); return acc; }, {});
+        let html = '';
+        const latestDate = Object.keys(grouped)[0];
+        let subtotalAmt = 0;
+
+        for(let date in grouped) {
+            html += `<div class="date-divider">${date.substring(5).replace('-','/')}</div>`;
+            grouped[date].forEach(exp => {
+                const isPersonal = exp.splitters.length === 0;
+                const icon = exp.method === '現金' ? '💵' : (exp.method === '信用卡' ? '💳' : '📱');
+                const locText = exp.loc ? `<span style="font-size:0.7rem; color:var(--ac-brown-light); margin-left:5px;">📍 ${exp.loc}</span>` : '';
+                let amountDisplayHtml = currentExpFilter === 'all' 
+                    ? `<div style="font-weight: 900; font-size: 1.15rem; color: var(--ac-brown);">₩ ${exp.amountKrw.toLocaleString()}</div><div style="font-size: 0.85rem; color: var(--mo-orange); font-weight:800;">NT$ ${exp.amountTwd.toLocaleString()}</div>`
+                    : `<div style="font-weight: 900; font-size: 1.15rem; color: var(--ac-brown);">NT$ ${(isPersonal ? exp.amountTwd : exp.splitAmountTwd).toLocaleString()}</div><div style="font-size: 0.75rem; color: var(--ac-brown-light);">原額 ₩ ${exp.amountKrw.toLocaleString()}</div>`;
+                const badgeHtml = isPersonal ? `<span style="background:var(--ac-bg); color:var(--ac-brown-light); padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:900;">${exp.payer} 個人帳</span>` : `<span style="background:var(--ac-tan); color:var(--ac-brown); padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:900;">${exp.payer} 先付</span>`;
+
+                html += `
+                <div class="bill-item">
+                    <div style="display: flex; align-items: flex-start; gap: 12px; flex:1;" onclick="openExpenseEdit(${exp.id})">
+                        <div class="bill-icon">${icon}</div>
+                        <div>
+                            <div style="font-weight: 900; font-size: 1.05rem; color:var(--ac-brown); margin-bottom:4px;">${exp.title}</div>
+                            <div style="display:flex; align-items:center; gap:5px;">${badgeHtml} ${locText}</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="text-align: right;" onclick="openExpenseEdit(${exp.id})">${amountDisplayHtml}</div>
+                        <div class="scale-btn" onclick="confirmDelete('expense', ${exp.id})" style="color:var(--ac-tan); font-size:1.2rem;"><i class="fa-solid fa-trash-can"></i></div>
+                    </div>
+                </div>`;
+                if(date === latestDate) { subtotalAmt += (currentExpFilter === 'all' || isPersonal) ? exp.amountTwd : exp.splitAmountTwd; }
+            });
+        }
+        subtotalElem.innerText = `本日 (${latestDate.substring(5)}) 小計: NT$ ${subtotalAmt.toLocaleString()}`;
+        container.innerHTML = html;
+    }
+
+
+    // ================= 模組 4: 日誌 (V10 編輯機制綁定) =================
+    function renderDiary() {
+        const container = document.getElementById('diary-container');
+        diaryData.sort((a, b) => new Date(b.date) - new Date(a.date)); 
+        if(diaryData.length === 0) { container.innerHTML = `<div style="text-align:center; padding:40px; color:var(--ac-brown-light); font-weight:800;">尚無日誌記錄 📖</div>`; return; }
+
+        const grouped = diaryData.reduce((acc, curr) => { if(!acc[curr.date]) acc[curr.date] = []; acc[curr.date].push(curr); return acc; }, {});
+        let html = '';
+        for(let date in grouped) {
+            html += `<div class="diary-date-badge">${date}</div>`;
+            grouped[date].forEach(item => {
+                const memberObj = membersData.find(m => m.name === item.author);
+                const avatarImg = memberObj && memberObj.img ? `<img src="${memberObj.img}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">` : (memberObj ? memberObj.fallback : '👤');
+                const imgsHtml = item.images && item.images.length > 0 ? `<div class="diary-photos">${item.images.map(src => `<img src="${src}" class="diary-img">`).join('')}</div>` : '';
+                
+                html += `
+                <div class="diary-card">
+                    <div class="diary-header">
+                        <div class="avatar" style="width:36px; height:36px; margin:0; font-size:1.1rem; border-width:2px; border-color:var(--ac-tan); box-shadow:none;">${avatarImg}</div>
+                        <div style="font-weight:900; color:var(--ac-brown); font-size:1.05rem;">${item.author}</div>
+                        <div style="flex:1; text-align:right;">
+                            <i class="fa-solid fa-pen-to-square scale-btn" style="color:var(--ac-tan); font-size:1.1rem; margin-right:15px;" onclick="openDiaryModal(${item.id})"></i>
+                            <i class="fa-solid fa-trash-can scale-btn" style="color:var(--ac-tan); font-size:1.1rem;" onclick="confirmDelete('diary', ${item.id})"></i>
+                        </div>
+                    </div>
+                    <div class="diary-content">${item.content}</div>
+                    ${imgsHtml}
+                </div>`;
+            });
+        }
+        container.innerHTML = html;
+    }
+
+    function toggleDiaryAuthor(el) {
+        playHaptic();
+        document.querySelectorAll('.diary-author-opt').forEach(opt => { opt.classList.remove('active'); opt.style.borderColor="var(--ac-tan)"; opt.style.opacity="0.4"; opt.style.filter="grayscale(100%)";});
+        el.classList.add('active'); el.style.borderColor="var(--mo-green)"; el.style.opacity="1"; el.style.filter="grayscale(0%)";
+    }
+
+    function openDiaryModal(id = null) {
+        playHaptic();
+        if (id) {
+            const entry = diaryData.find(d => d.id === id);
+            document.getElementById('diary-edit-id').value = entry.id;
+            document.getElementById('diary-date').value = entry.date;
+            document.getElementById('diary-content').value = entry.content;
+            document.getElementById('diary-modal-title').innerHTML = '<i class="fa-solid fa-pen"></i> 編輯日誌';
+            document.querySelectorAll('.diary-author-opt').forEach(opt => {
+                opt.classList.remove('active'); opt.style.borderColor="var(--ac-tan)"; opt.style.opacity="0.4"; opt.style.filter="grayscale(100%)";
+                if(opt.dataset.val === entry.author) { opt.classList.add('active'); opt.style.borderColor="var(--mo-green)"; opt.style.opacity="1"; opt.style.filter="grayscale(0%)"; }
+            });
+            currentDiaryImages = [...entry.images];
+        } else {
+            document.getElementById('diary-edit-id').value = ""; document.getElementById('diary-date').value = currentDateSelect; document.getElementById('diary-content').value = ''; document.getElementById('diary-modal-title').innerHTML = '<i class="fa-solid fa-book"></i> 寫新日誌'; currentDiaryImages = [];
+        }
+        renderDiaryUploadPreview(); document.getElementById('modal-diary').style.display = 'flex';
+    }
+
+    function handleDiaryPhotoUpload(event) {
+        const files = event.target.files;
+        if(currentDiaryImages.length + files.length > 5) { alert('最多只能上傳 5 張照片喔！'); return; }
+        Array.from(files).forEach(file => { const reader = new FileReader(); reader.onload = (e) => { currentDiaryImages.push(e.target.result); renderDiaryUploadPreview(); }; reader.readAsDataURL(file); });
+    }
+
+    function renderDiaryUploadPreview() {
+        const container = document.getElementById('diary-upload-preview');
+        let html = currentDiaryImages.map((src, index) => `
+            <div style="position:relative; flex-shrink:0;">
+                <img src="${src}" style="width:80px; height:80px; object-fit:cover; border-radius:14px; border: 1px solid var(--ac-tan);">
+                <div style="position:absolute; top:-5px; right:-5px; background:var(--mo-pink); color:#FFF; width:20px; height:20px; border-radius:50%; display:flex; justify-content:center; align-items:center; font-size:0.7rem; font-weight:900; cursor:pointer;" onclick="currentDiaryImages.splice(${index}, 1); renderDiaryUploadPreview();">X</div>
+            </div>
+        `).join('');
+        if(currentDiaryImages.length < 5) { html += `<div class="scale-btn" onclick="document.getElementById('diary-file-input').click()" style="width: 80px; height: 80px; border: 2px dashed var(--ac-tan); border-radius: 14px; background: #F8F6F2; display: flex; justify-content: center; align-items: center; color: var(--ac-tan); font-size: 1.5rem; flex-shrink:0;">+</div>`; }
+        container.innerHTML = html;
+    }
+
+    function saveDiary() {
+        const id = document.getElementById('diary-edit-id').value; const date = document.getElementById('diary-date').value; const author = document.querySelector('.diary-author-opt.active').dataset.val; const content = document.getElementById('diary-content').value.trim();
+        if(!content && currentDiaryImages.length === 0) { alert('請填寫內容或上傳照片喔！'); return; }
+
+        if (id) {
+            const index = diaryData.findIndex(d => d.id == id);
+            if (index > -1) { diaryData[index] = { ...diaryData[index], date, author, content, images: [...currentDiaryImages] }; }
+        } else { diaryData.unshift({ id: Date.now(), date, author, content, images: [...currentDiaryImages] }); }
+        closeModal('modal-diary'); showToast(id ? '修改成功' : '日誌發布成功'); renderDiary();
+    }
+
+    // ================= 模組 5: 成員管理 (V10 全新開發) =================
+    let currentMemberImage = null;
+
+    function openMemberModal(id = null) {
+        playHaptic();
+        if (id) {
+            const member = membersData.find(m => m.id === id);
+            document.getElementById('member-item-id').value = member.id; document.getElementById('member-name').value = member.name; document.getElementById('member-aka').value = member.aka || ""; document.getElementById('member-quote').value = member.quote || ""; currentMemberImage = member.img || null; document.getElementById('modal-member-title').innerText = "編輯成員";
+        } else {
+            document.getElementById('member-item-id').value = ""; document.getElementById('member-name').value = ""; document.getElementById('member-aka').value = ""; document.getElementById('member-quote').value = ""; currentMemberImage = null; document.getElementById('modal-member-title').innerText = "新增成員";
+        }
+        renderMemberUploadPreview(); document.getElementById('modal-member-edit').style.display = 'flex';
+    }
+
+    function handleMemberPhotoUpload(event) {
+        const file = event.target.files[0];
+        if (file) { const reader = new FileReader(); reader.onload = function(e) { currentMemberImage = e.target.result; renderMemberUploadPreview(); }; reader.readAsDataURL(file); }
+    }
+
+    function renderMemberUploadPreview() {
+        const preview = document.getElementById('member-upload-preview');
+        if (currentMemberImage) { preview.innerHTML = `<img src="${currentMemberImage}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`; } 
+        else { preview.innerHTML = `<i class="fa-solid fa-camera" style="color:var(--ac-tan);"></i>`; }
+    }
+
+    function saveMember() {
+        const id = document.getElementById('member-item-id').value; const name = document.getElementById('member-name').value.trim(); const aka = document.getElementById('member-aka').value.trim(); const quote = document.getElementById('member-quote').value.trim();
+        if(!name) { alert("⚠️ 成員名稱為必填！"); return; }
+        if (id) { const index = membersData.findIndex(m => m.id == id); membersData[index] = { ...membersData[index], name, aka, quote, img: currentMemberImage }; } 
+        else { membersData.push({ id: Date.now(), name, aka, quote, img: currentMemberImage, fallback: '👤' }); }
+        closeModal('modal-member-edit'); showToast('儲存成功'); renderGlobalAvatars(); // 同步全域頭像
+    }
+
+    // ================= 初始化 =================
     window.onload = () => {
-        renderDateScroller();
-        updateWeather();
+        renderGlobalAvatars(); 
+        renderDateScroller(); 
         renderTimeline();
-        setTimeout(animateCountdown, 300); 
+        renderExpenses();
+        renderDiary();
+        renderVouchers();
+        setTimeout(triggerCountdownAnimation, 200); 
     };
 </script>
 
