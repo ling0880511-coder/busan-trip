@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>琳和貓的自由行 - 旅遊 V13 終極進化版</title>
+    <title>琳和貓的自由行 - 旅遊 V13 終極定案版</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
     <style>
@@ -17,9 +17,9 @@
             
             --mo-green: #78A083;       
             --mo-green-dark: #5A7E64;  
-            --mo-blue: #72B1D6;        /* 天藍色 Sky Blue */
+            --mo-blue: #72B1D6;        
             --mo-pink: #D4A5A5;        
-            --mo-pink-deep: #B87373;   
+            --mo-pink-deep: #C0584F;   
             --mo-purple: #B5A8B9;      
             --mo-orange: #D99C78;      
             
@@ -36,8 +36,8 @@
             --modal-dynamic-bg: #FFFFFF;
         }
 
-        /* V13 全域縮放微調與防溢出鎖定 */
-        html { font-size: 14.5px; } /* 整體字體微縮 */
+        /* V13: 全域 UI 縮放與防溢出優化 */
+        html { font-size: 13.5px; } /* 基準字體等比縮小 */
         * { box-sizing: border-box; font-family: 'Nunito', 'Noto Sans TC', sans-serif; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; scrollbar-width: none; -ms-overflow-style: none; word-wrap: break-word; }
         *::-webkit-scrollbar { display: none !important; }
         
@@ -48,7 +48,6 @@
             background-size: 24px 24px; display: flex; justify-content: center;
         }
 
-        /* 模擬 iPhone 尺寸置中 */
         .app-container {
             width: 100%; max-width: 430px; height: 100%; margin: 0 auto;
             position: relative; display: flex; flex-direction: column;
@@ -57,12 +56,12 @@
 
         /* ================= Header ================= */
         header {
-            padding: 22px 16px 12px 16px; display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 16px 12px 16px; display: flex; justify-content: space-between; align-items: center;
             background: rgba(244, 240, 234, 0.95); backdrop-filter: blur(12px); z-index: 50; flex-shrink: 0;
         }
         .header-title h1 { font-size: 1.5rem; font-weight: 900; color: var(--ac-brown); }
         .header-avatars { display: flex; gap: -8px; }
-        .avatar { width: 42px; height: 42px; border-radius: 50%; background: var(--ac-card); border: 3px solid #FFF; display: flex; justify-content: center; align-items: center; font-size: 1.3rem; margin-left: -10px; box-shadow: var(--shadow-soft); overflow: hidden;}
+        .avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--ac-card); border: 3px solid #FFF; display: flex; justify-content: center; align-items: center; font-size: 1.3rem; margin-left: -10px; box-shadow: var(--shadow-soft); overflow: hidden;}
         .avatar img { width: 100%; height: 100%; object-fit: cover; }
 
         /* ================= 內容區 ================= */
@@ -82,15 +81,26 @@
         .btn-add-yellow-v10 { background: var(--mo-yellow-muted); color: var(--ac-brown); padding: 10px 22px; font-size: 1rem; border-radius: 30px; border: 3px solid #FFF; box-shadow: var(--shadow-btn-yellow); text-shadow: none; }
         .btn-add-yellow-v10:active { transform: translateY(5px) scale(0.96); box-shadow: 0 0px 0px transparent; }
 
-        .btn-add-blue-v11 { background: var(--mo-blue); color: #FFF; padding: 10px 22px; font-size: 1rem; border-radius: 30px; border: 3px solid #FFF; box-shadow: var(--shadow-btn-blue); text-shadow: none; }
+        /* V13: 日誌按鈕深咖字體與 Gap */
+        .btn-add-blue-v11 { background: var(--mo-blue); color: var(--ac-brown); padding: 10px 22px; font-size: 1rem; border-radius: 30px; border: 3px solid #FFF; box-shadow: var(--shadow-btn-blue); display: inline-flex; align-items: center; gap: 6px; }
         .btn-add-blue-v11:active { transform: translateY(5px) scale(0.96); box-shadow: 0 0px 0px transparent; }
 
-        /* V13 卡片內距微縮調整 */
-        .ac-card { background: var(--ac-card); border-radius: 24px; padding: 16px; margin-bottom: 16px; box-shadow: var(--shadow-soft); border: 2px solid transparent; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
-        .section-title { font-size: 1.25rem; font-weight: 900; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; color: var(--ac-brown); }
+        .btn-mo-teal { background: var(--mo-teal); color: #FFF; border: 3px solid #FFF; box-shadow: 0 5px 0 var(--mo-teal-dark); border-radius: 20px; padding: 12px; font-size: 1rem; width: 100%;}
+        .btn-mo-teal:active { transform: translateY(5px) scale(0.96); box-shadow: 0 0px 0px transparent; }
+        .btn-edit-trigger.is-editing { background: var(--mo-green) !important; color: #FFF !important; box-shadow: 0 5px 0 var(--mo-green-dark) !important; border-color: #FFF !important; }
+
+        /* V13 卡片內外距微縮調整 */
+        .ac-card { background: var(--ac-card); border-radius: 24px; padding: 14px; margin-bottom: 14px; box-shadow: var(--shadow-soft); border: 2px solid transparent; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .section-title { font-size: 1.2rem; font-weight: 900; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; color: var(--ac-brown); }
 
         .form-label { display: block; font-size: 0.85rem; font-weight: 900; margin-bottom: 8px; color: var(--ac-brown-light); }
-        .form-control { width: 100%; padding: 14px 15px; border-radius: 16px; border: 2px solid var(--ac-tan); font-size: 1rem; font-weight: 800; outline: none; background: #FFF; margin-bottom: 15px; color: var(--ac-brown); transition: 0.2s;}
+        
+        /* V13: 表單輸入框強制寬度對齊與防止溢出 */
+        .form-control, input[type="date"].form-control, input[type="time"].form-control { 
+            width: 100%; max-width: 100%; padding: 14px 15px; border-radius: 16px; border: 2px solid var(--ac-tan); 
+            font-size: 1rem; font-weight: 800; outline: none; background: #FFF; margin-bottom: 15px; color: var(--ac-brown); 
+            transition: 0.2s; box-sizing: border-box; -webkit-appearance: none;
+        }
         .form-control:focus { border-color: var(--mo-green); box-shadow: 0 0 0 3px rgba(120, 160, 131, 0.2); }
         .form-control:disabled { background: #F8F6F2; color: var(--ac-brown-light); font-weight: 900;}
         .form-control::placeholder { color: #C4C0B8; font-weight: 600; } 
@@ -147,25 +157,22 @@
         .map-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.3); border-radius: 12px; display: flex; justify-content: center; align-items: center; color: #FFF; font-weight: 900; font-size: 1.1rem; opacity: 0; transition: 0.2s;}
         .map-thumbnail:hover .map-overlay { opacity: 1; }
 
-        /* ================= 模組 2: 預定票務 (V13 色塊化修復與按鈕天藍色) ================= */
+        /* ================= 模組 2: 預定票務 (鎖定) ================= */
         .editable-mode .editable-field { border-bottom: 2px dashed var(--mo-yellow); padding: 0 4px; border-radius: 4px; cursor: text; transition: 0.2s;}
         .editable-mode .editable-field:focus { background: rgba(255, 208, 0, 0.2); outline: none;}
 
-        /* 捨棄漸層，純色區塊 */
         .flight-card { background: #FFF; border-radius: 24px; padding: 0; overflow: hidden; border: 2px solid var(--ac-tan); box-shadow: var(--shadow-soft); margin-bottom: 20px; position: relative; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);}
-        .fc-top-bg { background: var(--mo-green); height: 50px; width: 100%; position: absolute; top: 0; left: 0; z-index: 0; }
+        .fc-top-bg { background: var(--mo-green); height: 50px; width: 100%; position: absolute; top: 0; left: 0; z-index: 0; border-bottom: 2px dashed rgba(255,255,255,0.3);}
         .fc-content { position: relative; z-index: 1; padding: 15px 16px 16px 16px; }
         
         .fc-header { display: flex; justify-content: space-between; align-items: center; color: #FFF; font-weight: 900; font-size: 1rem; margin-bottom: 20px;}
         .fc-badge { background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 8px; color: #FFF; font-size: 0.75rem;}
         
-        /* 標籤跳色放大與圓角陰影 */
-        .fc-route-box { background: #F8F9FA; border-radius: 24px; padding: 25px 16px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.02); display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border: 1px solid var(--ac-tan);}
+        .fc-route-box { background: #F8F9FA; border-radius: 24px; padding: 25px 20px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.02); display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border: 1px solid var(--ac-tan);}
         .fc-route-point { text-align: center; }
-        .fc-route-point h2 { margin: 0; font-size: 2.5rem; color: var(--ac-brown); letter-spacing: 2px; }
-        .fc-route-point .time { font-weight: 900; font-size: 1.1rem; margin: 5px 0; color: var(--ac-brown);}
-        
-        .fc-route-tag { display: inline-block; color: white; padding: 6px 18px; border-radius: 20px; font-size: 0.95rem; font-weight: 900; box-shadow: var(--shadow-soft);}
+        .fc-route-point h2 { margin: 0; font-size: 2.8rem; color: var(--ac-brown); letter-spacing: 2px; }
+        .fc-route-point .time { font-weight: 900; font-size: 1.2rem; margin: 5px 0; color: var(--ac-brown);}
+        .fc-route-tag { display: inline-block; color: white; padding: 6px 16px; border-radius: 20px; font-size: 0.9rem; font-weight: 900; box-shadow: var(--shadow-soft);}
         .tag-tpe { background: var(--mo-pink); }
         .tag-pus { background: var(--mo-purple); }
         
@@ -177,10 +184,6 @@
         .fc-grid-item { border: 2px solid #F4F0EA; border-radius: 16px; padding: 12px; text-align: center; background: #FFF;}
         .fc-grid-title { font-size: 0.7rem; color: var(--ac-brown-light); font-weight: 900; margin-bottom: 5px;}
         .fc-grid-val { font-size: 0.9rem; font-weight: 900; color: var(--ac-brown);}
-
-        /* 預訂編輯按鈕強制天藍色 Sky Blue */
-        .btn-edit-blue { background: var(--mo-blue); color: #FFF; border: 3px solid #FFF; box-shadow: 0 4px 0px #5B8BAA; border-radius: 20px; padding: 12px; font-size: 1rem; width: 100%;}
-        .btn-edit-blue:active { transform: translateY(4px) scale(0.96); box-shadow: 0 0px 0px transparent; }
 
         .hotel-card2 { background: #FFF; border-radius: 24px; padding: 0; overflow: hidden; border: 2px solid var(--ac-tan); box-shadow: var(--shadow-soft); margin-bottom: 20px; position: relative; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); cursor: pointer;}
         .hc-img-wrapper { position: relative; width: 100%; height: 200px; }
@@ -206,7 +209,7 @@
         .hc-price-split { font-size: 0.85rem; font-weight: 800; color: var(--mo-pink); margin-bottom: 5px;}
         .hc-price-night { display: inline-block; background: #F1F4F6; color: var(--mo-blue); padding: 4px 10px; border-radius: 8px; font-size: 0.85rem; font-weight: 900;}
 
-        /* ================= 模組 3: 帳務系統 (V13 CSS 防溢出與排版修復) ================= */
+        /* ================= 模組 3: 帳務系統 (V13 UI 統一) ================= */
         .exchange-box { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; background: linear-gradient(135deg, #E6EEF2 0%, #DCE7ED 100%); padding: 15px; border-radius: 24px; box-shadow: inset 0 2px 5px rgba(255,255,255,0.5), 0 8px 15px rgba(114, 177, 214, 0.2);}
         .exc-input-group { flex: 1; background: #FFF; border: 2px solid transparent; border-radius: 16px; padding: 15px; text-align: center; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.03);}
         .exc-input-group:focus-within { border-color: var(--mo-yellow); transform: scale(1.02); box-shadow: 0 8px 15px rgba(255, 208, 0, 0.2);}
@@ -222,7 +225,6 @@
         .cur-tab { flex: 1; text-align: center; padding: 12px; border: 2px solid var(--ac-tan); border-radius: 16px; font-weight: 900; cursor: pointer; transition: 0.2s; color: var(--ac-brown-light);}
         .cur-tab.active { border-color: var(--mo-yellow-muted); color: var(--ac-brown); background: rgba(240, 213, 130, 0.3); transform: scale(1.05);}
 
-        /* 選擇群組：增加換行防溢出 */
         .ava-select-group { display: flex; gap: 12px; margin-bottom: 15px; flex-wrap: wrap;}
         .ava-opt { 
             width: 48px; height: 48px; border-radius: 50%; display: flex; justify-content: center; align-items: center; flex-direction: column;
@@ -232,9 +234,9 @@
         .ava-opt.active { opacity: 1; filter: grayscale(0%); border-color: var(--mo-blue); transform: scale(1.1); box-shadow: 0 4px 10px rgba(114, 177, 214, 0.3); }
         .ava-name { position: absolute; bottom: -18px; font-size: 0.7rem; font-weight: 900; color: var(--ac-brown); }
 
-        /* V13 支付方式 UI：完全對齊幣別設計，防溢出 */
+        /* V13: 支付方式寬度 Auto 對齊幣別，加入換行防溢出 */
         .method-tabs { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;}
-        .m-tab { flex: 1; min-width: 70px; text-align: center; padding: 12px 10px; border: 2px solid var(--ac-tan); border-radius: 14px; font-weight: 900; cursor: pointer; transition: 0.2s; color: var(--ac-brown-light); font-size: 0.85rem;}
+        .m-tab { padding: 10px 15px; width: auto; display: inline-flex; justify-content: center; align-items: center; border: 2px solid var(--ac-tan); border-radius: 14px; font-weight: 900; cursor: pointer; transition: 0.2s; color: var(--ac-brown-light); font-size: 0.85rem;}
         .m-tab.active { border-color: var(--mo-yellow-muted); color: var(--ac-brown) !important; background: rgba(240, 213, 130, 0.3); transform: scale(1.05);}
 
         .settlement-card { background: #FCFBFA; border: 2px dashed #8B5A5A; border-radius: 20px; padding: 15px; margin-bottom: 15px; display: none; animation: fadeIn 0.3s;}
@@ -249,7 +251,6 @@
         
         .filter-tags-container { display: flex; background: #F8F6F2; border-radius: 30px; padding: 4px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid var(--ac-tan);}
         .f-tag-pill { flex: 1; text-align: center; padding: 10px 0; border-radius: 26px; font-weight: 900; font-size: 0.9rem; cursor: pointer; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); color: var(--ac-brown-light); }
-        /* V13: 強制藍底白字 */
         .f-tag-pill.active { background-color: var(--mo-blue) !important; color: #FFFFFF !important; box-shadow: 0 4px 10px rgba(114, 177, 214, 0.4); transform: scale(1.02); }
 
         .bill-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 2px dashed var(--ac-tan); cursor: pointer; transition: 0.2s;}
@@ -259,7 +260,7 @@
         .bill-date { font-size: 0.75rem; background: var(--mo-blue); color: #FFF; padding: 2px 8px; border-radius: 8px; font-weight: 900; display: inline-block; margin-bottom: 4px;}
         .date-divider { display: inline-block; background: #EAF0F4; color: var(--mo-blue); border: 2px solid #FFF; box-shadow: var(--shadow-soft); padding: 4px 12px; border-radius: 20px; font-weight: 900; margin: 15px 0 5px 0; font-size: 0.8rem;}
 
-        /* ================= 模組 4: 日誌 (鎖定) ================= */
+        /* ================= 模組 4: 日誌 (V13 排版對齊) ================= */
         .diary-date-badge { display: inline-block; background: #EAF0F4; color: var(--mo-blue); border: 2px solid #FFF; box-shadow: var(--shadow-soft); padding: 6px 16px; border-radius: 20px; font-weight: 900; margin: 15px 0 10px 0; font-size: 0.85rem;}
         .diary-card { background: var(--ac-card); border-radius: 24px; padding: 20px; margin-bottom: 15px; box-shadow: var(--shadow-soft); border: 2px solid transparent;}
         .diary-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px;}
@@ -284,7 +285,7 @@
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(92, 84, 77, 0.6); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 1000;}
         .ac-modal { 
             background: var(--modal-dynamic-bg); 
-            width: 90%; max-width: 360px; border-radius: 28px; padding: 25px; 
+            width: 90%; max-width: 360px; border-radius: 28px; padding: 20px; 
             border: 4px solid var(--ac-brown);
             box-shadow: 0 15px 0px rgba(0,0,0,0.1), inset 0 0 0 3px rgba(255,255,255,0.5); 
             animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
@@ -309,7 +310,7 @@
 
         .delete-icon-bg { width: 60px; height: 60px; background: var(--mo-pink); border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 15px auto; font-size: 1.8rem; color: #FFF; border: 3px solid #FFF; box-shadow: var(--shadow-soft);}
 
-        /* 住宿詳細資訊 Modal (V12 全域置中) */
+        /* 住宿詳細資訊 Modal (V13 全域置中) */
         #modal-hotel-detail-content {
             background: #FFF; width: 90%; max-width: 360px; height: fit-content; max-height: 90vh; border-radius: 28px; padding: 0; 
             border: 4px solid var(--ac-brown); box-shadow: 0 15px 0px rgba(0,0,0,0.1), inset 0 0 0 3px rgba(255,255,255,0.5); 
@@ -319,12 +320,12 @@
         .hd-close { position: absolute; top: 15px; right: 15px; width: 32px; height: 32px; background: rgba(0,0,0,0.5); color: #FFF; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1rem; z-index: 10; cursor: pointer; backdrop-filter: blur(4px); transition: 0.2s;}
         .hd-close:active { transform: scale(0.9); }
 
-        /* V13: 頭像裁切器 UI */
-        .crop-container { width: 220px; height: 220px; margin: 0 auto 15px auto; position: relative; border-radius: 50%; overflow: hidden; border: 4px dashed var(--ac-tan); background: #F8F6F2; box-shadow: inset 0 4px 10px rgba(0,0,0,0.1);}
+        /* V13: 頭像裁切器 UI (防溢出) */
+        .crop-container { width: 200px; height: 200px; margin: 0 auto 15px auto; position: relative; border-radius: 50%; overflow: hidden; border: 4px dashed var(--ac-tan); background: #F8F6F2; box-shadow: inset 0 4px 10px rgba(0,0,0,0.1);}
         .crop-img { position: absolute; top: 0; left: 0; transform-origin: top left; cursor: move; }
         .crop-mask { position: absolute; inset: 0; border: 20px solid rgba(255,255,255,0.6); border-radius: 50%; pointer-events: none; z-index: 5;}
 
-        /* 動態 Toast (停留縮短至 1500ms) */
+        /* 動態 Toast (停留縮短至 1200ms) */
         .toast {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9);
             background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);
@@ -360,7 +361,8 @@
 <div class="app-container">
     <header>
         <div class="header-title"><h1>琳和貓的自由行</h1></div>
-        <div class="header-avatars" id="header-avatars-container"></div>
+        <div class="header-avatars" id="header-avatars-container">
+            </div>
     </header>
 
     <main id="main-scroll">
@@ -420,7 +422,7 @@
                             <div class="fc-grid-item"><div class="fc-grid-title">AIRCRAFT</div><div class="fc-grid-val"><i class="fa-solid fa-plane" style="color:var(--mo-pink);"></i> <span class="editable-field">A321neo</span></div></div>
                             <div class="fc-grid-item"><div class="fc-grid-title">PRICE (One Way)</div><div class="fc-grid-val">NT$ <span class="editable-field">4,432</span></div></div>
                         </div>
-                        <button class="btn-q btn-edit-blue scale-btn btn-edit-trigger" onclick="requirePin('flight-outbound'); event.stopPropagation();"><i class="fa-solid fa-pen"></i> 編輯去程航班</button>
+                        <button class="btn-q btn-mo-teal scale-btn btn-edit-trigger" onclick="requirePin('flight-outbound'); event.stopPropagation();"><i class="fa-solid fa-pen"></i> 編輯去程航班</button>
                     </div>
                 </div>
 
@@ -449,7 +451,7 @@
                             <div class="fc-grid-item"><div class="fc-grid-title">AIRCRAFT</div><div class="fc-grid-val"><i class="fa-solid fa-plane" style="color:var(--mo-pink);"></i> <span class="editable-field">A321neo</span></div></div>
                             <div class="fc-grid-item"><div class="fc-grid-title">PRICE (One Way)</div><div class="fc-grid-val">NT$ <span class="editable-field">4,431</span></div></div>
                         </div>
-                        <button class="btn-q btn-edit-blue scale-btn btn-edit-trigger" onclick="requirePin('flight-inbound'); event.stopPropagation();"><i class="fa-solid fa-pen"></i> 編輯回程航班</button>
+                        <button class="btn-q btn-mo-teal scale-btn btn-edit-trigger" onclick="requirePin('flight-inbound'); event.stopPropagation();"><i class="fa-solid fa-pen"></i> 編輯回程航班</button>
                     </div>
                 </div>
             </div>
@@ -457,7 +459,7 @@
             <div id="booking-hotel" style="display:none;">
                 <div class="hotel-card2 glowing-hover scale-btn" id="hotel-stay" onclick="openHotelDetailModal()">
                     <div class="hc-img-wrapper">
-                        <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80" alt="Airbnb Pop">
+                        <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80" alt="Hotel Cover">
                         <div class="hc-tag-loc"><i class="fa-solid fa-location-dot"></i> <span class="editable-field">釜山 西面</span></div>
                     </div>
                     <div class="hc-body">
@@ -486,14 +488,16 @@
                                 <div class="hc-price-night">每人每晚 NT$ <span class="editable-field">1,615</span></div>
                             </div>
                         </div>
-                        <button class="btn-q btn-edit-blue scale-btn btn-edit-trigger" style="margin-top:15px;" onclick="requirePin('hotel-stay'); event.stopPropagation();"><i class="fa-solid fa-pen"></i> 編輯住宿資訊</button>
+                        <button class="btn-q btn-mo-teal scale-btn btn-edit-trigger" style="margin-top: 15px;" onclick="requirePin('hotel-stay'); event.stopPropagation();"><i class="fa-solid fa-pen"></i> 編輯住宿資訊</button>
                     </div>
                 </div>
             </div>
             
             <div id="booking-voucher" style="display:none;">
                 <div class="section-title"><span>所有票卷</span><button class="btn-q btn-add-yellow-v10 scale-btn" onclick="playHaptic(); openVoucherModal()">+ 新增</button></div>
-                <div id="voucher-container"></div>
+                <div id="voucher-container">
+                    <div class="ac-card" style="text-align:center; padding: 40px; font-weight:900; color:var(--ac-brown-light);">🎫 尚無票卷資料</div>
+                </div>
             </div>
         </div>
 
@@ -506,29 +510,29 @@
             
             <div id="acc-calc" style="display: none;">
                 <div class="ac-card">
-                    <h3 style="margin-top:0; color: var(--ac-brown); text-align: center; margin-bottom:20px;" class="acc-title-brown">💱 即時匯率換算</h3>
+                    <h3 style="margin-top:0; color: var(--ac-brown); text-align: center; margin-bottom:20px;">💱 即時匯率換算</h3>
                     <div style="font-size:0.8rem; font-weight:900; color:var(--ac-brown-light); text-align:center; margin-bottom:15px;">預設匯率 1 KRW = 0.023 TWD</div>
                     
-                    <div class="exchange-box scale-btn" onclick="playHaptic()">
-                        <div class="exc-input-group">
-                            <div class="exc-currency">韓元 (KRW)</div>
-                            <input type="number" id="exc-krw" placeholder="0" oninput="calcExchange('krw')" onfocus="this.value=''; calcExchange('krw')">
+                    <div class="exchange-box scale-btn" onclick="playHaptic()" style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px; background: linear-gradient(135deg, #E8F4FA 0%, #D1E5EE 100%); padding: 15px; border-radius: 24px; box-shadow: inset 0 2px 5px rgba(255,255,255,0.5), 0 8px 15px rgba(114, 177, 214, 0.2);">
+                        <div class="exc-input-group" style="flex: 1; background: #FFF; border: 2px solid transparent; border-radius: 16px; padding: 15px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.03);">
+                            <div class="exc-currency" style="font-size: 0.8rem; font-weight: 900; color: var(--mo-blue); margin-bottom: 5px;">韓元 (KRW)</div>
+                            <input type="number" id="exc-krw" placeholder="0" oninput="calcExchange('krw')" onfocus="this.value=''; calcExchange('krw')" style="width: 100%; border: none; background: transparent; text-align: center; font-size: 1.8rem; font-weight: 900; color: var(--ac-brown); outline: none;">
                         </div>
-                        <div class="exc-icon"><i class="fa-solid fa-right-left"></i></div>
-                        <div class="exc-input-group">
-                            <div class="exc-currency">台幣 (TWD)</div>
-                            <input type="number" id="exc-twd" placeholder="0" oninput="calcExchange('twd')" onfocus="this.value=''; calcExchange('twd')">
+                        <div class="exc-icon" style="font-size: 1.5rem; color: var(--mo-blue);"><i class="fa-solid fa-right-left"></i></div>
+                        <div class="exc-input-group" style="flex: 1; background: #FFF; border: 2px solid transparent; border-radius: 16px; padding: 15px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.03);">
+                            <div class="exc-currency" style="font-size: 0.8rem; font-weight: 900; color: var(--mo-blue); margin-bottom: 5px;">台幣 (TWD)</div>
+                            <input type="number" id="exc-twd" placeholder="0" oninput="calcExchange('twd')" onfocus="this.value=''; calcExchange('twd')" style="width: 100%; border: none; background: transparent; text-align: center; font-size: 1.8rem; font-weight: 900; color: var(--ac-brown); outline: none;">
                         </div>
                     </div>
 
                     <div style="margin-top: 30px;">
                         <h4 style="font-size:0.9rem; color:var(--ac-brown-light); margin-bottom:10px;"><i class="fa-solid fa-bolt"></i> 常用面額速查</h4>
-                        <div class="quick-conv-board">
-                            <div class="qc-item scale-btn" onclick="playHaptic(); document.getElementById('exc-krw').value=1000; calcExchange('krw');">₩ 1,000 <span>NT$ 23</span></div>
-                            <div class="qc-item scale-btn" onclick="playHaptic(); document.getElementById('exc-krw').value=5000; calcExchange('krw');">₩ 5,000 <span>NT$ 115</span></div>
-                            <div class="qc-item scale-btn" onclick="playHaptic(); document.getElementById('exc-krw').value=10000; calcExchange('krw');">₩ 10,000 <span>NT$ 230</span></div>
-                            <div class="qc-item scale-btn" onclick="playHaptic(); document.getElementById('exc-krw').value=12500; calcExchange('krw');">₩ 12,500 <span>NT$ 288</span></div>
-                            <div class="qc-item scale-btn" onclick="playHaptic(); document.getElementById('exc-krw').value=50000; calcExchange('krw');" style="grid-column: span 2; text-align:center; display:block;">₩ 50,000 <span style="margin-left:10px;">NT$ 1,150</span></div>
+                        <div class="quick-conv-board" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div class="qc-item scale-btn" onclick="playHaptic(); document.getElementById('exc-krw').value=1000; calcExchange('krw');" style="background: #FFF; border: 2px solid var(--ac-tan); border-radius: 12px; padding: 10px; display: flex; justify-content: space-between; font-weight: 900; color: var(--ac-brown);">₩ 1,000 <span style="color:var(--ac-brown-light); font-size:0.85rem;">NT$ 23</span></div>
+                            <div class="qc-item scale-btn" onclick="playHaptic(); document.getElementById('exc-krw').value=5000; calcExchange('krw');" style="background: #FFF; border: 2px solid var(--ac-tan); border-radius: 12px; padding: 10px; display: flex; justify-content: space-between; font-weight: 900; color: var(--ac-brown);">₩ 5,000 <span style="color:var(--ac-brown-light); font-size:0.85rem;">NT$ 115</span></div>
+                            <div class="qc-item scale-btn" onclick="playHaptic(); document.getElementById('exc-krw').value=10000; calcExchange('krw');" style="background: #FFF; border: 2px solid var(--ac-tan); border-radius: 12px; padding: 10px; display: flex; justify-content: space-between; font-weight: 900; color: var(--ac-brown);">₩ 10,000 <span style="color:var(--ac-brown-light); font-size:0.85rem;">NT$ 230</span></div>
+                            <div class="qc-item scale-btn" onclick="playHaptic(); document.getElementById('exc-krw').value=12500; calcExchange('krw');" style="background: #FFF; border: 2px solid var(--ac-tan); border-radius: 12px; padding: 10px; display: flex; justify-content: space-between; font-weight: 900; color: var(--ac-brown);">₩ 12,500 <span style="color:var(--ac-brown-light); font-size:0.85rem;">NT$ 288</span></div>
+                            <div class="qc-item scale-btn" onclick="playHaptic(); document.getElementById('exc-krw').value=50000; calcExchange('krw');" style="grid-column: span 2; text-align:center; display:block; background: #FFF; border: 2px solid var(--ac-tan); border-radius: 12px; padding: 10px; font-weight: 900; color: var(--ac-brown);">₩ 50,000 <span style="margin-left:10px; color:var(--ac-brown-light); font-size:0.85rem;">NT$ 1,150</span></div>
                         </div>
                     </div>
                 </div>
@@ -537,47 +541,72 @@
             <div id="acc-record">
                 <div class="ac-card">
                     <h3 style="margin-top:0; color: var(--ac-brown); text-align: center; margin-bottom: 20px;">💰 記帳輸入</h3>
-                    <label class="form-label">日期</label><input type="date" class="form-control" id="exp-date" value="2026-06-06">
+                    
+                    <label class="form-label">日期</label>
+                    <input type="date" class="form-control" id="exp-date" value="2026-06-06">
+
                     <label class="form-label">幣別</label>
                     <div class="currency-tabs" style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
                         <div class="cur-tab active scale-btn" onclick="setExpCurrency('KRW', this)">KRW</div>
                         <div class="cur-tab scale-btn" onclick="setExpCurrency('TWD', this)">TWD</div>
                         <div class="cur-tab scale-btn" onclick="setExpCurrency('USD', this)">USD</div>
                     </div>
+
                     <div style="display:flex; gap:10px;">
-                        <div style="flex:1;"><label class="form-label"><span style="color:var(--mo-pink);">*</span> 金額</label><input type="number" class="form-control" id="exp-amount" placeholder="0" oninput="calcApproxTwd()" style="font-size:1.2rem; font-weight:900;"></div>
-                        <div style="flex:1;"><label class="form-label">約合台幣</label><input type="text" class="form-control" id="exp-approx-twd" value="0" disabled></div>
+                        <div style="flex:1; min-width:0;">
+                            <label class="form-label"><span style="color:var(--mo-pink);">*</span> 金額</label>
+                            <input type="number" class="form-control" id="exp-amount" placeholder="0" oninput="calcApproxTwd()" style="font-size:1.2rem; font-weight:900;">
+                        </div>
+                        <div style="flex:1; min-width:0;">
+                            <label class="form-label">約合台幣</label>
+                            <input type="text" class="form-control" id="exp-approx-twd" value="0" disabled>
+                        </div>
                     </div>
+
                     <label class="form-label">支付方式</label>
-                    <div class="method-tabs">
+                    <div class="method-tabs" style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
                         <div class="m-tab active scale-btn" onclick="selectMethod(this)">現金</div>
                         <div class="m-tab scale-btn" onclick="selectMethod(this)">信用卡</div>
-                        <div class="m-tab scale-btn" onclick="selectMethod(this)">WOWPASS</div>
-                        <div class="m-tab scale-btn" onclick="selectMethod(this)">行動支付</div>
+                        <div class="m-tab scale-btn" onclick="selectMethod(this)">T-money</div>
                     </div>
-                    <label class="form-label">地點 (選填)</label><input type="text" class="form-control" id="exp-loc" placeholder="📍 例如：便利商店">
-                    <label class="form-label"><span style="color:var(--mo-pink);">*</span> 消費項目</label><input type="text" class="form-control" id="exp-title" placeholder="例如：午餐">
+
+                    <label class="form-label">地點 (選填)</label>
+                    <input type="text" class="form-control" id="exp-loc" placeholder="📍 例如：便利商店">
+
+                    <label class="form-label"><span style="color:var(--mo-pink);">*</span> 消費項目</label>
+                    <input type="text" class="form-control" id="exp-title" placeholder="例如：午餐">
 
                     <div style="background: #FCFBFA; padding: 15px; border-radius: 16px; margin-top: 10px; border: 2px dashed var(--ac-tan);">
                         <label class="form-label"><span style="color:var(--mo-pink);">*</span> 誰付款的？ (單選)</label>
-                        <div class="ava-select-group" id="payer-group-container"></div>
-                        <label class="form-label" style="margin-top:25px;">誰要分攤？ (不選視為個人帳)</label>
-                        <div class="ava-select-group" id="split-group-container"></div>
+                        <div class="ava-select-group" id="payer-group-container" style="display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap;"></div>
+
+                        <label class="form-label" style="margin-top:15px;">誰要分攤？ (不選視為個人帳)</label>
+                        <div class="ava-select-group" id="split-group-container" style="display: flex; gap: 15px; flex-wrap: wrap;"></div>
                     </div>
-                    <button class="btn-q btn-add-blue-v11 scale-btn" style="width: 100%; margin-top: 20px;" onclick="saveExpense()">✔ 記一筆</button>
+
+                    <button class="btn-q btn-add-blue-v11 scale-btn" style="width: 100%; margin-top: 20px; justify-content: center;" onclick="saveExpense()">✔ 記一筆</button>
                 </div>
             </div>
 
             <div id="acc-detail" style="display: none;">
-                <div id="settlement-card" class="settlement-card">
-                    <div class="settlement-title"><i class="fa-solid fa-scale-balanced"></i> 內部結算結果</div>
-                    <div id="settlement-content"></div>
+                <div id="settlement-card" style="background: #FDFBF8; border: 2px dashed #8B5A5A; border-radius: 20px; padding: 15px; margin-bottom: 15px; display: none; animation: fadeIn 0.3s;">
+                    <div style="font-weight: 900; color: #8B5A5A; font-size: 0.9rem; margin-bottom: 10px; display: flex; align-items: center; gap: 5px;"><i class="fa-solid fa-scale-balanced"></i> 內部結算結果</div>
+                    <div id="settlement-content" style="color: #8B5A5A;"></div>
                 </div>
 
                 <div class="ac-card acc-total-card">
                     <div class="title"><span id="detail-filter-name" class="highlight-name">全體</span> 的支出 (TWD)</div>
                     <div id="detail-total-amount" class="amount">NT$ 0</div>
-                    <div style="font-size:0.8rem; color:#A8904D; font-weight:900; background:rgba(255,255,255,0.8); padding:4px 10px; border-radius:10px; display:inline-block;">預設匯率 1 : 0.023</div>
+                    <div style="background: rgba(255,255,255,0.3); border-radius: 16px; padding: 12px; display: flex; text-align: left; gap: 15px;">
+                        <div style="flex:1; border-right: 1px solid rgba(0,0,0,0.1);">
+                            <div style="font-size:0.75rem; color:var(--ac-brown); font-weight:800; opacity:0.8;">韓元支出</div>
+                            <div style="font-size:1.1rem; font-weight:900; color:var(--ac-brown);" id="detail-total-krw">₩ 0</div>
+                        </div>
+                        <div style="flex:1;">
+                            <div style="font-size:0.75rem; color:var(--ac-brown); font-weight:800; opacity:0.8;">匯率 (預設)</div>
+                            <div style="font-size:1.1rem; font-weight:900; color:var(--ac-brown);">1 : 0.023</div>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="filter-tags-container" id="expense-filter-container"></div>
@@ -587,21 +616,31 @@
                     <div id="detail-day-subtotal">本日小計: NT$ 0</div>
                 </div>
 
-                <div class="ac-card" style="padding: 10px 16px;" id="expense-list-container"></div>
+                <div class="ac-card" style="padding: 10px 16px;" id="expense-list-container">
+                    </div>
             </div>
         </div>
 
         <div id="page-diary" class="page">
-            <div class="section-title"><span>旅行日誌</span><button class="btn-q btn-add-blue-v11 scale-btn" onclick="playHaptic(); openDiaryModal()"><i class="fa-solid fa-pen-nib"></i> 寫日誌</button></div>
-            <div style="font-size:0.85rem; color:var(--ac-brown-light); font-weight:800; margin-top:-10px; margin-bottom:20px;">紀錄旅途中的每一個精彩瞬間</div>
+            <div class="section-title" style="margin-bottom: 20px;">
+                <div>
+                    <div>旅行日誌</div>
+                    <div style="font-size:0.75rem; color:var(--ac-brown-light); font-weight:800; margin-top:2px;">紀錄旅途中的每一個精彩瞬間</div>
+                </div>
+                <button class="btn-q btn-add-blue-v11 scale-btn" onclick="playHaptic(); openDiaryModal()"><i class="fa-solid fa-pen-nib"></i> 寫日誌</button>
+            </div>
             <div id="diary-container"></div>
         </div>
         
         <div id="page-member" class="page">
             <div class="section-title">
-                <div><div>快樂成員</div><div style="font-size:0.75rem; color:var(--ac-brown-light); font-weight:800; margin-top:2px;">說好不吵架，吵架的請吃一頓飯!</div></div>
+                <div>
+                    <div>快樂成員</div>
+                    <div style="font-size:0.75rem; color:var(--ac-brown-light); font-weight:800; margin-top:2px;">說好不吵架，吵架的請吃一頓飯!</div>
+                </div>
                 <button class="btn-q btn-add-yellow-v10 scale-btn" onclick="playHaptic(); openMemberModal()">+ 新增成員</button>
             </div>
+            
             <div id="member-container"></div>
         </div>
     </main>
@@ -621,7 +660,7 @@
     </div>
 
     <div class="modal-overlay" id="modal-hotel-detail" onclick="if(event.target === this) closeModal('modal-hotel-detail')">
-        <div class="ac-modal" id="modal-hotel-detail-content" style="padding: 0; display: flex; flex-direction: column;">
+        <div class="ac-modal" id="modal-hotel-detail-content">
             <div class="hd-close scale-btn" onclick="playHaptic(); closeModal('modal-hotel-detail')"><i class="fa-solid fa-xmark"></i></div>
             
             <div style="display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; width: 100%; height: 220px; border-radius: 24px 24px 0 0; position: relative; flex-shrink: 0;">
@@ -680,17 +719,22 @@
         <div class="ac-modal" id="modal-voucher-content-box">
             <h2 style="margin-top:0; margin-bottom: 20px; text-align: center; color: var(--ac-brown); font-weight: 900;" id="modal-voucher-title">新增票卷</h2>
             <input type="hidden" id="voucher-item-id">
+            
             <label class="form-label">票卷名稱 <span style="color:var(--mo-pink);">*</span></label>
             <input type="text" class="form-control" id="voucher-title" placeholder="例如：釜山通行證 Visit Busan Pass">
+            
             <div style="display:flex; gap:10px;">
-                <div style="flex:1;"><label class="form-label">使用日期</label><input type="date" class="form-control" id="voucher-date"></div>
-                <div style="flex:1;"><label class="form-label">有效期限</label><input type="date" class="form-control" id="voucher-expire"></div>
+                <div style="flex:1; min-width:0;"><label class="form-label">使用日期</label><input type="date" class="form-control" id="voucher-date"></div>
+                <div style="flex:1; min-width:0;"><label class="form-label">有效期限</label><input type="date" class="form-control" id="voucher-expire"></div>
             </div>
+            
             <label class="form-label">票卷代碼 / 備註</label>
             <input type="text" class="form-control" id="voucher-code" placeholder="輸入 QR Code 編號或取票備註">
+            
             <label class="form-label">上傳票卷截圖</label>
             <div style="display:flex; gap:10px; overflow-x:auto; scrollbar-width:none; padding-bottom:5px;" id="voucher-upload-preview"></div>
             <input type="file" id="voucher-file-input" accept="image/*" style="display:none;" onchange="handleVoucherPhotoUpload(event)">
+
             <div style="display: flex; gap: 15px; margin-top: 20px;">
                 <button class="btn-q modal-btn modal-btn-cancel scale-btn" onclick="playHaptic(); closeModal('modal-voucher')">取消</button>
                 <button class="btn-q modal-btn modal-btn-save scale-btn" onclick="playHaptic(); saveVoucher()">✔ 儲存</button>
@@ -702,6 +746,7 @@
         <div class="ac-modal" style="background: #FFF;">
             <h2 style="margin-top:0; margin-bottom: 20px; text-align: center; color: var(--ac-brown); font-weight: 900;" id="modal-member-title">新增成員</h2>
             <input type="hidden" id="member-item-id">
+            
             <div style="display:flex; justify-content:center; margin-bottom:20px;">
                 <div style="position:relative;">
                     <div id="member-upload-preview" class="member-avatar scale-btn" style="width:100px; height:100px; cursor:pointer;" onclick="document.getElementById('member-file-input').click()">
@@ -711,18 +756,21 @@
                 </div>
             </div>
             <input type="file" id="member-file-input" accept="image/*" style="display:none;" onchange="handleMemberPhotoUpload(event)">
+            
             <div style="display:flex; gap:10px;">
-                <div style="flex:1;">
+                <div style="flex:1; min-width:0;">
                     <label class="form-label">名稱 <span style="color:var(--mo-pink);">*</span></label>
                     <input type="text" class="form-control" id="member-name" placeholder="例：琳">
                 </div>
-                <div style="flex:1;">
+                <div style="flex:1; min-width:0;">
                     <label class="form-label">Aka 代號</label>
                     <input type="text" class="form-control" id="member-aka" placeholder="例：財務大臣">
                 </div>
             </div>
+
             <label class="form-label">想說的話</label>
             <textarea class="form-control" id="member-quote" rows="2" placeholder="留下旅行宣言..."></textarea>
+
             <div style="display: flex; gap: 15px; margin-top: 10px;">
                 <button class="btn-q modal-btn modal-btn-cancel scale-btn" onclick="playHaptic(); closeModal('modal-member-edit')">取消</button>
                 <button class="btn-q modal-btn modal-btn-save scale-btn" onclick="playHaptic(); saveMember()">✔ 儲存</button>
@@ -737,8 +785,8 @@
                 <img id="crop-img" class="crop-img" src="" alt="crop">
                 <div class="crop-mask"></div>
             </div>
-            <label class="form-label" style="text-align:center; width:100%; margin-top:10px;">縮放照片</label>
-            <input type="range" id="crop-zoom" min="1" max="3" step="0.01" value="1" style="width: 80%; margin-bottom: 20px;">
+            <label class="form-label" style="text-align:center; width:100%; margin-top:10px;">縮放照片 (支援雙指縮放)</label>
+            <input type="range" id="crop-zoom" min="0.1" max="5" step="0.01" value="1" style="width: 80%; margin-bottom: 20px;">
             
             <div style="display: flex; gap: 15px; width: 100%;">
                 <button class="btn-q modal-btn modal-btn-cancel scale-btn" onclick="playHaptic(); closeModal('modal-cropper')">取消</button>
@@ -751,19 +799,28 @@
         <div class="ac-modal" style="background: #FFF;">
             <h2 style="margin-top:0; margin-bottom: 20px; text-align: center; color: var(--ac-brown); font-weight: 900;"><i class="fa-solid fa-pen"></i> 編輯帳務</h2>
             <input type="hidden" id="edit-exp-id">
-            <label class="form-label">日期</label><input type="date" class="form-control" id="edit-exp-date">
+            
+            <label class="form-label">日期</label>
+            <input type="date" class="form-control" id="edit-exp-date">
+            
             <div style="display:flex; gap:10px;">
-                <div style="flex:1;"><label class="form-label">金額 (KRW)</label><input type="number" class="form-control" id="edit-exp-amount" oninput="calcApproxTwdEdit()"></div>
-                <div style="flex:1;"><label class="form-label">約合台幣 (TWD)</label><input type="text" class="form-control" id="edit-exp-twd" disabled></div>
+                <div style="flex:1; min-width:0;"><label class="form-label">金額 (KRW)</label><input type="number" class="form-control" id="edit-exp-amount" oninput="calcApproxTwdEdit()"></div>
+                <div style="flex:1; min-width:0;"><label class="form-label">約合台幣 (TWD)</label><input type="text" class="form-control" id="edit-exp-twd" disabled></div>
             </div>
+
             <label class="form-label">地點與消費項目</label>
-            <div style="display:flex; gap:10px;"><input type="text" class="form-control" id="edit-exp-loc" placeholder="地點"><input type="text" class="form-control" id="edit-exp-title" placeholder="項目"></div>
+            <div style="display:flex; gap:10px;">
+                <input type="text" class="form-control" id="edit-exp-loc" placeholder="地點">
+                <input type="text" class="form-control" id="edit-exp-title" placeholder="項目">
+            </div>
+
             <div style="background: #FCFBFA; padding: 15px; border-radius: 16px; margin-top: 10px; border: 2px dashed var(--ac-tan);">
                 <label class="form-label">付款人 (單選)</label>
                 <div class="ava-select-group" id="edit-payer-group-container"></div>
                 <label class="form-label">分攤人 (複選)</label>
                 <div class="ava-select-group" id="edit-split-group-container"></div>
             </div>
+
             <div style="display: flex; gap: 15px; margin-top: 20px;">
                 <button class="btn-q modal-btn modal-btn-cancel scale-btn" onclick="playHaptic(); closeModal('modal-expense-edit')">取消</button>
                 <button class="btn-q modal-btn modal-btn-save scale-btn" onclick="playHaptic(); saveExpenseEdit()">✔ 儲存修改</button>
@@ -775,14 +832,21 @@
         <div class="ac-modal" id="modal-content-box">
             <h2 style="margin-top:0; margin-bottom: 20px; text-align: center; color: var(--ac-brown); font-weight: 900;" id="modal-itinerary-title">新增行程</h2>
             <input type="hidden" id="form-item-id">
-            <label class="form-label">選擇日期</label><input type="date" class="form-control" id="form-date">
-            <label class="form-label">行程時間</label><input type="time" class="form-control" id="form-time" required>
-            <label class="form-label">行程標題 <span style="color:var(--mo-pink);">*</span></label><input type="text" class="form-control" id="form-title" placeholder="例如：海雲台看海 🌊">
-            <label class="form-label">地點地址 (貼上自動顯示地圖)</label><input type="text" class="form-control" id="form-loc" placeholder="貼上完整地址..." oninput="checkMapThumbnail()">
+            <div style="display:flex; gap:10px;">
+                <div style="flex:1; min-width:0;"><label class="form-label">日期</label><input type="date" class="form-control" id="form-date"></div>
+                <div style="flex:1; min-width:0;"><label class="form-label">時間</label><input type="time" class="form-control" id="form-time" required></div>
+            </div>
+            
+            <label class="form-label">行程標題 <span style="color:var(--mo-pink);">*</span></label>
+            <input type="text" class="form-control" id="form-title" placeholder="例如：海雲台看海 🌊">
+            
+            <label class="form-label">地點地址 (貼上自動顯示地圖)</label>
+            <input type="text" class="form-control" id="form-loc" placeholder="貼上完整地址..." oninput="checkMapThumbnail()">
             
             <div id="map-preview-container" style="display:none;"></div>
 
-            <label class="form-label" style="margin-top:10px;">備註內容</label><textarea class="form-control" id="form-note" rows="2" placeholder="選填..."></textarea>
+            <label class="form-label" style="margin-top:10px;">備註內容</label>
+            <textarea class="form-control" id="form-note" rows="2" placeholder="選填..."></textarea>
             
             <label class="form-label">上傳照片</label>
             <div style="display:flex; gap:10px; overflow-x:auto; scrollbar-width:none; padding-bottom:5px;" id="iti-upload-preview"></div>
@@ -803,11 +867,15 @@
     <div class="modal-overlay" id="modal-diary" onclick="if(event.target === this) closeModal('modal-diary')">
         <div class="ac-modal" style="background: #FFF;">
             <h2 style="margin-top:0; margin-bottom: 20px; text-align: center; color: var(--ac-brown); font-weight: 900;" id="diary-modal-title"><i class="fa-solid fa-book"></i> 寫新日誌</h2>
+            
             <input type="hidden" id="diary-edit-id">
-            <label class="form-label">日期</label><input type="date" class="form-control" id="diary-date">
+
+            <label class="form-label">日期</label>
+            <input type="date" class="form-control" id="diary-date">
             <label class="form-label">記錄人</label>
             <div class="ava-select-group" id="diary-author-group-container" style="justify-content: center;"></div>
-            <label class="form-label" style="margin-top: 25px;">內容</label><textarea class="form-control" id="diary-content" rows="4" placeholder="寫下今天的趣事..."></textarea>
+            <label class="form-label" style="margin-top: 25px;">內容</label>
+            <textarea class="form-control" id="diary-content" rows="4" placeholder="寫下今天的趣事..."></textarea>
             <label class="form-label">照片 (最多5張)</label>
             <div style="display:flex; gap:10px; overflow-x:auto; scrollbar-width:none; padding-bottom:5px;" id="diary-upload-preview"></div>
             <input type="file" id="diary-file-input" accept="image/*" multiple style="display:none;" onchange="handleDiaryPhotoUpload(event)">
@@ -845,15 +913,15 @@
 </div>
 
 <script>
-    // ================= 基礎工具 =================
+    // ================= 基礎設定與工具 =================
     function playHaptic() { if (navigator.vibrate) navigator.vibrate(15); }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
     function showToast(msg = '儲存成功') {
         document.getElementById('toast-text').innerText = msg;
         const toast = document.getElementById('toast-msg');
         toast.style.opacity = '1'; toast.style.transform = 'translate(-50%, -50%) scale(1)';
-        // V12: 提示縮短為 1500ms
-        setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translate(-50%, -50%) scale(0.9)'; }, 1500);
+        // 敏捷回饋：縮短至 1000ms
+        setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translate(-50%, -50%) scale(0.9)'; }, 1000);
     }
     function switchPage(pageId, el) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -871,11 +939,10 @@
 
     function applyNeonGlow(el) { el.classList.add('glowing-border'); playHaptic(); }
     function removeNeonGlow(el) { setTimeout(() => { el.classList.remove('glowing-border'); }, 200); }
-    
     function openMap() { 
         playHaptic(); 
         const loc = document.getElementById('form-loc').value || '釜山';
-        window.open(`https://maps.google.com/?q=Busan`, '_blank'); 
+        window.open(`http://googleusercontent.com/maps.google.com/maps?q=${encodeURIComponent(loc)}`, '_blank'); 
     }
 
     // ================= 全域變數與系統鎖定 =================
@@ -903,6 +970,7 @@
         { id: 2, name: '貓', aka: '導航雷達', quote: '跟著我走絕對不會迷路', img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&q=80', fallback: '🐱' }
     ];
 
+    // V13: PDF Data Seeding 完整綁定
     let itineraryData = [
         { id: 1, date: '2026-06-06', time: '15:30', title: '下機後搭車至西面', note: '搭免費接駁前往住宿(車程約30分)', img: null, loc: '', color: 'white' },
         { id: 2, date: '2026-06-06', time: '18:00', title: '雪夜覓-燒肉', note: '晚餐 訂位大名:Wang lin', img: null, loc: '', color: 'pink' },
@@ -923,15 +991,15 @@
         { id: 17, date: '2026-06-08', time: '17:30', title: 'Spa Land 汗蒸幕', note: '天然溫泉(09:00~22:00)', img: null, loc: '', color: 'blue' },
         { id: 18, date: '2026-06-09', time: '08:00', title: '前往廣安里', note: '', img: null, loc: '', color: 'white' },
         { id: 19, date: '2026-06-09', time: '09:00', title: 'Your Type', note: '早午餐', img: null, loc: '', color: 'yellow' },
-        { id: 20, date: '2026-06-09', time: '11:00', title: '逛逛小店', note: '', img: null, loc: '', color: 'white' },
-        { id: 21, date: '2026-06-09', time: '12:40', title: '烤扇貝+海鮮大餐', note: '午餐', img: null, loc: '', color: 'blue' },
+        { id: 20, date: '2026-06-09', time: '11:00', title: '逛逛小店看風景', note: '', img: null, loc: '', color: 'blue' },
+        { id: 21, date: '2026-06-09', time: '13:00', title: '烤扇貝+海鮮大餐', note: '午餐', img: null, loc: '', color: 'yellow' },
         { id: 22, date: '2026-06-09', time: '14:30', title: '海邊走走看夕陽+拍照', note: '', img: null, loc: '', color: 'blue' },
         { id: 23, date: '2026-06-09', time: '15:00', title: '前往南浦洞', note: '逛五福寢具', img: null, loc: '', color: 'white' },
-        { id: 24, date: '2026-06-09', time: '17:00', title: '扎嘎其市場', note: '', img: null, loc: '', color: 'white' },
-        { id: 25, date: '2026-06-09', time: '19:30', title: '樂天超市', note: '', img: null, loc: '', color: 'white' },
+        { id: 24, date: '2026-06-09', time: '17:30', title: '扎嘎其市場', note: '', img: null, loc: '', color: 'white' },
+        { id: 25, date: '2026-06-09', time: '19:00', title: '樂天超市', note: '', img: null, loc: '', color: 'white' },
         { id: 26, date: '2026-06-10', time: '08:00', title: '吃早餐', note: '步行5分', img: null, loc: '', color: 'yellow' },
         { id: 27, date: '2026-06-10', time: '10:30', title: '本思診所 醫美體驗', note: '預約大名:Wang lin / Hsieh chia hao', img: null, loc: '', color: 'green' },
-        { id: 28, date: '2026-06-10', time: '13:00', title: '豬肉湯飯', note: '午餐', img: null, loc: '', color: 'blue' },
+        { id: 28, date: '2026-06-10', time: '13:00', title: '豬肉湯飯', note: '午餐', img: null, loc: '', color: 'yellow' },
         { id: 29, date: '2026-06-10', time: '14:30', title: '逛西面地下街+購物', note: '買伴手禮', img: null, loc: '', color: 'white' },
         { id: 30, date: '2026-06-11', time: '06:00', title: '搭免費接駁車前往機場', note: '車程約30分', img: null, loc: '', color: 'white' },
         { id: 31, date: '2026-06-11', time: '06:30', title: '機場退稅', note: '', img: null, loc: '', color: 'white' },
@@ -951,7 +1019,7 @@
 
     let vouchersData = [];
 
-    // ================= 全域頭像同步 =================
+    // ================= 全域頭像同步 (Global Avatar Sync) =================
     function renderGlobalAvatars() {
         document.getElementById('header-avatars-container').innerHTML = membersData.map(m => `
             <div class="avatar">${m.img ? `<img src="${m.img}">` : m.fallback}</div>
@@ -1011,23 +1079,6 @@
         }).join('');
     }
 
-    // ================= 共用刪除邏輯 =================
-    function confirmDelete(type, id) { 
-        deleteTargetType = type; itemToDelete = id; 
-        document.getElementById('modal-delete').style.display = 'flex'; 
-        playHaptic(); 
-    }
-    
-    function executeDelete() { 
-        if(deleteTargetType === 'itinerary') { itineraryData = itineraryData.filter(e => e.id !== itemToDelete); renderTimeline(); }
-        else if(deleteTargetType === 'expense') { expenses = expenses.filter(e => e.id !== itemToDelete); renderExpenses(); }
-        else if(deleteTargetType === 'diary') { diaryData = diaryData.filter(e => e.id !== itemToDelete); renderDiary(); }
-        else if(deleteTargetType === 'voucher') { vouchersData = vouchersData.filter(e => e.id !== itemToDelete); renderVouchers(); }
-        else if(deleteTargetType === 'member') { membersData = membersData.filter(e => e.id !== itemToDelete); renderGlobalAvatars(); }
-        
-        closeModal('modal-delete'); showToast('刪除成功');
-    }
-
     // ================= 模組 1: 行程 V12 =================
     let currentDateSelect = '2026-06-06';
     
@@ -1077,7 +1128,12 @@
     function renderTimeline() {
         const container = document.getElementById('timeline-container');
         let todaysEvents = itineraryData.filter(e => e.date === currentDateSelect).sort((a, b) => a.time.localeCompare(b.time));
-        if(todaysEvents.length === 0) { container.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--ac-brown-light); font-weight: 800;">當日尚無行程 🍃</div>`; return; }
+
+        if(todaysEvents.length === 0) {
+            container.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--ac-brown-light); font-weight: 800;">當日尚無行程 🍃</div>`;
+            return;
+        }
+
         container.innerHTML = todaysEvents.map(event => {
             const cInfo = themeColors.find(c => c.name === event.color) || themeColors[0];
             return `
@@ -1085,21 +1141,47 @@
                 <div class="timeline-dot" style="border-color: ${cInfo.dot};"></div>
                 <div class="event-card" style="background-color: ${cInfo.hex}; border-color: ${cInfo.name === 'white' ? 'transparent' : cInfo.dot};" onclick="toggleEventDetail(${event.id})">
                     <div class="event-header">
-                        <div class="time-picker-wrapper" onclick="event.stopPropagation()"><div class="time-display-btn">${event.time}</div><input type="time" value="${event.time}" onchange="updateEventTime(${event.id}, this.value)"></div>
-                        <span class="event-title">${event.title}</span><i class="fa-solid fa-chevron-down" style="color:var(--ac-tan);"></i>
+                        <div class="time-picker-wrapper" onclick="event.stopPropagation()">
+                            <div class="time-display-btn">${event.time}</div>
+                            <input type="time" value="${event.time}" onchange="updateEventTime(${event.id}, this.value)">
+                        </div>
+                        <span class="event-title">${event.title}</span>
+                        <i class="fa-solid fa-chevron-down" style="color:var(--ac-tan);"></i>
                     </div>
+                    
                     <div class="event-detail" id="detail-${event.id}">
                         ${event.note ? `<div class="event-note">${event.note}</div>` : ''}
+                        
                         ${event.loc ? `<div class="map-thumbnail" onclick="openMap(); event.stopPropagation();"><div class="map-overlay"><i class="fa-solid fa-location-arrow" style="margin-right:8px;"></i> 導航</div></div>` : ''}
                         ${event.img ? `<img src="${event.img}" style="width:100%; height:140px; object-fit:cover; border-radius:18px; margin-bottom:10px; border:1px solid var(--ac-tan); margin-top:10px;">` : ''}
-                        <div class="event-actions"><span onclick="event.stopPropagation(); playHaptic(); openItineraryModal(${event.id})"><i class="fa-solid fa-pen-to-square"></i></span><span onclick="event.stopPropagation(); playHaptic(); confirmDelete('itinerary', ${event.id})"><i class="fa-solid fa-trash-can"></i></span></div>
+
+                        <div class="event-actions">
+                            <span onclick="event.stopPropagation(); playHaptic(); openItineraryModal(${event.id})"><i class="fa-solid fa-pen-to-square"></i></span>
+                            <span onclick="event.stopPropagation(); playHaptic(); confirmDelete('itinerary', ${event.id})"><i class="fa-solid fa-trash-can"></i></span>
+                        </div>
                     </div>
                 </div>
-            </div>`}).join('');
+            </div>
+        `}).join('');
     }
 
     function toggleEventDetail(id) { playHaptic(); const detail = document.getElementById(`detail-${id}`); detail.style.display = (detail.style.display === 'block') ? 'none' : 'block'; }
     function updateEventTime(id, newTime) { const event = itineraryData.find(e => e.id === id); if(event) { event.time = newTime; renderTimeline(); } }
+
+    function triggerUpload(id) { playHaptic(); document.getElementById(`upload-${id}`).click(); }
+    function handleImageUpload(event, id) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const item = itineraryData.find(x => x.id === id);
+                if(item) item.img = e.target.result;
+                renderTimeline();
+                setTimeout(() => { document.getElementById(`detail-${id}`).style.display = 'block'; }, 50);
+            }
+            reader.readAsDataURL(file);
+        }
+    }
 
     function easeOutQuart(t) { return 1 - (--t) * t * t * t; }
     function triggerCountdownAnimation() {
@@ -1176,7 +1258,7 @@
     }
 
 
-    // ================= 模組 2: 預定票務 (V12 按鈕修復) =================
+    // ================= 模組 2: 預定票務 (V12 按鈕完美復原) =================
     function requirePin(targetId) {
         document.getElementById('pin-target').value = targetId; document.getElementById('pin-input').value = '';
         document.getElementById('modal-pin').style.display = 'flex'; setTimeout(() => document.getElementById('pin-input').focus(), 100);
@@ -1191,7 +1273,7 @@
             
             const btn = card.querySelector('.btn-edit-trigger');
             btn.innerHTML = '<i class="fa-solid fa-check"></i> 儲存修改';
-            btn.classList.add('is-editing'); // 加入編輯中狀態
+            btn.classList.add('is-editing'); 
             
             btn.onclick = function(e) { e.stopPropagation(); lockCard(targetId, this); };
             closeModal('modal-pin');
@@ -1204,7 +1286,7 @@
         
         const isFlight = cardId.includes('flight');
         btn.innerHTML = `<i class="fa-solid fa-pen"></i> ${isFlight ? '編輯航班資訊' : '編輯住宿資訊'}`;
-        btn.classList.remove('is-editing'); // 移除編輯中狀態，恢復原始 CSS (Teal/Blue)
+        btn.classList.remove('is-editing'); 
         
         btn.onclick = function(e) { e.stopPropagation(); requirePin(cardId); };
         showToast('儲存成功');
@@ -1285,6 +1367,7 @@
 
     function togglePayer(el) { playHaptic(); document.querySelectorAll('.payer-opt').forEach(opt => { opt.classList.remove('active'); opt.style.borderColor="var(--ac-tan)"; opt.style.opacity="0.4"; opt.style.filter="grayscale(100%)"; opt.style.background="#FFF";}); el.classList.add('active'); el.style.borderColor="var(--mo-yellow)"; el.style.opacity="1"; el.style.filter="grayscale(0%)"; el.style.background="rgba(255,208,0,0.1)";}
     function toggleSplit(el) { playHaptic(); el.classList.toggle('active'); if(el.classList.contains('active')) { el.style.borderColor="var(--mo-yellow)"; el.style.opacity="1"; el.style.filter="grayscale(0%)"; el.style.background="rgba(255,208,0,0.1)"; } else { el.style.borderColor="var(--ac-tan)"; el.style.opacity="0.4"; el.style.filter="grayscale(100%)"; el.style.background="#FFF"; } }
+
     function toggleEditPayer(el) { playHaptic(); document.querySelectorAll('.edit-payer-opt').forEach(opt => { opt.classList.remove('active'); opt.style.borderColor="var(--ac-tan)"; opt.style.opacity="0.4"; opt.style.filter="grayscale(100%)"; opt.style.background="#FFF";}); el.classList.add('active'); el.style.borderColor="var(--mo-yellow)"; el.style.opacity="1"; el.style.filter="grayscale(0%)"; el.style.background="rgba(255,208,0,0.1)";}
     function toggleEditSplit(el) { playHaptic(); el.classList.toggle('active'); if(el.classList.contains('active')) { el.style.borderColor="var(--mo-yellow)"; el.style.opacity="1"; el.style.filter="grayscale(0%)"; el.style.background="rgba(255,208,0,0.1)"; } else { el.style.borderColor="var(--ac-tan)"; el.style.opacity="0.4"; el.style.filter="grayscale(100%)"; el.style.background="#FFF"; } }
 
@@ -1408,7 +1491,7 @@
     }
 
 
-    // ================= 模組 4: 日誌 (V12 保留 Update) =================
+    // ================= 模組 4: 日誌 =================
     function renderDiary() {
         const container = document.getElementById('diary-container');
         diaryData.sort((a, b) => new Date(b.date) - new Date(a.date)); 
@@ -1500,7 +1583,6 @@
     // ================= 模組 5: 快樂成員 (V12 Avatar Cropper) =================
     let currentMemberImage = null;
     
-    // Vanilla JS 輕量級裁切器參數
     let cropImgElement = document.getElementById('crop-img');
     let cropZoomInput = document.getElementById('crop-zoom');
     let isDragging = false; let startX, startY; let imgX = 0, imgY = 0; let currentScale = 1;
@@ -1518,75 +1600,77 @@
 
     function handleMemberPhotoUpload(event) {
         const file = event.target.files[0];
-        if (file) { 
-            const reader = new FileReader(); 
-            reader.onload = function(e) { 
-                openCropper(e.target.result); 
-            }; 
-            reader.readAsDataURL(file); 
-        }
+        if (file) { const reader = new FileReader(); reader.onload = function(e) { openCropper(e.target.result); }; reader.readAsDataURL(file); }
     }
     
     function openCropper(src) {
         cropImgElement.src = src;
         cropImgElement.onload = () => {
-            imgX = 0; imgY = 0; currentScale = 1; cropZoomInput.value = 1;
+            const size = 200;
+            currentScale = Math.min(size / cropImgElement.width, size / cropImgElement.height);
+            imgX = (size - cropImgElement.width * currentScale) / 2;
+            imgY = (size - cropImgElement.height * currentScale) / 2;
+            
+            cropZoomInput.min = currentScale * 0.2;
+            cropZoomInput.max = currentScale * 5;
+            cropZoomInput.value = currentScale;
+
             updateCropTransform();
             document.getElementById('modal-cropper').style.display = 'flex';
         };
     }
     
-    cropZoomInput.addEventListener('input', (e) => {
-        currentScale = parseFloat(e.target.value);
-        updateCropTransform();
-    });
+    cropZoomInput.addEventListener('input', (e) => { currentScale = parseFloat(e.target.value); updateCropTransform(); });
 
     const cropContainer = document.getElementById('crop-container');
     cropContainer.addEventListener('mousedown', dragStart);
-    cropContainer.addEventListener('touchstart', dragStart, {passive: false});
+    
+    // Pinch to zoom support
+    let initialDistance = null; let initialScaleDrag = 1;
+    cropContainer.addEventListener('touchstart', (e) => {
+        if(e.touches.length === 2) {
+            isDragging = false;
+            initialDistance = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+            initialScaleDrag = currentScale;
+            e.preventDefault();
+        } else if(e.touches.length === 1) { dragStart(e); }
+    }, {passive: false});
+
     window.addEventListener('mousemove', drag);
-    window.addEventListener('touchmove', drag, {passive: false});
-    window.addEventListener('mouseup', dragEnd);
-    window.addEventListener('touchend', dragEnd);
+    window.addEventListener('touchmove', (e) => {
+        if(e.touches && e.touches.length === 2 && initialDistance) {
+            e.preventDefault();
+            const currentDistance = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+            currentScale = initialScaleDrag * (currentDistance / initialDistance);
+            cropZoomInput.value = currentScale;
+            updateCropTransform();
+        } else { drag(e); }
+    }, {passive: false});
+
+    window.addEventListener('mouseup', dragEnd); window.addEventListener('touchend', dragEnd);
 
     function dragStart(e) {
         isDragging = true;
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        startX = clientX - imgX;
-        startY = clientY - imgY;
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX; const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        startX = clientX - imgX; startY = clientY - imgY;
     }
     function drag(e) {
-        if(!isDragging) return;
-        e.preventDefault(); // prevent scroll
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        imgX = clientX - startX;
-        imgY = clientY - startY;
-        updateCropTransform();
+        if(!isDragging) return; e.preventDefault();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX; const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        imgX = clientX - startX; imgY = clientY - startY; updateCropTransform();
     }
     function dragEnd() { isDragging = false; }
     
-    function updateCropTransform() {
-        cropImgElement.style.transform = `translate(${imgX}px, ${imgY}px) scale(${currentScale})`;
-    }
+    function updateCropTransform() { cropImgElement.style.transform = `translate(${imgX}px, ${imgY}px) scale(${currentScale})`; }
 
     function confirmCrop() {
         playHaptic();
-        const canvas = document.createElement('canvas');
-        canvas.width = 220; canvas.height = 220;
+        const canvas = document.createElement('canvas'); canvas.width = 200; canvas.height = 200;
         const ctx = canvas.getContext('2d');
-        
-        // Ensure circular mask in canvas (optional, but good for saving)
-        ctx.beginPath();
-        ctx.arc(110, 110, 110, 0, Math.PI * 2);
-        ctx.clip();
-        
+        ctx.beginPath(); ctx.arc(100, 100, 100, 0, Math.PI * 2); ctx.clip();
         ctx.drawImage(cropImgElement, imgX, imgY, cropImgElement.width * currentScale, cropImgElement.height * currentScale);
-        
         currentMemberImage = canvas.toDataURL('image/jpeg', 0.9);
-        renderMemberUploadPreview();
-        closeModal('modal-cropper');
+        renderMemberUploadPreview(); closeModal('modal-cropper');
     }
 
     function renderMemberUploadPreview() {
@@ -1602,12 +1686,9 @@
         if (id) {
             const index = membersData.findIndex(m => m.id == id);
             membersData[index] = { ...membersData[index], name, aka, quote, img: currentMemberImage };
-        } else {
-            membersData.push({ id: Date.now(), name, aka, quote, img: currentMemberImage, fallback: '👤' });
-        }
+        } else { membersData.push({ id: Date.now(), name, aka, quote, img: currentMemberImage, fallback: '👤' }); }
         
-        closeModal('modal-member-edit'); showToast('儲存成功');
-        renderGlobalAvatars(); 
+        closeModal('modal-member-edit'); showToast('儲存成功'); renderGlobalAvatars(); 
     }
 
     // ================= 初始化 =================
