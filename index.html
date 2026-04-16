@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>琳和貓的自由行 - 旅遊 V12 終極定案版</title>
+    <title>琳和貓的自由行 - 旅遊 V13 終極進化版</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
     <style>
@@ -17,9 +17,9 @@
             
             --mo-green: #78A083;       
             --mo-green-dark: #5A7E64;  
-            --mo-blue: #72B1D6;        
+            --mo-blue: #72B1D6;        /* 天藍色 Sky Blue */
             --mo-pink: #D4A5A5;        
-            --mo-pink-deep: #C0584F;   
+            --mo-pink-deep: #B87373;   
             --mo-purple: #B5A8B9;      
             --mo-orange: #D99C78;      
             
@@ -36,41 +36,42 @@
             --modal-dynamic-bg: #FFFFFF;
         }
 
-        /* 全域消滅滾動條與防溢出規範 */
+        /* V13 全域縮放微調與防溢出鎖定 */
+        html { font-size: 14.5px; } /* 整體字體微縮 */
         * { box-sizing: border-box; font-family: 'Nunito', 'Noto Sans TC', sans-serif; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; scrollbar-width: none; -ms-overflow-style: none; word-wrap: break-word; }
         *::-webkit-scrollbar { display: none !important; }
         
-        html, body { height: 100%; overflow: hidden; background-color: var(--ac-bg); color: var(--ac-brown); overscroll-behavior-y: none; }
+        html, body { height: 100%; width: 100%; overflow-x: hidden; background-color: var(--ac-bg); color: var(--ac-brown); overscroll-behavior-y: none; }
         
         body { 
             background-image: radial-gradient(rgba(220, 215, 208, 0.7) 2px, transparent 2px);
             background-size: 24px 24px; display: flex; justify-content: center;
         }
 
-        /* V12: 手機端適配 (Mobile-First) 置中 */
+        /* 模擬 iPhone 尺寸置中 */
         .app-container {
             width: 100%; max-width: 430px; height: 100%; margin: 0 auto;
             position: relative; display: flex; flex-direction: column;
-            box-shadow: 0 0 35px rgba(0,0,0,0.06); background: transparent; overflow: hidden;
+            box-shadow: 0 0 35px rgba(0,0,0,0.06); background: transparent; overflow-x: hidden;
         }
 
         /* ================= Header ================= */
         header {
-            padding: 25px 20px 15px 20px; display: flex; justify-content: space-between; align-items: center;
+            padding: 22px 16px 12px 16px; display: flex; justify-content: space-between; align-items: center;
             background: rgba(244, 240, 234, 0.95); backdrop-filter: blur(12px); z-index: 50; flex-shrink: 0;
         }
         .header-title h1 { font-size: 1.5rem; font-weight: 900; color: var(--ac-brown); }
         .header-avatars { display: flex; gap: -8px; }
-        .avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--ac-card); border: 3px solid #FFF; display: flex; justify-content: center; align-items: center; font-size: 1.4rem; margin-left: -10px; box-shadow: var(--shadow-soft); overflow: hidden;}
+        .avatar { width: 42px; height: 42px; border-radius: 50%; background: var(--ac-card); border: 3px solid #FFF; display: flex; justify-content: center; align-items: center; font-size: 1.3rem; margin-left: -10px; box-shadow: var(--shadow-soft); overflow: hidden;}
         .avatar img { width: 100%; height: 100%; object-fit: cover; }
 
         /* ================= 內容區 ================= */
-        main { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 10px 20px 120px 20px; scroll-behavior: smooth; }
+        main { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 10px 16px 120px 16px; scroll-behavior: smooth; width: 100%; }
         .page { display: none; animation: fadeIn 0.3s ease; }
         .page.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ================= 核心按鈕與微互動 ================= */
+        /* ================= 核心按鈕與微互動 (Scale) ================= */
         .btn-q { border: none; cursor: pointer; font-weight: 900; transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.15s, background 0.3s, color 0.3s; display: inline-flex; align-items: center; justify-content: center; }
         .scale-btn { transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1); cursor: pointer; }
         .scale-btn:active { transform: scale(0.92); }
@@ -84,13 +85,8 @@
         .btn-add-blue-v11 { background: var(--mo-blue); color: #FFF; padding: 10px 22px; font-size: 1rem; border-radius: 30px; border: 3px solid #FFF; box-shadow: var(--shadow-btn-blue); text-shadow: none; }
         .btn-add-blue-v11:active { transform: translateY(5px) scale(0.96); box-shadow: 0 0px 0px transparent; }
 
-        .btn-mo-teal { background: var(--mo-teal); color: #FFF; border: 3px solid #FFF; box-shadow: 0 5px 0 var(--mo-teal-dark); border-radius: 20px; padding: 12px; font-size: 1rem; width: 100%;}
-        .btn-mo-teal:active { transform: translateY(5px) scale(0.96); box-shadow: 0 0px 0px transparent; }
-
-        /* V12 狀態還原防護：當編輯中時覆寫為綠色 */
-        .btn-edit-trigger.is-editing { background: var(--mo-green) !important; color: #FFF !important; box-shadow: 0 5px 0 var(--mo-green-dark) !important; border-color: #FFF !important; }
-
-        .ac-card { background: var(--ac-card); border-radius: 24px; padding: 20px; margin-bottom: 20px; box-shadow: var(--shadow-soft); border: 2px solid transparent; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        /* V13 卡片內距微縮調整 */
+        .ac-card { background: var(--ac-card); border-radius: 24px; padding: 16px; margin-bottom: 16px; box-shadow: var(--shadow-soft); border: 2px solid transparent; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
         .section-title { font-size: 1.25rem; font-weight: 900; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; color: var(--ac-brown); }
 
         .form-label { display: block; font-size: 0.85rem; font-weight: 900; margin-bottom: 8px; color: var(--ac-brown-light); }
@@ -131,9 +127,8 @@
         .timeline-item { position: relative; margin-bottom: 20px; }
         .timeline-dot { position: absolute; left: -21px; top: 18px; width: 16px; height: 16px; border-radius: 50%; background: var(--ac-card); border: 4px solid var(--mo-green); z-index: 2; transition: 0.3s;}
         
-        .event-card { border-radius: 20px; padding: 18px; box-shadow: var(--shadow-soft); border: 2px solid transparent; display: flex; flex-direction: column; gap: 8px; position: relative; cursor: pointer; transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); background: var(--ac-card); }
+        .event-card { border-radius: 20px; padding: 16px; box-shadow: var(--shadow-soft); border: 2px solid transparent; display: flex; flex-direction: column; gap: 8px; position: relative; cursor: pointer; transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); background: var(--ac-card); }
         .event-header { display: flex; align-items: center; gap: 12px; }
-        
         .time-picker-wrapper { position: relative; display: inline-block; cursor: pointer;}
         .time-display-btn { background: #F4F0EA; color: var(--ac-brown); padding: 8px 14px; border-radius: 14px; font-size: 1.05rem; font-weight: 900; border: none; pointer-events: none; box-shadow: 0 2px 0 #DCD7D0; }
         .time-picker-wrapper input[type="time"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 10;}
@@ -141,52 +136,62 @@
         
         .event-detail { display: none; margin-top: 10px; padding-top: 15px; border-top: 2px dashed rgba(220, 215, 208, 0.8); animation: fadeIn 0.3s; }
         .event-note { font-size: 0.95rem; color: var(--ac-brown-light); font-weight: 700; background: rgba(244,240,234,0.7); padding: 12px; border-radius: 14px; margin-bottom: 12px;}
+        .photo-upload-box { border: 3px dashed var(--ac-tan); background: #FDFCF9; height: 140px; border-radius: 18px; display: flex; justify-content: center; align-items: center; color: var(--ac-brown-light); font-size: 1.5rem; cursor: pointer; margin-bottom: 10px; overflow: hidden; position: relative; transition: 0.2s;}
+        .photo-upload-box img { width: 100%; height: 100%; object-fit: cover; }
+        
         .event-actions { text-align: right; margin-top: 5px; }
         .event-actions span { cursor: pointer; margin-left: 20px; font-size: 1.2rem; color: var(--ac-brown-light); transition: 0.2s;}
+        .event-actions span:hover { color: var(--mo-pink); transform: scale(1.2); display: inline-block;}
 
         .map-thumbnail { width: 100%; height: 100px; border-radius: 14px; background: url('https://images.unsplash.com/photo-1524661135-423995f22d0b?w=400&q=80') center/cover; position: relative; cursor: pointer; margin-top: 10px; border: 2px solid var(--ac-tan); box-shadow: var(--shadow-soft);}
         .map-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.3); border-radius: 12px; display: flex; justify-content: center; align-items: center; color: #FFF; font-weight: 900; font-size: 1.1rem; opacity: 0; transition: 0.2s;}
         .map-thumbnail:hover .map-overlay { opacity: 1; }
 
-        /* ================= 模組 2: 預定票務 ================= */
+        /* ================= 模組 2: 預定票務 (V13 色塊化修復與按鈕天藍色) ================= */
         .editable-mode .editable-field { border-bottom: 2px dashed var(--mo-yellow); padding: 0 4px; border-radius: 4px; cursor: text; transition: 0.2s;}
         .editable-mode .editable-field:focus { background: rgba(255, 208, 0, 0.2); outline: none;}
 
-        .flight-card { background: linear-gradient(135deg, #E6F0F9 0%, #F5E6F0 50%, #EFE8F2 100%); border-radius: 24px; padding: 0; overflow: hidden; border: 2px solid var(--ac-tan); box-shadow: var(--shadow-soft); margin-bottom: 20px; position: relative; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);}
-        .fc-top-bg { background: rgba(255,255,255,0.4); height: 110px; width: 100%; position: absolute; top: 0; left: 0; z-index: 0; border-bottom: 1px solid var(--ac-tan);}
-        .fc-content { position: relative; z-index: 1; padding: 20px; }
+        /* 捨棄漸層，純色區塊 */
+        .flight-card { background: #FFF; border-radius: 24px; padding: 0; overflow: hidden; border: 2px solid var(--ac-tan); box-shadow: var(--shadow-soft); margin-bottom: 20px; position: relative; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);}
+        .fc-top-bg { background: var(--mo-green); height: 50px; width: 100%; position: absolute; top: 0; left: 0; z-index: 0; }
+        .fc-content { position: relative; z-index: 1; padding: 15px 16px 16px 16px; }
         
-        .fc-header { display: flex; justify-content: space-between; align-items: center; color: var(--ac-brown-light); font-weight: 900; font-size: 0.9rem; margin-bottom: 10px;}
-        .fc-badge { background: #FFF; padding: 4px 10px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); color: var(--ac-brown-light); font-size: 0.75rem; border: 1px solid var(--ac-tan);}
-        .fc-number { background: #FFF; margin: 0 auto 20px auto; border-radius: 20px; padding: 10px 0; text-align: center; font-size: 2.6rem; font-weight: 900; color: var(--ac-brown); letter-spacing: 4px; box-shadow: 0 8px 15px rgba(0,0,0,0.03); width: 90%; border: 2px solid var(--ac-tan);}
+        .fc-header { display: flex; justify-content: space-between; align-items: center; color: #FFF; font-weight: 900; font-size: 1rem; margin-bottom: 20px;}
+        .fc-badge { background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 8px; color: #FFF; font-size: 0.75rem;}
         
-        .fc-route-box { background: #F8F9FA; border-radius: 24px; padding: 25px 20px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.02); display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border: 1px solid var(--ac-tan);}
+        /* 標籤跳色放大與圓角陰影 */
+        .fc-route-box { background: #F8F9FA; border-radius: 24px; padding: 25px 16px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.02); display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border: 1px solid var(--ac-tan);}
         .fc-route-point { text-align: center; }
-        .fc-route-point h2 { margin: 0; font-size: 2.2rem; color: var(--ac-brown); }
+        .fc-route-point h2 { margin: 0; font-size: 2.5rem; color: var(--ac-brown); letter-spacing: 2px; }
         .fc-route-point .time { font-weight: 900; font-size: 1.1rem; margin: 5px 0; color: var(--ac-brown);}
-        .fc-route-tag { display: inline-block; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8rem; font-weight: 900;}
+        
+        .fc-route-tag { display: inline-block; color: white; padding: 6px 18px; border-radius: 20px; font-size: 0.95rem; font-weight: 900; box-shadow: var(--shadow-soft);}
         .tag-tpe { background: var(--mo-pink); }
         .tag-pus { background: var(--mo-purple); }
         
-        .fc-duration { text-align: center; color: var(--ac-brown-light); font-weight: 800; font-size: 0.75rem; flex: 1; position: relative;}
-        .fc-duration .line { width: 80%; height: 2px; border-bottom: 2px dashed var(--mo-blue); margin: 8px auto; position: relative;}
-        .fc-duration .line i { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); color: var(--mo-blue); font-size: 1.2rem; background: #F8F9FA; padding: 0 5px;}
+        .fc-duration { text-align: center; color: var(--ac-brown-light); font-weight: 800; font-size: 0.8rem; flex: 1; position: relative; padding: 0 10px;}
+        .fc-duration .line { width: 100%; height: 2px; border-bottom: 2px dashed var(--mo-blue); margin: 8px auto; position: relative;}
+        .fc-duration .line i { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); color: var(--mo-blue); font-size: 1.4rem; background: #F8F9FA; padding: 0 8px;}
         
-        .fc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .fc-grid-item { border: 2px solid #F4F0EA; border-radius: 16px; padding: 12px; text-align: center; background: rgba(255,255,255,0.7);}
+        .fc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .fc-grid-item { border: 2px solid #F4F0EA; border-radius: 16px; padding: 12px; text-align: center; background: #FFF;}
         .fc-grid-title { font-size: 0.7rem; color: var(--ac-brown-light); font-weight: 900; margin-bottom: 5px;}
-        .fc-grid-val { font-size: 0.95rem; font-weight: 900; color: var(--ac-brown);}
+        .fc-grid-val { font-size: 0.9rem; font-weight: 900; color: var(--ac-brown);}
+
+        /* 預訂編輯按鈕強制天藍色 Sky Blue */
+        .btn-edit-blue { background: var(--mo-blue); color: #FFF; border: 3px solid #FFF; box-shadow: 0 4px 0px #5B8BAA; border-radius: 20px; padding: 12px; font-size: 1rem; width: 100%;}
+        .btn-edit-blue:active { transform: translateY(4px) scale(0.96); box-shadow: 0 0px 0px transparent; }
 
         .hotel-card2 { background: #FFF; border-radius: 24px; padding: 0; overflow: hidden; border: 2px solid var(--ac-tan); box-shadow: var(--shadow-soft); margin-bottom: 20px; position: relative; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); cursor: pointer;}
         .hc-img-wrapper { position: relative; width: 100%; height: 200px; }
         .hc-img-wrapper img { width: 100%; height: 100%; object-fit: cover; }
         .hc-tag-loc { position: absolute; top: 15px; left: 15px; background: #007AFF; color: #FFF; padding: 6px 15px; border-radius: 20px; font-weight: 900; font-size: 0.85rem; box-shadow: 0 4px 10px rgba(0,122,255,0.3);}
         
-        .hc-body { padding: 20px; }
+        .hc-body { padding: 16px; }
         .hc-title { font-size: 1.4rem; font-weight: 900; color: var(--ac-brown); margin: 0 0 5px 0;}
         .hc-address { font-size: 0.85rem; font-weight: 800; color: var(--ac-brown-light); margin-bottom: 20px;}
         
-        .hc-checkin-box { display: flex; justify-content: space-between; align-items: center; border: 2px solid #F4F0EA; border-left: 6px solid var(--mo-blue); border-radius: 16px; padding: 15px; margin-bottom: 20px; background: #FCFBFA; }
+        .hc-checkin-box { display: flex; justify-content: space-between; align-items: center; border: 2px solid #F4F0EA; border-left: 6px solid var(--mo-blue); border-radius: 16px; padding: 12px; margin-bottom: 20px; background: #FCFBFA; }
         .hc-ci-col { display: flex; flex-direction: column; gap: 4px; }
         .hc-ci-title { font-size: 0.7rem; font-weight: 900; color: var(--ac-brown-light); text-transform: uppercase;}
         .hc-ci-date { font-size: 1.1rem; font-weight: 900; color: var(--ac-brown);}
@@ -201,7 +206,7 @@
         .hc-price-split { font-size: 0.85rem; font-weight: 800; color: var(--mo-pink); margin-bottom: 5px;}
         .hc-price-night { display: inline-block; background: #F1F4F6; color: var(--mo-blue); padding: 4px 10px; border-radius: 8px; font-size: 0.85rem; font-weight: 900;}
 
-        /* ================= 模組 3: 帳務系統 ================= */
+        /* ================= 模組 3: 帳務系統 (V13 CSS 防溢出與排版修復) ================= */
         .exchange-box { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; background: linear-gradient(135deg, #E6EEF2 0%, #DCE7ED 100%); padding: 15px; border-radius: 24px; box-shadow: inset 0 2px 5px rgba(255,255,255,0.5), 0 8px 15px rgba(114, 177, 214, 0.2);}
         .exc-input-group { flex: 1; background: #FFF; border: 2px solid transparent; border-radius: 16px; padding: 15px; text-align: center; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.03);}
         .exc-input-group:focus-within { border-color: var(--mo-yellow); transform: scale(1.02); box-shadow: 0 8px 15px rgba(255, 208, 0, 0.2);}
@@ -213,23 +218,24 @@
         .qc-item { background: #FFF; border: 2px solid var(--ac-tan); border-radius: 12px; padding: 10px; display: flex; justify-content: space-between; font-weight: 900; color: var(--ac-brown); box-shadow: 0 2px 5px rgba(0,0,0,0.02);}
         .qc-item span { color: var(--ac-brown-light); font-size: 0.85rem;}
 
-        .currency-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
+        .currency-tabs { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;}
         .cur-tab { flex: 1; text-align: center; padding: 12px; border: 2px solid var(--ac-tan); border-radius: 16px; font-weight: 900; cursor: pointer; transition: 0.2s; color: var(--ac-brown-light);}
         .cur-tab.active { border-color: var(--mo-yellow-muted); color: var(--ac-brown); background: rgba(240, 213, 130, 0.3); transform: scale(1.05);}
 
-        .ava-select-group { display: flex; gap: 15px; margin-bottom: 15px;}
+        /* 選擇群組：增加換行防溢出 */
+        .ava-select-group { display: flex; gap: 12px; margin-bottom: 15px; flex-wrap: wrap;}
         .ava-opt { 
-            width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; flex-direction: column;
-            font-size: 1.4rem; background: #FFF; border: 3px solid var(--ac-tan); cursor: pointer; transition: 0.2s;
-            opacity: 0.4; filter: grayscale(100%); position: relative; overflow: hidden;
+            width: 48px; height: 48px; border-radius: 50%; display: flex; justify-content: center; align-items: center; flex-direction: column;
+            font-size: 1.3rem; background: #FFF; border: 3px solid var(--ac-tan); cursor: pointer; transition: 0.2s;
+            opacity: 0.4; filter: grayscale(100%); position: relative;
         }
         .ava-opt.active { opacity: 1; filter: grayscale(0%); border-color: var(--mo-blue); transform: scale(1.1); box-shadow: 0 4px 10px rgba(114, 177, 214, 0.3); }
-        .ava-name { position: absolute; bottom: -20px; font-size: 0.75rem; font-weight: 900; color: var(--ac-brown); }
+        .ava-name { position: absolute; bottom: -18px; font-size: 0.7rem; font-weight: 900; color: var(--ac-brown); }
 
-        /* V12: 支付方式 UI 完全對齊幣別選擇器 */
-        .method-tabs { display: flex; gap: 12px; margin-bottom: 15px; flex-wrap: wrap; padding: 5px;}
-        .m-tab { padding: 10px 15px; border: 2px solid var(--ac-tan); border-radius: 14px; font-weight: 900; cursor: pointer; transition: 0.2s; color: var(--ac-brown-light); font-size: 0.9rem; white-space: nowrap;}
-        .m-tab.active { border-color: var(--mo-yellow-muted); color: var(--ac-brown); background: rgba(240, 213, 130, 0.3); transform: scale(1.05);}
+        /* V13 支付方式 UI：完全對齊幣別設計，防溢出 */
+        .method-tabs { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;}
+        .m-tab { flex: 1; min-width: 70px; text-align: center; padding: 12px 10px; border: 2px solid var(--ac-tan); border-radius: 14px; font-weight: 900; cursor: pointer; transition: 0.2s; color: var(--ac-brown-light); font-size: 0.85rem;}
+        .m-tab.active { border-color: var(--mo-yellow-muted); color: var(--ac-brown) !important; background: rgba(240, 213, 130, 0.3); transform: scale(1.05);}
 
         .settlement-card { background: #FCFBFA; border: 2px dashed #8B5A5A; border-radius: 20px; padding: 15px; margin-bottom: 15px; display: none; animation: fadeIn 0.3s;}
         .settlement-title { font-weight: 900; color: #8B5A5A; font-size: 0.9rem; margin-bottom: 10px; display: flex; align-items: center; gap: 5px;}
@@ -243,13 +249,13 @@
         
         .filter-tags-container { display: flex; background: #F8F6F2; border-radius: 30px; padding: 4px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid var(--ac-tan);}
         .f-tag-pill { flex: 1; text-align: center; padding: 10px 0; border-radius: 26px; font-weight: 900; font-size: 0.9rem; cursor: pointer; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); color: var(--ac-brown-light); }
-        /* V12: 強制藍底白字 Active 狀態 */
+        /* V13: 強制藍底白字 */
         .f-tag-pill.active { background-color: var(--mo-blue) !important; color: #FFFFFF !important; box-shadow: 0 4px 10px rgba(114, 177, 214, 0.4); transform: scale(1.02); }
 
         .bill-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 2px dashed var(--ac-tan); cursor: pointer; transition: 0.2s;}
         .bill-item:last-child { border-bottom: none; }
         .bill-item:active { transform: scale(0.98); background: #F8F6F2; border-radius: 12px;}
-        .bill-icon { width: 44px; height: 44px; border-radius: 14px; background: #F8F6F2; display: flex; justify-content: center; align-items: center; font-size: 1.4rem; color: var(--ac-brown); border: 1px solid var(--ac-tan);}
+        .bill-icon { width: 44px; height: 44px; border-radius: 14px; background: #F8F6F2; display: flex; justify-content: center; align-items: center; font-size: 1.4rem; color: var(--ac-brown); border: 1px solid var(--ac-tan); flex-shrink:0;}
         .bill-date { font-size: 0.75rem; background: var(--mo-blue); color: #FFF; padding: 2px 8px; border-radius: 8px; font-weight: 900; display: inline-block; margin-bottom: 4px;}
         .date-divider { display: inline-block; background: #EAF0F4; color: var(--mo-blue); border: 2px solid #FFF; box-shadow: var(--shadow-soft); padding: 4px 12px; border-radius: 20px; font-weight: 900; margin: 15px 0 5px 0; font-size: 0.8rem;}
 
@@ -274,7 +280,7 @@
         .member-quote { font-size: 0.9rem; color: var(--mo-blue); font-weight: 700; margin-top: 8px; font-style: italic;}
         .member-actions { position: absolute; top: 15px; right: 15px; display: flex; gap: 10px; color: var(--ac-tan); font-size: 1.1rem; }
 
-        /* ================= 居中遊戲通知 Modal (V12 防溢出與置中) ================= */
+        /* ================= 居中遊戲通知 Modal (V13 無滾動條與防溢出) ================= */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(92, 84, 77, 0.6); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 1000;}
         .ac-modal { 
             background: var(--modal-dynamic-bg); 
@@ -282,15 +288,15 @@
             border: 4px solid var(--ac-brown);
             box-shadow: 0 15px 0px rgba(0,0,0,0.1), inset 0 0 0 3px rgba(255,255,255,0.5); 
             animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            /* 隱藏滾動條 */
-            max-height: 90vh; height: fit-content; overflow-y: auto; position: relative;
-            scrollbar-width: none; -ms-overflow-style: none;
+            /* V13 高度自適應且消滅滾動條 */
+            height: fit-content; max-height: 90vh; overflow-y: auto; overflow-x: hidden; position: relative;
+            scrollbar-width: none; -ms-overflow-style: none; box-sizing: border-box;
         }
         .ac-modal::-webkit-scrollbar { display: none; }
         @keyframes popIn { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
         .color-picker-wrapper { background: rgba(255,255,255,0.6); border-radius: 20px; padding: 12px 15px; margin-bottom: 20px; border: 2px dashed rgba(92, 84, 77, 0.3);}
-        .color-picker-group { display: flex; gap: 15px; overflow-x: auto; padding: 10px 5px; scrollbar-width: none; align-items: center;}
+        .color-picker-group { display: flex; gap: 15px; overflow-x: auto; padding: 10px 5px; scrollbar-width: none; align-items: center; flex-wrap: wrap;}
         .color-picker-group::-webkit-scrollbar { display: none; }
         .color-dot { width: 28px; height: 28px; border-radius: 50%; cursor: pointer; border: 3px solid #FFF; flex-shrink: 0; transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s;}
         .color-dot:active { transform: scale(0.8); }
@@ -303,15 +309,22 @@
 
         .delete-icon-bg { width: 60px; height: 60px; background: var(--mo-pink); border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 15px auto; font-size: 1.8rem; color: #FFF; border: 3px solid #FFF; box-shadow: var(--shadow-soft);}
 
-        /* V12: 住宿詳細資訊 Modal (強制套用居中 Modal 樣式) */
+        /* 住宿詳細資訊 Modal (V12 全域置中) */
         #modal-hotel-detail-content {
             background: #FFF; width: 90%; max-width: 360px; height: fit-content; max-height: 90vh; border-radius: 28px; padding: 0; 
             border: 4px solid var(--ac-brown); box-shadow: 0 15px 0px rgba(0,0,0,0.1), inset 0 0 0 3px rgba(255,255,255,0.5); 
             animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1); overflow: hidden; display: flex; flex-direction: column;
+            box-sizing: border-box; overflow-x: hidden;
         }
         .hd-close { position: absolute; top: 15px; right: 15px; width: 32px; height: 32px; background: rgba(0,0,0,0.5); color: #FFF; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1rem; z-index: 10; cursor: pointer; backdrop-filter: blur(4px); transition: 0.2s;}
         .hd-close:active { transform: scale(0.9); }
 
+        /* V13: 頭像裁切器 UI */
+        .crop-container { width: 220px; height: 220px; margin: 0 auto 15px auto; position: relative; border-radius: 50%; overflow: hidden; border: 4px dashed var(--ac-tan); background: #F8F6F2; box-shadow: inset 0 4px 10px rgba(0,0,0,0.1);}
+        .crop-img { position: absolute; top: 0; left: 0; transform-origin: top left; cursor: move; }
+        .crop-mask { position: absolute; inset: 0; border: 20px solid rgba(255,255,255,0.6); border-radius: 50%; pointer-events: none; z-index: 5;}
+
+        /* 動態 Toast (停留縮短至 1500ms) */
         .toast {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9);
             background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);
@@ -407,7 +420,7 @@
                             <div class="fc-grid-item"><div class="fc-grid-title">AIRCRAFT</div><div class="fc-grid-val"><i class="fa-solid fa-plane" style="color:var(--mo-pink);"></i> <span class="editable-field">A321neo</span></div></div>
                             <div class="fc-grid-item"><div class="fc-grid-title">PRICE (One Way)</div><div class="fc-grid-val">NT$ <span class="editable-field">4,432</span></div></div>
                         </div>
-                        <button class="btn-q btn-mo-teal scale-btn btn-edit-trigger" onclick="requirePin('flight-outbound'); event.stopPropagation();"><i class="fa-solid fa-pen"></i> 編輯去程航班</button>
+                        <button class="btn-q btn-edit-blue scale-btn btn-edit-trigger" onclick="requirePin('flight-outbound'); event.stopPropagation();"><i class="fa-solid fa-pen"></i> 編輯去程航班</button>
                     </div>
                 </div>
 
@@ -436,7 +449,7 @@
                             <div class="fc-grid-item"><div class="fc-grid-title">AIRCRAFT</div><div class="fc-grid-val"><i class="fa-solid fa-plane" style="color:var(--mo-pink);"></i> <span class="editable-field">A321neo</span></div></div>
                             <div class="fc-grid-item"><div class="fc-grid-title">PRICE (One Way)</div><div class="fc-grid-val">NT$ <span class="editable-field">4,431</span></div></div>
                         </div>
-                        <button class="btn-q btn-mo-teal scale-btn btn-edit-trigger" onclick="requirePin('flight-inbound'); event.stopPropagation();"><i class="fa-solid fa-pen"></i> 編輯回程航班</button>
+                        <button class="btn-q btn-edit-blue scale-btn btn-edit-trigger" onclick="requirePin('flight-inbound'); event.stopPropagation();"><i class="fa-solid fa-pen"></i> 編輯回程航班</button>
                     </div>
                 </div>
             </div>
@@ -445,7 +458,7 @@
                 <div class="hotel-card2 glowing-hover scale-btn" id="hotel-stay" onclick="openHotelDetailModal()">
                     <div class="hc-img-wrapper">
                         <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80" alt="Airbnb Pop">
-                        <div class="hc-tag-loc" style="background:#007AFF; color:#FFF;"><i class="fa-solid fa-location-dot"></i> <span class="editable-field">釜山 西面</span></div>
+                        <div class="hc-tag-loc"><i class="fa-solid fa-location-dot"></i> <span class="editable-field">釜山 西面</span></div>
                     </div>
                     <div class="hc-body">
                         <h2 class="hc-title"><span class="editable-field">釜山 Airbnb - Pop</span></h2>
@@ -473,7 +486,7 @@
                                 <div class="hc-price-night">每人每晚 NT$ <span class="editable-field">1,615</span></div>
                             </div>
                         </div>
-                        <button class="btn-q btn-mo-teal scale-btn btn-edit-trigger" style="margin-top:15px;" onclick="requirePin('hotel-stay'); event.stopPropagation();"><i class="fa-solid fa-pen"></i> 編輯住宿資訊</button>
+                        <button class="btn-q btn-edit-blue scale-btn btn-edit-trigger" style="margin-top:15px;" onclick="requirePin('hotel-stay'); event.stopPropagation();"><i class="fa-solid fa-pen"></i> 編輯住宿資訊</button>
                     </div>
                 </div>
             </div>
@@ -493,29 +506,29 @@
             
             <div id="acc-calc" style="display: none;">
                 <div class="ac-card">
-                    <h3 style="margin-top:0; color: var(--ac-brown); text-align: center; margin-bottom:20px;">💱 即時匯率換算</h3>
+                    <h3 style="margin-top:0; color: var(--ac-brown); text-align: center; margin-bottom:20px;" class="acc-title-brown">💱 即時匯率換算</h3>
                     <div style="font-size:0.8rem; font-weight:900; color:var(--ac-brown-light); text-align:center; margin-bottom:15px;">預設匯率 1 KRW = 0.023 TWD</div>
                     
-                    <div class="exchange-box scale-btn" onclick="playHaptic()" style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px; background: linear-gradient(135deg, #E8F4FA 0%, #D1E5EE 100%); padding: 15px; border-radius: 24px; box-shadow: inset 0 2px 5px rgba(255,255,255,0.5), 0 8px 15px rgba(114, 177, 214, 0.2);">
-                        <div class="exc-input-group" style="flex: 1; background: #FFF; border: 2px solid transparent; border-radius: 16px; padding: 15px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.03);">
-                            <div class="exc-currency" style="font-size: 0.8rem; font-weight: 900; color: var(--mo-blue); margin-bottom: 5px;">韓元 (KRW)</div>
-                            <input type="number" id="exc-krw" placeholder="0" oninput="calcExchange('krw')" onfocus="this.value=''; calcExchange('krw')" style="width: 100%; border: none; background: transparent; text-align: center; font-size: 1.8rem; font-weight: 900; color: var(--ac-brown); outline: none;">
+                    <div class="exchange-box scale-btn" onclick="playHaptic()">
+                        <div class="exc-input-group">
+                            <div class="exc-currency">韓元 (KRW)</div>
+                            <input type="number" id="exc-krw" placeholder="0" oninput="calcExchange('krw')" onfocus="this.value=''; calcExchange('krw')">
                         </div>
-                        <div class="exc-icon" style="font-size: 1.5rem; color: var(--mo-blue);"><i class="fa-solid fa-right-left"></i></div>
-                        <div class="exc-input-group" style="flex: 1; background: #FFF; border: 2px solid transparent; border-radius: 16px; padding: 15px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.03);">
-                            <div class="exc-currency" style="font-size: 0.8rem; font-weight: 900; color: var(--mo-blue); margin-bottom: 5px;">台幣 (TWD)</div>
-                            <input type="number" id="exc-twd" placeholder="0" oninput="calcExchange('twd')" onfocus="this.value=''; calcExchange('twd')" style="width: 100%; border: none; background: transparent; text-align: center; font-size: 1.8rem; font-weight: 900; color: var(--ac-brown); outline: none;">
+                        <div class="exc-icon"><i class="fa-solid fa-right-left"></i></div>
+                        <div class="exc-input-group">
+                            <div class="exc-currency">台幣 (TWD)</div>
+                            <input type="number" id="exc-twd" placeholder="0" oninput="calcExchange('twd')" onfocus="this.value=''; calcExchange('twd')">
                         </div>
                     </div>
 
                     <div style="margin-top: 30px;">
                         <h4 style="font-size:0.9rem; color:var(--ac-brown-light); margin-bottom:10px;"><i class="fa-solid fa-bolt"></i> 常用面額速查</h4>
-                        <div class="quick-conv-board" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                            <div class="qc-item scale-btn" onclick="playHaptic(); document.getElementById('exc-krw').value=1000; calcExchange('krw');" style="background: #FFF; border: 2px solid var(--ac-tan); border-radius: 12px; padding: 10px; display: flex; justify-content: space-between; font-weight: 900; color: var(--ac-brown);">₩ 1,000 <span style="color:var(--ac-brown-light); font-size:0.85rem;">NT$ 23</span></div>
-                            <div class="qc-item scale-btn" onclick="playHaptic(); document.getElementById('exc-krw').value=5000; calcExchange('krw');" style="background: #FFF; border: 2px solid var(--ac-tan); border-radius: 12px; padding: 10px; display: flex; justify-content: space-between; font-weight: 900; color: var(--ac-brown);">₩ 5,000 <span style="color:var(--ac-brown-light); font-size:0.85rem;">NT$ 115</span></div>
-                            <div class="qc-item scale-btn" onclick="playHaptic(); document.getElementById('exc-krw').value=10000; calcExchange('krw');" style="background: #FFF; border: 2px solid var(--ac-tan); border-radius: 12px; padding: 10px; display: flex; justify-content: space-between; font-weight: 900; color: var(--ac-brown);">₩ 10,000 <span style="color:var(--ac-brown-light); font-size:0.85rem;">NT$ 230</span></div>
-                            <div class="qc-item scale-btn" onclick="playHaptic(); document.getElementById('exc-krw').value=12500; calcExchange('krw');" style="background: #FFF; border: 2px solid var(--ac-tan); border-radius: 12px; padding: 10px; display: flex; justify-content: space-between; font-weight: 900; color: var(--ac-brown);">₩ 12,500 <span style="color:var(--ac-brown-light); font-size:0.85rem;">NT$ 288</span></div>
-                            <div class="qc-item scale-btn" onclick="playHaptic(); document.getElementById('exc-krw').value=50000; calcExchange('krw');" style="grid-column: span 2; text-align:center; display:block; background: #FFF; border: 2px solid var(--ac-tan); border-radius: 12px; padding: 10px; font-weight: 900; color: var(--ac-brown);">₩ 50,000 <span style="margin-left:10px; color:var(--ac-brown-light); font-size:0.85rem;">NT$ 1,150</span></div>
+                        <div class="quick-conv-board">
+                            <div class="qc-item scale-btn" onclick="playHaptic(); document.getElementById('exc-krw').value=1000; calcExchange('krw');">₩ 1,000 <span>NT$ 23</span></div>
+                            <div class="qc-item scale-btn" onclick="playHaptic(); document.getElementById('exc-krw').value=5000; calcExchange('krw');">₩ 5,000 <span>NT$ 115</span></div>
+                            <div class="qc-item scale-btn" onclick="playHaptic(); document.getElementById('exc-krw').value=10000; calcExchange('krw');">₩ 10,000 <span>NT$ 230</span></div>
+                            <div class="qc-item scale-btn" onclick="playHaptic(); document.getElementById('exc-krw').value=12500; calcExchange('krw');">₩ 12,500 <span>NT$ 288</span></div>
+                            <div class="qc-item scale-btn" onclick="playHaptic(); document.getElementById('exc-krw').value=50000; calcExchange('krw');" style="grid-column: span 2; text-align:center; display:block;">₩ 50,000 <span style="margin-left:10px;">NT$ 1,150</span></div>
                         </div>
                     </div>
                 </div>
@@ -524,30 +537,24 @@
             <div id="acc-record">
                 <div class="ac-card">
                     <h3 style="margin-top:0; color: var(--ac-brown); text-align: center; margin-bottom: 20px;">💰 記帳輸入</h3>
-                    
-                    <label class="form-label">日期</label>
-                    <input type="date" class="form-control" id="exp-date" value="2026-06-06">
-
+                    <label class="form-label">日期</label><input type="date" class="form-control" id="exp-date" value="2026-06-06">
                     <label class="form-label">幣別</label>
-                    <div class="currency-tabs">
+                    <div class="currency-tabs" style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
                         <div class="cur-tab active scale-btn" onclick="setExpCurrency('KRW', this)">KRW</div>
                         <div class="cur-tab scale-btn" onclick="setExpCurrency('TWD', this)">TWD</div>
                         <div class="cur-tab scale-btn" onclick="setExpCurrency('USD', this)">USD</div>
                     </div>
-
                     <div style="display:flex; gap:10px;">
                         <div style="flex:1;"><label class="form-label"><span style="color:var(--mo-pink);">*</span> 金額</label><input type="number" class="form-control" id="exp-amount" placeholder="0" oninput="calcApproxTwd()" style="font-size:1.2rem; font-weight:900;"></div>
                         <div style="flex:1;"><label class="form-label">約合台幣</label><input type="text" class="form-control" id="exp-approx-twd" value="0" disabled></div>
                     </div>
-
                     <label class="form-label">支付方式</label>
-                    <div class="method-tabs" style="display: flex; gap: 12px; margin-bottom: 15px; flex-wrap: wrap; padding: 5px;">
+                    <div class="method-tabs">
                         <div class="m-tab active scale-btn" onclick="selectMethod(this)">現金</div>
                         <div class="m-tab scale-btn" onclick="selectMethod(this)">信用卡</div>
                         <div class="m-tab scale-btn" onclick="selectMethod(this)">WOWPASS</div>
                         <div class="m-tab scale-btn" onclick="selectMethod(this)">行動支付</div>
                     </div>
-
                     <label class="form-label">地點 (選填)</label><input type="text" class="form-control" id="exp-loc" placeholder="📍 例如：便利商店">
                     <label class="form-label"><span style="color:var(--mo-pink);">*</span> 消費項目</label><input type="text" class="form-control" id="exp-title" placeholder="例如：午餐">
 
@@ -557,8 +564,7 @@
                         <label class="form-label" style="margin-top:25px;">誰要分攤？ (不選視為個人帳)</label>
                         <div class="ava-select-group" id="split-group-container"></div>
                     </div>
-
-                    <button class="btn-q btn-add-blue-v11 scale-btn" style="width: 100%; padding: 16px; font-size: 1.1rem; margin-top: 20px;" onclick="saveExpense()">✔ 記一筆</button>
+                    <button class="btn-q btn-add-blue-v11 scale-btn" style="width: 100%; margin-top: 20px;" onclick="saveExpense()">✔ 記一筆</button>
                 </div>
             </div>
 
@@ -581,7 +587,7 @@
                     <div id="detail-day-subtotal">本日小計: NT$ 0</div>
                 </div>
 
-                <div class="ac-card" style="padding: 10px 20px;" id="expense-list-container"></div>
+                <div class="ac-card" style="padding: 10px 16px;" id="expense-list-container"></div>
             </div>
         </div>
 
@@ -724,22 +730,39 @@
         </div>
     </div>
 
+    <div class="modal-overlay" id="modal-cropper">
+        <div class="ac-modal" style="background: #FFF; display: flex; flex-direction: column; align-items: center; overflow:hidden;">
+            <h2 style="margin-top:0; margin-bottom: 20px; text-align: center; color: var(--ac-brown); font-weight: 900;"><i class="fa-solid fa-crop-simple"></i> 調整大頭貼</h2>
+            <div class="crop-container" id="crop-container">
+                <img id="crop-img" class="crop-img" src="" alt="crop">
+                <div class="crop-mask"></div>
+            </div>
+            <label class="form-label" style="text-align:center; width:100%; margin-top:10px;">縮放照片</label>
+            <input type="range" id="crop-zoom" min="1" max="3" step="0.01" value="1" style="width: 80%; margin-bottom: 20px;">
+            
+            <div style="display: flex; gap: 15px; width: 100%;">
+                <button class="btn-q modal-btn modal-btn-cancel scale-btn" onclick="playHaptic(); closeModal('modal-cropper')">取消</button>
+                <button class="btn-q modal-btn modal-btn-save scale-btn" onclick="playHaptic(); confirmCrop()">✂️ 裁切儲存</button>
+            </div>
+        </div>
+    </div>
+
     <div class="modal-overlay" id="modal-expense-edit" onclick="if(event.target === this) closeModal('modal-expense-edit')">
         <div class="ac-modal" style="background: #FFF;">
             <h2 style="margin-top:0; margin-bottom: 20px; text-align: center; color: var(--ac-brown); font-weight: 900;"><i class="fa-solid fa-pen"></i> 編輯帳務</h2>
             <input type="hidden" id="edit-exp-id">
             <label class="form-label">日期</label><input type="date" class="form-control" id="edit-exp-date">
             <div style="display:flex; gap:10px;">
-                <div style="flex:1;"><label class="form-label">金額</label><input type="number" class="form-control" id="edit-exp-amount" oninput="calcApproxTwdEdit()"></div>
+                <div style="flex:1;"><label class="form-label">金額 (KRW)</label><input type="number" class="form-control" id="edit-exp-amount" oninput="calcApproxTwdEdit()"></div>
                 <div style="flex:1;"><label class="form-label">約合台幣 (TWD)</label><input type="text" class="form-control" id="edit-exp-twd" disabled></div>
             </div>
             <label class="form-label">地點與消費項目</label>
             <div style="display:flex; gap:10px;"><input type="text" class="form-control" id="edit-exp-loc" placeholder="地點"><input type="text" class="form-control" id="edit-exp-title" placeholder="項目"></div>
             <div style="background: #FCFBFA; padding: 15px; border-radius: 16px; margin-top: 10px; border: 2px dashed var(--ac-tan);">
                 <label class="form-label">付款人 (單選)</label>
-                <div class="ava-select-group" id="edit-payer-group-container" style="display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap;"></div>
+                <div class="ava-select-group" id="edit-payer-group-container"></div>
                 <label class="form-label">分攤人 (複選)</label>
-                <div class="ava-select-group" id="edit-split-group-container" style="display: flex; gap: 15px; flex-wrap: wrap;"></div>
+                <div class="ava-select-group" id="edit-split-group-container"></div>
             </div>
             <div style="display: flex; gap: 15px; margin-top: 20px;">
                 <button class="btn-q modal-btn modal-btn-cancel scale-btn" onclick="playHaptic(); closeModal('modal-expense-edit')">取消</button>
@@ -780,15 +803,11 @@
     <div class="modal-overlay" id="modal-diary" onclick="if(event.target === this) closeModal('modal-diary')">
         <div class="ac-modal" style="background: #FFF;">
             <h2 style="margin-top:0; margin-bottom: 20px; text-align: center; color: var(--ac-brown); font-weight: 900;" id="diary-modal-title"><i class="fa-solid fa-book"></i> 寫新日誌</h2>
-            
             <input type="hidden" id="diary-edit-id">
-
-            <label class="form-label">日期</label>
-            <input type="date" class="form-control" id="diary-date">
+            <label class="form-label">日期</label><input type="date" class="form-control" id="diary-date">
             <label class="form-label">記錄人</label>
-            <div class="ava-select-group" id="diary-author-group-container" style="display: flex; gap: 15px; margin-bottom: 15px; justify-content: center; flex-wrap: wrap;"></div>
-            <label class="form-label" style="margin-top: 25px;">內容</label>
-            <textarea class="form-control" id="diary-content" rows="4" placeholder="寫下今天的趣事..."></textarea>
+            <div class="ava-select-group" id="diary-author-group-container" style="justify-content: center;"></div>
+            <label class="form-label" style="margin-top: 25px;">內容</label><textarea class="form-control" id="diary-content" rows="4" placeholder="寫下今天的趣事..."></textarea>
             <label class="form-label">照片 (最多5張)</label>
             <div style="display:flex; gap:10px; overflow-x:auto; scrollbar-width:none; padding-bottom:5px;" id="diary-upload-preview"></div>
             <input type="file" id="diary-file-input" accept="image/*" multiple style="display:none;" onchange="handleDiaryPhotoUpload(event)">
@@ -826,14 +845,15 @@
 </div>
 
 <script>
-    // ================= 基礎設定與工具 =================
+    // ================= 基礎工具 =================
     function playHaptic() { if (navigator.vibrate) navigator.vibrate(15); }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
     function showToast(msg = '儲存成功') {
         document.getElementById('toast-text').innerText = msg;
         const toast = document.getElementById('toast-msg');
-        toast.classList.add('show');
-        setTimeout(() => { toast.classList.remove('show'); }, 2000);
+        toast.style.opacity = '1'; toast.style.transform = 'translate(-50%, -50%) scale(1)';
+        // V12: 提示縮短為 1500ms
+        setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translate(-50%, -50%) scale(0.9)'; }, 1500);
     }
     function switchPage(pageId, el) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -851,6 +871,7 @@
 
     function applyNeonGlow(el) { el.classList.add('glowing-border'); playHaptic(); }
     function removeNeonGlow(el) { setTimeout(() => { el.classList.remove('glowing-border'); }, 200); }
+    
     function openMap() { 
         playHaptic(); 
         const loc = document.getElementById('form-loc').value || '釜山';
@@ -861,6 +882,8 @@
     const EXCHANGE_RATE = 0.023; const EXCHANGE_RATE_USD = 32; 
     let currentExpFilter = 'all'; let currentExpCurrency = 'KRW';
     let selectedFormColor = 'white';
+    
+    // 刪除操作變數
     let deleteTargetType = ''; let itemToDelete = null;
     let animationFrameId;
 
@@ -875,13 +898,11 @@
         { date: '2026-06-10', day: 'DAY 5', week: '三', loc: '西面' }, { date: '2026-06-11', day: 'DAY 6', week: '四', loc: '西面' }
     ];
 
-    // 全域核心資料集 (Global State)
     let membersData = [
         { id: 1, name: '琳', aka: '財務大臣', quote: '買買買，錢不是問題！', img: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&q=80', fallback: '👩' },
         { id: 2, name: '貓', aka: '導航雷達', quote: '跟著我走絕對不會迷路', img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&q=80', fallback: '🐱' }
     ];
 
-    // V11 Data Seeding: 完整解析 PDF 釜山 6 天 5 夜
     let itineraryData = [
         { id: 1, date: '2026-06-06', time: '15:30', title: '下機後搭車至西面', note: '搭免費接駁前往住宿(車程約30分)', img: null, loc: '', color: 'white' },
         { id: 2, date: '2026-06-06', time: '18:00', title: '雪夜覓-燒肉', note: '晚餐 訂位大名:Wang lin', img: null, loc: '', color: 'pink' },
@@ -990,7 +1011,24 @@
         }).join('');
     }
 
-    // ================= 模組 1: 行程 V11 =================
+    // ================= 共用刪除邏輯 =================
+    function confirmDelete(type, id) { 
+        deleteTargetType = type; itemToDelete = id; 
+        document.getElementById('modal-delete').style.display = 'flex'; 
+        playHaptic(); 
+    }
+    
+    function executeDelete() { 
+        if(deleteTargetType === 'itinerary') { itineraryData = itineraryData.filter(e => e.id !== itemToDelete); renderTimeline(); }
+        else if(deleteTargetType === 'expense') { expenses = expenses.filter(e => e.id !== itemToDelete); renderExpenses(); }
+        else if(deleteTargetType === 'diary') { diaryData = diaryData.filter(e => e.id !== itemToDelete); renderDiary(); }
+        else if(deleteTargetType === 'voucher') { vouchersData = vouchersData.filter(e => e.id !== itemToDelete); renderVouchers(); }
+        else if(deleteTargetType === 'member') { membersData = membersData.filter(e => e.id !== itemToDelete); renderGlobalAvatars(); }
+        
+        closeModal('modal-delete'); showToast('刪除成功');
+    }
+
+    // ================= 模組 1: 行程 V12 =================
     let currentDateSelect = '2026-06-06';
     
     let touchStartX = 0; let touchEndX = 0;
@@ -1138,7 +1176,7 @@
     }
 
 
-    // ================= 模組 2: 預定票務 (V11 狀態復原修復) =================
+    // ================= 模組 2: 預定票務 (V12 按鈕修復) =================
     function requirePin(targetId) {
         document.getElementById('pin-target').value = targetId; document.getElementById('pin-input').value = '';
         document.getElementById('modal-pin').style.display = 'flex'; setTimeout(() => document.getElementById('pin-input').focus(), 100);
@@ -1153,7 +1191,7 @@
             
             const btn = card.querySelector('.btn-edit-trigger');
             btn.innerHTML = '<i class="fa-solid fa-check"></i> 儲存修改';
-            btn.classList.add('is-editing');
+            btn.classList.add('is-editing'); // 加入編輯中狀態
             
             btn.onclick = function(e) { e.stopPropagation(); lockCard(targetId, this); };
             closeModal('modal-pin');
@@ -1166,7 +1204,7 @@
         
         const isFlight = cardId.includes('flight');
         btn.innerHTML = `<i class="fa-solid fa-pen"></i> ${isFlight ? '編輯航班資訊' : '編輯住宿資訊'}`;
-        btn.classList.remove('is-editing');
+        btn.classList.remove('is-editing'); // 移除編輯中狀態，恢復原始 CSS (Teal/Blue)
         
         btn.onclick = function(e) { e.stopPropagation(); requirePin(cardId); };
         showToast('儲存成功');
@@ -1247,7 +1285,6 @@
 
     function togglePayer(el) { playHaptic(); document.querySelectorAll('.payer-opt').forEach(opt => { opt.classList.remove('active'); opt.style.borderColor="var(--ac-tan)"; opt.style.opacity="0.4"; opt.style.filter="grayscale(100%)"; opt.style.background="#FFF";}); el.classList.add('active'); el.style.borderColor="var(--mo-yellow)"; el.style.opacity="1"; el.style.filter="grayscale(0%)"; el.style.background="rgba(255,208,0,0.1)";}
     function toggleSplit(el) { playHaptic(); el.classList.toggle('active'); if(el.classList.contains('active')) { el.style.borderColor="var(--mo-yellow)"; el.style.opacity="1"; el.style.filter="grayscale(0%)"; el.style.background="rgba(255,208,0,0.1)"; } else { el.style.borderColor="var(--ac-tan)"; el.style.opacity="0.4"; el.style.filter="grayscale(100%)"; el.style.background="#FFF"; } }
-
     function toggleEditPayer(el) { playHaptic(); document.querySelectorAll('.edit-payer-opt').forEach(opt => { opt.classList.remove('active'); opt.style.borderColor="var(--ac-tan)"; opt.style.opacity="0.4"; opt.style.filter="grayscale(100%)"; opt.style.background="#FFF";}); el.classList.add('active'); el.style.borderColor="var(--mo-yellow)"; el.style.opacity="1"; el.style.filter="grayscale(0%)"; el.style.background="rgba(255,208,0,0.1)";}
     function toggleEditSplit(el) { playHaptic(); el.classList.toggle('active'); if(el.classList.contains('active')) { el.style.borderColor="var(--mo-yellow)"; el.style.opacity="1"; el.style.filter="grayscale(0%)"; el.style.background="rgba(255,208,0,0.1)"; } else { el.style.borderColor="var(--ac-tan)"; el.style.opacity="0.4"; el.style.filter="grayscale(100%)"; el.style.background="#FFF"; } }
 
@@ -1354,7 +1391,7 @@
                         <div class="bill-icon">${icon}</div>
                         <div>
                             <div style="font-weight: 900; font-size: 1.05rem; color:var(--ac-brown); margin-bottom:4px;">${exp.title}</div>
-                            <div style="display:flex; align-items:center; gap:5px;">${badgeHtml} ${locText}</div>
+                            <div style="display:flex; align-items:center; gap:5px; flex-wrap:wrap;">${badgeHtml} ${locText}</div>
                         </div>
                     </div>
                     <div style="display: flex; align-items: center; gap: 15px;">
@@ -1371,7 +1408,7 @@
     }
 
 
-    // ================= 模組 4: 日誌 (V4保留) =================
+    // ================= 模組 4: 日誌 (V12 保留 Update) =================
     function renderDiary() {
         const container = document.getElementById('diary-container');
         diaryData.sort((a, b) => new Date(b.date) - new Date(a.date)); 
@@ -1460,8 +1497,13 @@
         closeModal('modal-diary'); showToast(id ? '修改成功' : '日誌發布成功'); renderDiary();
     }
 
-    // ================= 模組 5: 快樂成員 =================
+    // ================= 模組 5: 快樂成員 (V12 Avatar Cropper) =================
     let currentMemberImage = null;
+    
+    // Vanilla JS 輕量級裁切器參數
+    let cropImgElement = document.getElementById('crop-img');
+    let cropZoomInput = document.getElementById('crop-zoom');
+    let isDragging = false; let startX, startY; let imgX = 0, imgY = 0; let currentScale = 1;
 
     function openMemberModal(id = null) {
         playHaptic();
@@ -1476,7 +1518,75 @@
 
     function handleMemberPhotoUpload(event) {
         const file = event.target.files[0];
-        if (file) { const reader = new FileReader(); reader.onload = function(e) { currentMemberImage = e.target.result; renderMemberUploadPreview(); }; reader.readAsDataURL(file); }
+        if (file) { 
+            const reader = new FileReader(); 
+            reader.onload = function(e) { 
+                openCropper(e.target.result); 
+            }; 
+            reader.readAsDataURL(file); 
+        }
+    }
+    
+    function openCropper(src) {
+        cropImgElement.src = src;
+        cropImgElement.onload = () => {
+            imgX = 0; imgY = 0; currentScale = 1; cropZoomInput.value = 1;
+            updateCropTransform();
+            document.getElementById('modal-cropper').style.display = 'flex';
+        };
+    }
+    
+    cropZoomInput.addEventListener('input', (e) => {
+        currentScale = parseFloat(e.target.value);
+        updateCropTransform();
+    });
+
+    const cropContainer = document.getElementById('crop-container');
+    cropContainer.addEventListener('mousedown', dragStart);
+    cropContainer.addEventListener('touchstart', dragStart, {passive: false});
+    window.addEventListener('mousemove', drag);
+    window.addEventListener('touchmove', drag, {passive: false});
+    window.addEventListener('mouseup', dragEnd);
+    window.addEventListener('touchend', dragEnd);
+
+    function dragStart(e) {
+        isDragging = true;
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        startX = clientX - imgX;
+        startY = clientY - imgY;
+    }
+    function drag(e) {
+        if(!isDragging) return;
+        e.preventDefault(); // prevent scroll
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        imgX = clientX - startX;
+        imgY = clientY - startY;
+        updateCropTransform();
+    }
+    function dragEnd() { isDragging = false; }
+    
+    function updateCropTransform() {
+        cropImgElement.style.transform = `translate(${imgX}px, ${imgY}px) scale(${currentScale})`;
+    }
+
+    function confirmCrop() {
+        playHaptic();
+        const canvas = document.createElement('canvas');
+        canvas.width = 220; canvas.height = 220;
+        const ctx = canvas.getContext('2d');
+        
+        // Ensure circular mask in canvas (optional, but good for saving)
+        ctx.beginPath();
+        ctx.arc(110, 110, 110, 0, Math.PI * 2);
+        ctx.clip();
+        
+        ctx.drawImage(cropImgElement, imgX, imgY, cropImgElement.width * currentScale, cropImgElement.height * currentScale);
+        
+        currentMemberImage = canvas.toDataURL('image/jpeg', 0.9);
+        renderMemberUploadPreview();
+        closeModal('modal-cropper');
     }
 
     function renderMemberUploadPreview() {
