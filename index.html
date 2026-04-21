@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>琳和貓的自由行 - 旅遊 V15 終極定案版</title>
+    <title>琳和貓的自由行 - 旅遊 V16 終極定案版</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
     <style>
@@ -37,7 +37,7 @@
         }
 
         /* V15: 全域 UI 縮放與防溢出優化 (Mobile-First 微調) */
-        html { font-size: 13.8px; } /* 微幅調大基底字體，增加閱讀性 */
+        html { font-size: 13.8px; } 
         * { box-sizing: border-box; font-family: 'Nunito', 'Noto Sans TC', sans-serif; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; scrollbar-width: none; -ms-overflow-style: none; word-wrap: break-word; }
         *::-webkit-scrollbar { display: none !important; }
         
@@ -81,18 +81,15 @@
         .btn-add-yellow-v10 { background: var(--mo-yellow-muted); color: var(--ac-brown); padding: 10px 22px; font-size: 1rem; border-radius: 30px; border: 3px solid #FFF; box-shadow: var(--shadow-btn-yellow); text-shadow: none; }
         .btn-add-yellow-v10:active { transform: translateY(5px) scale(0.96); box-shadow: 0 0px 0px transparent; }
 
-        /* V15: 日誌與記帳按鈕強制白字 */
         .btn-add-blue-v11 { background: var(--mo-blue); color: #FFFFFF !important; padding: 10px 22px; font-size: 1rem; border-radius: 30px; border: 3px solid #FFF; box-shadow: var(--shadow-btn-blue); display: inline-flex; align-items: center; gap: 6px; }
         .btn-add-blue-v11:active { transform: translateY(5px) scale(0.96); box-shadow: 0 0px 0px transparent; }
 
         .btn-mo-teal { background: var(--mo-teal); color: #FFF; border: 3px solid #FFF; box-shadow: 0 5px 0 var(--mo-teal-dark); border-radius: 20px; padding: 12px; font-size: 1rem; width: 100%;}
         .btn-mo-teal:active { transform: translateY(5px) scale(0.96); box-shadow: 0 0px 0px transparent; }
         
-        /* V15: 機票與住宿按鈕天藍色覆寫 */
         #flight-outbound .btn-edit-trigger, #flight-inbound .btn-edit-trigger, #hotel-stay .btn-edit-trigger { background: var(--mo-blue) !important; box-shadow: 0 5px 0 #5B8BAA !important; color: #FFF !important;}
         .btn-edit-trigger.is-editing { background: var(--mo-green) !important; color: #FFF !important; box-shadow: 0 5px 0 var(--mo-green-dark) !important; border-color: #FFF !important; }
 
-        /* V15: 卡片內距微調，讓留白更舒適 */
         .ac-card { background: var(--ac-card); border-radius: 24px; padding: 16px; margin-bottom: 16px; box-shadow: var(--shadow-soft); border: 2px solid transparent; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
         .section-title { font-size: 1.2rem; font-weight: 900; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; color: var(--ac-brown); }
 
@@ -120,11 +117,10 @@
 
         /* ================= 模組 1: 行程 ================= */
         .date-scroller { display: flex; gap: 8px; overflow-x: auto; padding: 5px 0 15px 0; scroll-behavior: smooth; margin: 0 -5px; }
-        /* V15: 日期 Inactive 改為淡粉色 */
-        .date-tab { min-width: 56px; text-align: center; padding: 6px 4px; border-radius: 16px; background: #FCECEC; border: 2px solid transparent; cursor: pointer; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); color: var(--mo-pink-deep); opacity: 0.8; transform: scale(0.92); margin: 0 2px; }
+        /* V16: Inactive 狀態新增 currentColor 邊框 */
+        .date-tab { min-width: 56px; text-align: center; padding: 6px 4px; border-radius: 16px; background: #FCECEC; border: 2px solid currentColor; cursor: pointer; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); color: var(--mo-pink-deep); opacity: 0.8; transform: scale(0.92); margin: 0 2px; }
         .date-tab .day { font-size: 0.7rem; font-weight: 900; display: block; margin-bottom: 2px; }
         .date-tab .date { font-size: 1.05rem; font-weight: 900; }
-        /* V15: 日期 Active 維持原版亮粉色 */
         .date-tab.active { opacity: 1; background-color: var(--mo-pink); border-color: var(--mo-pink-deep); box-shadow: 0 0 15px 2px rgba(212, 165, 165, 0.5), inset 0 0 8px rgba(212, 165, 165, 0.3); transform: scale(1.05); color: #FFF;}
 
         .weather-card { border: 2px solid var(--mo-blue); display: flex; flex-direction: column; gap: 10px; background: linear-gradient(135deg, #E6F0F9 0%, #D4E6F1 100%); box-shadow: 0 8px 20px rgba(114, 177, 214, 0.15);}
@@ -190,18 +186,17 @@
         .hotel-card2 { background: #FFF; border-radius: 24px; padding: 0; overflow: hidden; border: 2px solid var(--ac-tan); box-shadow: var(--shadow-soft); margin-bottom: 20px; position: relative; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); cursor: pointer;}
         .hc-img-wrapper { position: relative; width: 100%; height: 200px; }
         .hc-img-wrapper img { width: 100%; height: 100%; object-fit: cover; }
-        /* V15: 住宿地標改柔和莫蘭迪深藍 (#2C3E50) */
         .hc-tag-loc { position: absolute; top: 15px; left: 15px; background: #2C3E50 !important; color: #FFF !important; padding: 6px 15px; border-radius: 20px; font-weight: 900; font-size: 0.85rem; box-shadow: 0 4px 10px rgba(44, 62, 80, 0.3) !important;}
         
         .hc-body { padding: 16px; }
         .hc-title { font-size: 1.4rem; font-weight: 900; color: var(--ac-brown); margin: 0 0 5px 0;}
         .hc-address { font-size: 0.85rem; font-weight: 800; color: var(--ac-brown-light); margin-bottom: 20px;}
         
-        .hc-checkin-box { display: flex; justify-content: space-between; align-items: center; border: 2px solid #F4F0EA; border-left: 6px solid var(--mo-blue); border-radius: 16px; padding: 12px; margin-bottom: 20px; background: #FCFBFA; }
+        /* V16: 雙色夾擊邊框 (左藍右粉) */
+        .hc-checkin-box { display: flex; justify-content: space-between; align-items: center; border: 2px solid #F4F0EA; border-left: 6px solid var(--mo-blue); border-right: 6px solid #D47A7A; border-radius: 16px; padding: 12px; margin-bottom: 20px; background: #FCFBFA; }
         .hc-ci-col { display: flex; flex-direction: column; gap: 4px; }
         .hc-ci-title { font-size: 0.7rem; font-weight: 900; color: var(--ac-brown-light); text-transform: uppercase;}
         .hc-ci-date { font-size: 1.1rem; font-weight: 900; color: var(--ac-brown);}
-        /* V15: 左右時區使用對比色 (深藍與玫瑰紅) */
         .hc-ci-col:nth-child(1) .hc-ci-title { color: #2C3E50 !important; }
         .hc-ci-col:nth-child(1) .hc-ci-time { font-size: 0.9rem; font-weight: 800; color: #2C3E50 !important; }
         .hc-ci-col:nth-child(3) .hc-ci-title { color: #D47A7A !important; }
@@ -242,7 +237,6 @@
         .ava-opt.active { opacity: 1; filter: grayscale(0%); border-color: var(--mo-blue); transform: scale(1.1); box-shadow: 0 4px 10px rgba(114, 177, 214, 0.3); }
         .ava-name { position: absolute; bottom: -18px; font-size: 0.7rem; font-weight: 900; color: var(--ac-brown); }
 
-        /* V15: 支付方式支援 Flex 等距展開 */
         .method-tabs { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;}
         .m-tab { flex: 1; text-align: center; padding: 10px 15px; width: auto; display: inline-flex; justify-content: center; align-items: center; border: 2px solid var(--ac-tan); border-radius: 14px; font-weight: 900; cursor: pointer; transition: 0.2s; color: var(--ac-brown-light); font-size: 0.85rem;}
         .m-tab.active { border-color: var(--mo-yellow-muted); color: var(--ac-brown) !important; background: rgba(240, 213, 130, 0.3); transform: scale(1.05);}
@@ -720,6 +714,7 @@
     <div class="modal-overlay" id="modal-voucher-detail" onclick="if(event.target === this) closeModal('modal-voucher-detail')">
         <div class="ac-modal" style="background: #FFF; padding: 25px;">
             <div class="hd-close scale-btn" onclick="playHaptic(); closeModal('modal-voucher-detail')" style="position: absolute; top: 15px; right: 15px; width: 32px; height: 32px; background: rgba(0,0,0,0.5); color: #FFF; border-radius: 50%; display: flex; justify-content: center; align-items: center; z-index: 10;"><i class="fa-solid fa-xmark"></i></div>
+            <input type="hidden" id="vd-item-id">
             <h2 id="vd-title" style="margin:0 0 15px 0; color:var(--ac-brown); font-weight:900; text-align:center; padding: 0 20px;">票卷名稱</h2>
             <div id="vd-img-container" style="width:100%; max-height:250px; border-radius:16px; overflow:hidden; margin-bottom:15px; border:2px solid var(--ac-tan); display:none;">
                 <img id="vd-img" src="" style="width:100%; height:100%; object-fit:cover;">
@@ -742,6 +737,7 @@
                 <h3 style="font-size:0.95rem; color:var(--ac-brown); font-weight:900; margin-bottom:10px;"><i class="fa-solid fa-list-check"></i> 設施打卡清單</h3>
                 <div id="vd-facilities-list" style="display:flex; flex-direction:column; gap:8px;"></div>
             </div>
+            <button class="btn-q btn-mo-teal scale-btn" style="width:100%; margin-top:20px; background:var(--mo-blue); box-shadow:0 5px 0 #5B8BAA; color:#FFF;" onclick="closeModal('modal-voucher-detail'); openVoucherModal(parseInt(document.getElementById('vd-item-id').value));"><i class="fa-solid fa-pen"></i> 編輯票卷</button>
         </div>
     </div>
 
@@ -1046,7 +1042,6 @@
         { id: 2, date: '2026-06-06', author: '琳', content: '出發去機場，好期待！✈️', images: [] }
     ];
 
-    // V15: 票卷設施資料結構支援
     let vouchersData = [];
 
     // ================= 全域刪除核心 (CRUD) =================
@@ -1273,7 +1268,6 @@
         animationFrameId = requestAnimationFrame(animate);
     }
 
-    // V15: 修復地圖正則表達式與邏輯
     function checkMapThumbnail() {
         const val = document.getElementById('form-loc').value.trim();
         const container = document.getElementById('map-preview-container');
@@ -1303,7 +1297,7 @@
             window.open(match[0], '_blank');
         } else {
             const loc = val || '釜山';
-            window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(loc)}`, '_blank'); 
+            window.open(`http://googleusercontent.com/maps.google.com/maps?q=${encodeURIComponent(loc)}`, '_blank'); 
         }
     }
 
@@ -1319,7 +1313,6 @@
         }
     }
     
-    // V15: 優化圖片刪除按鈕排版，避免被裁切
     function renderItiUploadPreview() {
         if(currentItiImage) {
             document.getElementById('iti-upload-preview').innerHTML = `<div style="position:relative; flex-shrink:0; padding:5px;"><img src="${currentItiImage}" style="width:70px; height:70px; object-fit:cover; border-radius:12px; border: 1px solid var(--ac-tan);"><div style="position:absolute; top:0px; right:0px; background:var(--mo-pink); color:#FFF; width:22px; height:22px; border-radius:50%; display:flex; justify-content:center; align-items:center; font-size:0.8rem; font-weight:900; cursor:pointer; box-shadow:0 2px 4px rgba(0,0,0,0.2);" onclick="currentItiImage=null; renderItiUploadPreview();"><i class="fa-solid fa-xmark"></i></div></div>`;
@@ -1360,7 +1353,6 @@
 
 
     // ================= 模組 2: 預定票務 =================
-    // V15: 移除原本 HTML 內的密碼提示，功能照舊
     function requirePin(targetId) {
         document.getElementById('pin-target').value = targetId; document.getElementById('pin-input').value = '';
         document.getElementById('modal-pin').style.display = 'flex'; setTimeout(() => document.getElementById('pin-input').focus(), 100);
@@ -1396,7 +1388,7 @@
     
     function openHotelDetailModal() { playHaptic(); document.getElementById('modal-hotel-detail').style.display = 'flex'; }
 
-    // ================= V15: 票卷設施打卡功能 =================
+    // ================= 票卷設施打卡功能 =================
     let currentVoucherImage = null;
     let currentVoucherFacilities = [];
     
@@ -1459,7 +1451,6 @@
         if (file) { const reader = new FileReader(); reader.onload = function(e) { currentVoucherImage = e.target.result; renderVoucherUploadPreview(); }; reader.readAsDataURL(file); }
     }
 
-    // V15: 預覽區防擠壓
     function renderVoucherUploadPreview() {
         if(currentVoucherImage) {
             document.getElementById('voucher-upload-preview').innerHTML = `<div style="position:relative; flex-shrink:0; padding:5px;"><img src="${currentVoucherImage}" style="width:70px; height:70px; object-fit:cover; border-radius:12px; border: 1px solid var(--ac-tan);"><div style="position:absolute; top:0px; right:0px; background:var(--mo-pink); color:#FFF; width:22px; height:22px; border-radius:50%; display:flex; justify-content:center; align-items:center; font-size:0.8rem; font-weight:900; cursor:pointer; box-shadow:0 2px 4px rgba(0,0,0,0.2);" onclick="currentVoucherImage=null; renderVoucherUploadPreview();"><i class="fa-solid fa-xmark"></i></div></div>`;
@@ -1489,13 +1480,11 @@
         closeModal('modal-voucher');  
         renderVouchers();
         
-        // 若目前詳情 Modal 是開啟的，同步更新畫面
         if (document.getElementById('modal-voucher-detail').style.display === 'flex' && id) {
             openVoucherDetail(parseInt(id));
         }
     }
 
-    // V15: 點擊卡片開啟詳情 Modal，編輯按鈕移至右側
     function renderVouchers() {
         const container = document.getElementById('voucher-container');
         if(vouchersData.length === 0) { container.innerHTML = `<div class="ac-card" style="text-align:center; padding: 40px; font-weight:900; color:var(--ac-brown-light);">🎫 尚無票卷資料</div>`; return; }
@@ -1515,12 +1504,13 @@
         `).join('');
     }
 
-    // V15: 開啟票卷詳情 Modal
+    // V16: 取消已勾選項目的 text-decoration 刪除線
     function openVoucherDetail(id) {
         playHaptic();
         const v = vouchersData.find(item => item.id === id);
         if(!v) return;
         
+        document.getElementById('vd-item-id').value = v.id;
         document.getElementById('vd-title').innerText = v.title;
         const imgContainer = document.getElementById('vd-img-container');
         const imgEl = document.getElementById('vd-img');
@@ -1543,7 +1533,7 @@
             facList.innerHTML = facilities.map((f, i) => `
                 <div style="display:flex; align-items:center; gap:10px; background:#FDFBF8; padding:12px 15px; border-radius:12px; border:1px solid ${f.checked ? 'var(--mo-green)' : 'var(--ac-tan)'};">
                     <i class="fa-solid ${f.checked ? 'fa-circle-check' : 'fa-circle'}" style="color:${f.checked ? 'var(--mo-green)' : 'var(--ac-tan)'}; font-size:1.2rem;"></i>
-                    <span style="font-weight:900; color:var(--ac-brown); text-decoration:${f.checked ? 'line-through' : 'none'}; opacity:${f.checked ? 0.5 : 1}; font-size:0.95rem;">${f.name}</span>
+                    <span style="font-weight:900; color:var(--ac-brown); text-decoration:none; opacity:1; font-size:0.95rem;">${f.name}</span>
                 </div>
             `).join('');
             facSection.style.display = 'block';
@@ -1648,20 +1638,32 @@
         return settlements;
     }
 
+    // V16: 同步計算動態渲染 KRW 總額
     function renderExpenses() {
-        const container = document.getElementById('expense-list-container'); const filterTitle = document.getElementById('detail-filter-name'); const totalElem = document.getElementById('detail-total-amount'); const settlementCard = document.getElementById('settlement-card'); const subtotalElem = document.getElementById('detail-day-subtotal');
+        const container = document.getElementById('expense-list-container'); const filterTitle = document.getElementById('detail-filter-name'); const totalElem = document.getElementById('detail-total-amount'); const totalKrwElem = document.getElementById('detail-total-krw'); const settlementCard = document.getElementById('settlement-card'); const subtotalElem = document.getElementById('detail-day-subtotal');
         expenses.sort((a, b) => new Date(b.date) - new Date(a.date)); 
-        let totalDisplay = 0; let filtered = [];
+        
+        let totalDisplay = 0; let totalDisplayKrw = 0; let filtered = [];
         filterTitle.innerText = currentExpFilter === 'all' ? '全體' : currentExpFilter;
 
         expenses.forEach(exp => {
-            let includeInList = false; let myAmt = 0;
-            if (currentExpFilter === 'all') { includeInList = true; myAmt = exp.amountTwd; } 
-            else { if (exp.splitters.length > 0 && exp.splitters.includes(currentExpFilter)) { includeInList = true; myAmt = exp.splitAmountTwd; } else if (exp.splitters.length === 0 && exp.payer === currentExpFilter) { includeInList = true; myAmt = exp.amountTwd; } }
-            if (includeInList) { filtered.push(exp); totalDisplay += myAmt; }
+            let includeInList = false; let myAmt = 0; let myAmtKrw = 0;
+            
+            if (currentExpFilter === 'all') { 
+                includeInList = true; myAmt = exp.amountTwd; myAmtKrw = exp.amountKrw; 
+            } else { 
+                if (exp.splitters.length > 0 && exp.splitters.includes(currentExpFilter)) { 
+                    includeInList = true; myAmt = exp.splitAmountTwd; myAmtKrw = Math.round(exp.amountKrw / exp.splitters.length); 
+                } else if (exp.splitters.length === 0 && exp.payer === currentExpFilter) { 
+                    includeInList = true; myAmt = exp.amountTwd; myAmtKrw = exp.amountKrw; 
+                } 
+            }
+            
+            if (includeInList) { filtered.push(exp); totalDisplay += myAmt; totalDisplayKrw += myAmtKrw; }
         });
 
         totalElem.innerText = `NT$ ${totalDisplay.toLocaleString()}`;
+        totalKrwElem.innerText = `₩ ${totalDisplayKrw.toLocaleString()}`;
 
         if(currentExpFilter === 'all' && expenses.some(e => e.splitters.length > 0)) {
             const results = calculateSettlement();
@@ -1776,7 +1778,6 @@
         Array.from(files).forEach(file => { const reader = new FileReader(); reader.onload = (e) => { currentDiaryImages.push(e.target.result); renderDiaryUploadPreview(); }; reader.readAsDataURL(file); });
     }
 
-    // V15: 預覽區防擠壓優化
     function renderDiaryUploadPreview() {
         const container = document.getElementById('diary-upload-preview');
         let html = currentDiaryImages.map((src, index) => `
