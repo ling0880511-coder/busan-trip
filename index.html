@@ -3,11 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>琳和貓的自由行 - 旅遊 V16 終極定案版</title>
+    <title>琳和貓的自由行 - 旅遊 V17 雲端同步版</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
     <style>
-        /* ================= 莫蘭迪色板 (Morandi Palette - 嚴格保留) ================= */
+        /* ================= 莫蘭迪色板 ================= */
         :root {
             --ac-bg: #F4F0EA;          
             --ac-card: #FFFFFF;        
@@ -36,54 +40,33 @@
             --modal-dynamic-bg: #FFFFFF;
         }
 
-        /* V15: 全域 UI 縮放與防溢出優化 (Mobile-First 微調) */
         html { font-size: 13.8px; } 
         * { box-sizing: border-box; font-family: 'Nunito', 'Noto Sans TC', sans-serif; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; scrollbar-width: none; -ms-overflow-style: none; word-wrap: break-word; }
         *::-webkit-scrollbar { display: none !important; }
         
         html, body { height: 100%; width: 100%; overflow-x: hidden; background-color: var(--ac-bg); color: var(--ac-brown); overscroll-behavior-y: none; }
-        
-        body { 
-            background-image: radial-gradient(rgba(220, 215, 208, 0.7) 2px, transparent 2px);
-            background-size: 24px 24px; display: flex; justify-content: center;
-        }
+        body { background-image: radial-gradient(rgba(220, 215, 208, 0.7) 2px, transparent 2px); background-size: 24px 24px; display: flex; justify-content: center; }
+        .app-container { width: 100%; max-width: 430px; height: 100%; margin: 0 auto; position: relative; display: flex; flex-direction: column; box-shadow: 0 0 35px rgba(0,0,0,0.06); background: transparent; overflow-x: hidden; }
 
-        .app-container {
-            width: 100%; max-width: 430px; height: 100%; margin: 0 auto;
-            position: relative; display: flex; flex-direction: column;
-            box-shadow: 0 0 35px rgba(0,0,0,0.06); background: transparent; overflow-x: hidden;
-        }
-
-        /* ================= Header ================= */
-        header {
-            padding: 20px 16px 12px 16px; display: flex; justify-content: space-between; align-items: center;
-            background: rgba(244, 240, 234, 0.95); backdrop-filter: blur(12px); z-index: 50; flex-shrink: 0;
-        }
+        header { padding: 20px 16px 12px 16px; display: flex; justify-content: space-between; align-items: center; background: rgba(244, 240, 234, 0.95); backdrop-filter: blur(12px); z-index: 50; flex-shrink: 0; }
         .header-title h1 { font-size: 1.5rem; font-weight: 900; color: var(--ac-brown); }
         .header-avatars { display: flex; gap: -8px; }
         .avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--ac-card); border: 3px solid #FFF; display: flex; justify-content: center; align-items: center; font-size: 1.3rem; margin-left: -10px; box-shadow: var(--shadow-soft); overflow: hidden;}
         .avatar img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* ================= 內容區 ================= */
         main { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 10px 16px 120px 16px; scroll-behavior: smooth; width: 100%; }
         .page { display: none; animation: fadeIn 0.3s ease; }
         .page.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ================= 核心按鈕與微互動 ================= */
         .btn-q { border: none; cursor: pointer; font-weight: 900; transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.15s, background 0.3s, color 0.3s; display: inline-flex; align-items: center; justify-content: center; }
         .scale-btn { transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1); cursor: pointer; }
         .scale-btn:active { transform: scale(0.92); }
         
-        .btn-primary-action { background: var(--mo-green); color: #FFF; padding: 10px 22px; font-size: 1rem; border-radius: 30px; border: 3px solid #FFF; box-shadow: var(--shadow-btn); text-shadow: 0 1px 2px rgba(0,0,0,0.1); }
-        .btn-primary-action:active { transform: translateY(5px) scale(0.96); box-shadow: 0 0px 0px transparent; }
-
         .btn-add-yellow-v10 { background: var(--mo-yellow-muted); color: var(--ac-brown); padding: 10px 22px; font-size: 1rem; border-radius: 30px; border: 3px solid #FFF; box-shadow: var(--shadow-btn-yellow); text-shadow: none; }
         .btn-add-yellow-v10:active { transform: translateY(5px) scale(0.96); box-shadow: 0 0px 0px transparent; }
-
         .btn-add-blue-v11 { background: var(--mo-blue); color: #FFFFFF !important; padding: 10px 22px; font-size: 1rem; border-radius: 30px; border: 3px solid #FFF; box-shadow: var(--shadow-btn-blue); display: inline-flex; align-items: center; gap: 6px; }
         .btn-add-blue-v11:active { transform: translateY(5px) scale(0.96); box-shadow: 0 0px 0px transparent; }
-
         .btn-mo-teal { background: var(--mo-teal); color: #FFF; border: 3px solid #FFF; box-shadow: 0 5px 0 var(--mo-teal-dark); border-radius: 20px; padding: 12px; font-size: 1rem; width: 100%;}
         .btn-mo-teal:active { transform: translateY(5px) scale(0.96); box-shadow: 0 0px 0px transparent; }
         
@@ -95,11 +78,7 @@
 
         .form-label { display: block; font-size: 0.85rem; font-weight: 900; margin-bottom: 8px; color: var(--ac-brown-light); }
         
-        .form-control, input[type="date"].form-control, input[type="time"].form-control { 
-            width: 100%; max-width: 100%; padding: 14px 15px; border-radius: 16px; border: 2px solid var(--ac-tan); 
-            font-size: 1rem; font-weight: 800; outline: none; background: #FFF; margin-bottom: 15px; color: var(--ac-brown); 
-            transition: 0.2s; box-sizing: border-box; -webkit-appearance: none;
-        }
+        .form-control, input[type="date"].form-control, input[type="time"].form-control { width: 100%; max-width: 100%; padding: 14px 15px; border-radius: 16px; border: 2px solid var(--ac-tan); font-size: 1rem; font-weight: 800; outline: none; background: #FFF; margin-bottom: 15px; color: var(--ac-brown); transition: 0.2s; box-sizing: border-box; -webkit-appearance: none;}
         .form-control:focus { border-color: var(--mo-green); box-shadow: 0 0 0 3px rgba(120, 160, 131, 0.2); }
         .form-control:disabled { background: #F8F6F2; color: var(--ac-brown-light); font-weight: 900;}
         .form-control::placeholder { color: #C4C0B8; font-weight: 600; } 
@@ -111,13 +90,11 @@
 
         .scroll-nav-pink .scroll-item { border: 2px solid transparent; }
         .scroll-nav-pink .scroll-item.active { background: var(--mo-pink); color: #FFF; border: 2px solid var(--mo-pink-deep); box-shadow: none; transform: scale(1.02); }
-
         .glowing-hover:hover, .glowing-hover:active { border-color: var(--mo-yellow) !important; box-shadow: 0 0 20px 2px rgba(255, 208, 0, 0.6), inset 0 0 10px rgba(255, 208, 0, 0.2) !important; transform: scale(0.98); }
-        .glowing-border { border-color: var(--mo-yellow) !important; box-shadow: 0 0 20px 2px rgba(255, 208, 0, 0.6), inset 0 0 10px rgba(255, 208, 0, 0.2) !important; transform: scale(0.98); }
 
         /* ================= 模組 1: 行程 ================= */
         .date-scroller { display: flex; gap: 8px; overflow-x: auto; padding: 5px 0 15px 0; scroll-behavior: smooth; margin: 0 -5px; }
-        /* V16: Inactive 狀態新增 currentColor 邊框 */
+        /* V16: Inactive 狀態字體同色邊框 */
         .date-tab { min-width: 56px; text-align: center; padding: 6px 4px; border-radius: 16px; background: #FCECEC; border: 2px solid currentColor; cursor: pointer; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); color: var(--mo-pink-deep); opacity: 0.8; transform: scale(0.92); margin: 0 2px; }
         .date-tab .day { font-size: 0.7rem; font-weight: 900; display: block; margin-bottom: 2px; }
         .date-tab .date { font-size: 1.05rem; font-weight: 900; }
@@ -229,11 +206,7 @@
         .cur-tab.active { border-color: var(--mo-yellow-muted); color: var(--ac-brown); background: rgba(240, 213, 130, 0.3); transform: scale(1.05);}
 
         .ava-select-group { display: flex; gap: 12px; margin-bottom: 15px; flex-wrap: wrap;}
-        .ava-opt { 
-            width: 48px; height: 48px; border-radius: 50%; display: flex; justify-content: center; align-items: center; flex-direction: column;
-            font-size: 1.3rem; background: #FFF; border: 3px solid var(--ac-tan); cursor: pointer; transition: 0.2s;
-            opacity: 0.4; filter: grayscale(100%); position: relative;
-        }
+        .ava-opt { width: 48px; height: 48px; border-radius: 50%; display: flex; justify-content: center; align-items: center; flex-direction: column; font-size: 1.3rem; background: #FFF; border: 3px solid var(--ac-tan); cursor: pointer; transition: 0.2s; opacity: 0.4; filter: grayscale(100%); position: relative; }
         .ava-opt.active { opacity: 1; filter: grayscale(0%); border-color: var(--mo-blue); transform: scale(1.1); box-shadow: 0 4px 10px rgba(114, 177, 214, 0.3); }
         .ava-name { position: absolute; bottom: -18px; font-size: 0.7rem; font-weight: 900; color: var(--ac-brown); }
 
@@ -280,17 +253,9 @@
         .member-quote { font-size: 0.9rem; color: var(--mo-blue); font-weight: 700; margin-top: 8px; font-style: italic;}
         .member-actions { position: absolute; top: 15px; right: 15px; display: flex; gap: 10px; color: var(--ac-tan); font-size: 1.1rem; }
 
-        /* ================= 居中遊戲通知 Modal ================= */
+        /* ================= 模態視窗 UI (全部保留不刪減) ================= */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(92, 84, 77, 0.6); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 1000;}
-        .ac-modal { 
-            background: var(--modal-dynamic-bg); 
-            width: 90%; max-width: 360px; border-radius: 28px; padding: 20px; 
-            border: 4px solid var(--ac-brown);
-            box-shadow: 0 15px 0px rgba(0,0,0,0.1), inset 0 0 0 3px rgba(255,255,255,0.5); 
-            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            height: fit-content; max-height: 90vh; overflow-y: auto; overflow-x: hidden; position: relative;
-            scrollbar-width: none; -ms-overflow-style: none; box-sizing: border-box;
-        }
+        .ac-modal { background: var(--modal-dynamic-bg); width: 90%; max-width: 360px; border-radius: 28px; padding: 20px; border: 4px solid var(--ac-brown); box-shadow: 0 15px 0px rgba(0,0,0,0.1), inset 0 0 0 3px rgba(255,255,255,0.5); animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); height: fit-content; max-height: 90vh; overflow-y: auto; overflow-x: hidden; position: relative; scrollbar-width: none; -ms-overflow-style: none; box-sizing: border-box;}
         .ac-modal::-webkit-scrollbar { display: none; }
         @keyframes popIn { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
@@ -308,50 +273,25 @@
 
         .delete-icon-bg { width: 60px; height: 60px; background: var(--mo-pink); border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 15px auto; font-size: 1.8rem; color: #FFF; border: 3px solid #FFF; box-shadow: var(--shadow-soft);}
 
-        /* 住宿詳細資訊 Modal */
-        #modal-hotel-detail-content {
-            background: #FFF; width: 90%; max-width: 360px; height: fit-content; max-height: 90vh; border-radius: 28px; padding: 0; 
-            border: 4px solid var(--ac-brown); box-shadow: 0 15px 0px rgba(0,0,0,0.1), inset 0 0 0 3px rgba(255,255,255,0.5); 
-            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1); overflow: hidden; display: flex; flex-direction: column;
-            box-sizing: border-box; overflow-x: hidden;
-        }
+        #modal-hotel-detail-content { background: #FFF; width: 90%; max-width: 360px; height: fit-content; max-height: 90vh; border-radius: 28px; padding: 0; border: 4px solid var(--ac-brown); box-shadow: 0 15px 0px rgba(0,0,0,0.1), inset 0 0 0 3px rgba(255,255,255,0.5); animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1); overflow: hidden; display: flex; flex-direction: column; box-sizing: border-box; overflow-x: hidden; }
         .hd-close { position: absolute; top: 15px; right: 15px; width: 32px; height: 32px; background: rgba(0,0,0,0.5); color: #FFF; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1rem; z-index: 10; cursor: pointer; backdrop-filter: blur(4px); transition: 0.2s;}
         .hd-close:active { transform: scale(0.9); }
 
-        /* 頭像裁切器 UI */
         .crop-container { width: 200px; height: 200px; margin: 0 auto 15px auto; position: relative; border-radius: 50%; overflow: hidden; border: 4px dashed var(--ac-tan); background: #F8F6F2; box-shadow: inset 0 4px 10px rgba(0,0,0,0.1);}
         .crop-img { position: absolute; top: 0; left: 0; transform-origin: top left; cursor: move; }
         .crop-mask { position: absolute; inset: 0; border: 20px solid rgba(255,255,255,0.6); border-radius: 50%; pointer-events: none; z-index: 5;}
 
-        /* 動態 Toast */
-        .toast {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9);
-            background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);
-            padding: 20px 30px; border-radius: 24px; box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-            border: 3px solid var(--mo-green); display: flex; flex-direction: column; align-items: center; gap: 10px;
-            opacity: 0; pointer-events: none; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 2000;
-        }
+        .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); padding: 20px 30px; border-radius: 24px; box-shadow: 0 15px 35px rgba(0,0,0,0.15); border: 3px solid var(--mo-green); display: flex; flex-direction: column; align-items: center; gap: 10px; opacity: 0; pointer-events: none; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 2000; }
         .toast.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
         .toast i { font-size: 3rem; color: var(--mo-green); }
         .toast span { font-weight: 900; color: var(--ac-brown); font-size: 1.2rem; }
 
-        /* ================= 底部導覽列 ================= */
-        nav {
-            position: fixed; bottom: 0; width: 100%; max-width: 430px;
-            background: rgba(244, 240, 234, 0.95); backdrop-filter: blur(10px);
-            display: flex; justify-content: space-around;
-            padding: 10px 10px 25px 10px; border-radius: 30px 30px 0 0; 
-            border-top: 2px solid var(--ac-tan); z-index: 100;
-        }
+        nav { position: fixed; bottom: 0; width: 100%; max-width: 430px; background: rgba(244, 240, 234, 0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 10px 10px 25px 10px; border-radius: 30px 30px 0 0; border-top: 2px solid var(--ac-tan); z-index: 100; }
         .nav-item { text-align: center; color: var(--ac-brown-light); font-size: 0.7rem; font-weight: 900; cursor: pointer; flex: 1; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center;}
         .nav-icon { font-size: 1.4rem; margin-bottom: 4px; padding: 8px 15px; border-radius: 20px; transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
         .nav-item:active .nav-icon { transform: scale(0.8); }
         .nav-item.active { color: var(--ac-brown); transform: translateY(-4px); }
-        .nav-item.active .nav-icon { 
-            background: var(--mo-yellow-muted); color: var(--ac-brown); 
-            box-shadow: 0 0 15px 2px rgba(240, 213, 130, 0.5), inset 0 0 8px rgba(240, 213, 130, 0.3);
-            font-size: 1.4rem; border: 2px solid #FFF;
-        }
+        .nav-item.active .nav-icon { background: var(--mo-yellow-muted); color: var(--ac-brown); box-shadow: 0 0 15px 2px rgba(240, 213, 130, 0.5), inset 0 0 8px rgba(240, 213, 130, 0.3); font-size: 1.4rem; border: 2px solid #FFF; }
     </style>
 </head>
 <body>
@@ -382,7 +322,6 @@
                 <span>當日行程</span>
                 <button class="btn-q btn-add-yellow-v10 scale-btn" onclick="playHaptic(); openItineraryModal()">+ 新增</button>
             </div>
-
             <div class="timeline-wrapper" id="timeline-container"></div>
         </div>
         
@@ -400,19 +339,9 @@
                         <div class="fc-header"><span>大韓航空</span> <span class="fc-badge">同一張訂單</span></div>
                         <div class="fc-number"><span class="editable-field">KE 2086</span></div>
                         <div class="fc-route-box">
-                            <div class="fc-route-point">
-                                <h2><span class="editable-field">TPE</span></h2>
-                                <div style="font-size: 0.75rem; color: var(--ac-brown-light); font-weight: 900; margin-top: -3px;"><span class="editable-field">桃園</span></div>
-                                <div class="time"><span class="editable-field">12:00</span></div>
-                            </div>
-                            <div class="fc-duration">
-                                <span>02h30m</span><div class="line"><i class="fa-solid fa-plane"></i></div><span><span class="editable-field">2026/06/06</span></span>
-                            </div>
-                            <div class="fc-route-point">
-                                <h2><span class="editable-field">PUS</span></h2>
-                                <div style="font-size: 0.75rem; color: var(--ac-brown-light); font-weight: 900; margin-top: -3px;"><span class="editable-field">釜山</span></div>
-                                <div class="time"><span class="editable-field">15:30</span></div>
-                            </div>
+                            <div class="fc-route-point"><h2><span class="editable-field">TPE</span></h2><div style="font-size: 0.75rem; color: var(--ac-brown-light); font-weight: 900; margin-top: -3px;"><span class="editable-field">桃園</span></div><div class="time"><span class="editable-field">12:00</span></div></div>
+                            <div class="fc-duration"><span>02h30m</span><div class="line"><i class="fa-solid fa-plane"></i></div><span><span class="editable-field">2026/06/06</span></span></div>
+                            <div class="fc-route-point"><h2><span class="editable-field">PUS</span></h2><div style="font-size: 0.75rem; color: var(--ac-brown-light); font-weight: 900; margin-top: -3px;"><span class="editable-field">釜山</span></div><div class="time"><span class="editable-field">15:30</span></div></div>
                         </div>
                         <div class="fc-grid">
                             <div class="fc-grid-item" style="grid-column: span 2;"><div class="fc-grid-title">BAGGAGE</div><div class="fc-grid-val"><i class="fa-solid fa-suitcase" style="color:var(--mo-yellow);"></i> <span class="editable-field">23kg</span> &nbsp;&nbsp; <i class="fa-solid fa-briefcase" style="color:var(--mo-blue);"></i> <span class="editable-field">10kg</span></div></div>
@@ -429,19 +358,9 @@
                         <div class="fc-header"><span>大韓航空</span> <span class="fc-badge">同一張訂單</span></div>
                         <div class="fc-number"><span class="editable-field">KE 2085</span></div>
                         <div class="fc-route-box">
-                            <div class="fc-route-point">
-                                <h2><span class="editable-field">PUS</span></h2>
-                                <div style="font-size: 0.75rem; color: var(--ac-brown-light); font-weight: 900; margin-top: -3px;"><span class="editable-field">釜山</span></div>
-                                <div class="time"><span class="editable-field">09:00</span></div>
-                            </div>
-                            <div class="fc-duration">
-                                <span>02h30m</span><div class="line"><i class="fa-solid fa-plane" style="transform: scaleX(-1);"></i></div><span><span class="editable-field">2026/06/11</span></span>
-                            </div>
-                            <div class="fc-route-point">
-                                <h2><span class="editable-field">TPE</span></h2>
-                                <div style="font-size: 0.75rem; color: var(--ac-brown-light); font-weight: 900; margin-top: -3px;"><span class="editable-field">桃園</span></div>
-                                <div class="time"><span class="editable-field">10:30</span></div>
-                            </div>
+                            <div class="fc-route-point"><h2><span class="editable-field">PUS</span></h2><div style="font-size: 0.75rem; color: var(--ac-brown-light); font-weight: 900; margin-top: -3px;"><span class="editable-field">釜山</span></div><div class="time"><span class="editable-field">09:00</span></div></div>
+                            <div class="fc-duration"><span>02h30m</span><div class="line"><i class="fa-solid fa-plane" style="transform: scaleX(-1);"></i></div><span><span class="editable-field">2026/06/11</span></span></div>
+                            <div class="fc-route-point"><h2><span class="editable-field">TPE</span></h2><div style="font-size: 0.75rem; color: var(--ac-brown-light); font-weight: 900; margin-top: -3px;"><span class="editable-field">桃園</span></div><div class="time"><span class="editable-field">10:30</span></div></div>
                         </div>
                         <div class="fc-grid">
                             <div class="fc-grid-item" style="grid-column: span 2;"><div class="fc-grid-title">BAGGAGE</div><div class="fc-grid-val"><i class="fa-solid fa-suitcase" style="color:var(--mo-yellow);"></i> <span class="editable-field">23kg</span> &nbsp;&nbsp; <i class="fa-solid fa-briefcase" style="color:var(--mo-blue);"></i> <span class="editable-field">10kg</span></div></div>
@@ -452,499 +371,20 @@
                     </div>
                 </div>
             </div>
-
-            <div id="booking-hotel" style="display:none;">
-                <div class="hotel-card2 glowing-hover scale-btn" id="hotel-stay" onclick="openHotelDetailModal()">
-                    <div class="hc-img-wrapper">
-                        <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80" alt="Hotel Cover">
-                        <div class="hc-tag-loc"><i class="fa-solid fa-location-dot"></i> <span class="editable-field">釜山 西面</span></div>
-                    </div>
-                    <div class="hc-body">
-                        <h2 class="hc-title"><span class="editable-field">釜山 Airbnb - Pop</span></h2>
-                        <p class="hc-address">📍 近商圏、精華區、車站、超市 (點擊查看詳細)</p>
-                        
-                        <div class="hc-checkin-box">
-                            <div class="hc-ci-col">
-                                <span class="hc-ci-title">Check-in</span>
-                                <span class="hc-ci-date"><span class="editable-field">2026-06-06</span></span>
-                                <span class="hc-ci-time"><span class="editable-field">15:00</span></span>
-                            </div>
-                            <div class="hc-ci-mid">5<br>Nights<br>➔</div>
-                            <div class="hc-ci-col" style="text-align: right;">
-                                <span class="hc-ci-title">Check-out</span>
-                                <span class="hc-ci-date"><span class="editable-field">2026-06-11</span></span>
-                                <span class="hc-ci-time"><span class="editable-field">13:00</span></span>
-                            </div>
-                        </div>
-
-                        <div class="hc-price-area">
-                            <div class="hc-ref">Ref: <span class="editable-field">B-88645</span></div>
-                            <div class="hc-price-right">
-                                <div class="hc-price-total"><span>Total</span> <span style="font-size:1.6rem; color:var(--ac-brown);">NT$</span> <span class="editable-field" style="font-size:1.6rem; font-weight:900; color:var(--ac-brown);">16,156</span></div>
-                                <div class="hc-price-split">每人均分 NT$ <span class="editable-field">8,078</span></div>
-                                <div class="hc-price-night">每人每晚 NT$ <span class="editable-field">1,615</span></div>
-                            </div>
-                        </div>
-                        <button class="btn-q btn-mo-teal scale-btn btn-edit-trigger" style="margin-top: 15px;" onclick="requirePin('hotel-stay'); event.stopPropagation();"><i class="fa-solid fa-pen"></i> 編輯住宿資訊</button>
-                    </div>
-                </div>
-            </div>
-            
-            <div id="booking-voucher" style="display:none;">
-                <div class="section-title"><span>所有票卷</span><button class="btn-q btn-add-yellow-v10 scale-btn" onclick="playHaptic(); openVoucherModal()">+ 新增</button></div>
-                <div id="voucher-container">
-                    <div class="ac-card" style="text-align:center; padding: 40px; font-weight:900; color:var(--ac-brown-light);">🎫 尚無票卷資料</div>
-                </div>
-            </div>
-        </div>
-
-        <div id="page-accounting" class="page">
-            <div class="scroll-nav scroll-nav-pink">
-                <div class="scroll-item" onclick="playHaptic(); switchSubTab('acc', 'calc', this)">💱 匯率</div>
-                <div class="scroll-item active" onclick="playHaptic(); switchSubTab('acc', 'record', this)">✍️ 記帳</div>
-                <div class="scroll-item" onclick="playHaptic(); switchSubTab('acc', 'detail', this)" id="tab-acc-detail">🧾 明細</div>
-            </div>
-            
-            <div id="acc-calc" style="display: none;">
-                <div class="ac-card">
-                    <h3 style="margin-top:0; color: var(--ac-brown); text-align: center; margin-bottom:20px;">💱 即時匯率換算</h3>
-                    <div style="font-size:0.8rem; font-weight:900; color:var(--ac-brown-light); text-align:center; margin-bottom:15px;">預設匯率 1 KRW = 0.023 TWD</div>
-                    
-                    <div class="exchange-box scale-btn" onclick="playHaptic()" style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px; background: linear-gradient(135deg, #E8F4FA 0%, #D1E5EE 100%); padding: 15px; border-radius: 24px; box-shadow: inset 0 2px 5px rgba(255,255,255,0.5), 0 8px 15px rgba(114, 177, 214, 0.2);">
-                        <div class="exc-input-group" style="flex: 1; background: #FFF; border: 2px solid transparent; border-radius: 16px; padding: 15px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.03);">
-                            <div class="exc-currency" style="font-size: 0.8rem; font-weight: 900; color: var(--mo-blue); margin-bottom: 5px;">韓元 (KRW)</div>
-                            <input type="number" id="exc-krw" placeholder="0" oninput="calcExchange('krw')" onfocus="this.value=''; calcExchange('krw')" style="width: 100%; border: none; background: transparent; text-align: center; font-size: 1.8rem; font-weight: 900; color: var(--ac-brown); outline: none;">
-                        </div>
-                        <div class="exc-icon" style="font-size: 1.5rem; color: var(--mo-blue);"><i class="fa-solid fa-right-left"></i></div>
-                        <div class="exc-input-group" style="flex: 1; background: #FFF; border: 2px solid transparent; border-radius: 16px; padding: 15px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.03);">
-                            <div class="exc-currency" style="font-size: 0.8rem; font-weight: 900; color: var(--mo-blue); margin-bottom: 5px;">台幣 (TWD)</div>
-                            <input type="number" id="exc-twd" placeholder="0" oninput="calcExchange('twd')" onfocus="this.value=''; calcExchange('twd')" style="width: 100%; border: none; background: transparent; text-align: center; font-size: 1.8rem; font-weight: 900; color: var(--ac-brown); outline: none;">
-                        </div>
-                    </div>
-
-                    <div style="margin-top: 30px;">
-                        <h4 style="font-size:0.9rem; color:var(--ac-brown-light); margin-bottom:10px;"><i class="fa-solid fa-bolt"></i> 常用面額速查</h4>
-                        <div class="quick-conv-board" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                            <div class="qc-item scale-btn" onclick="playHaptic(); document.getElementById('exc-krw').value=1000; calcExchange('krw');" style="background: #FFF; border: 2px solid var(--ac-tan); border-radius: 12px; padding: 10px; display: flex; justify-content: space-between; font-weight: 900; color: var(--ac-brown);">₩ 1,000 <span style="color:var(--ac-brown-light); font-size:0.85rem;">NT$ 23</span></div>
-                            <div class="qc-item scale-btn" onclick="playHaptic(); document.getElementById('exc-krw').value=5000; calcExchange('krw');" style="background: #FFF; border: 2px solid var(--ac-tan); border-radius: 12px; padding: 10px; display: flex; justify-content: space-between; font-weight: 900; color: var(--ac-brown);">₩ 5,000 <span style="color:var(--ac-brown-light); font-size:0.85rem;">NT$ 115</span></div>
-                            <div class="qc-item scale-btn" onclick="playHaptic(); document.getElementById('exc-krw').value=10000; calcExchange('krw');" style="background: #FFF; border: 2px solid var(--ac-tan); border-radius: 12px; padding: 10px; display: flex; justify-content: space-between; font-weight: 900; color: var(--ac-brown);">₩ 10,000 <span style="color:var(--ac-brown-light); font-size:0.85rem;">NT$ 230</span></div>
-                            <div class="qc-item scale-btn" onclick="playHaptic(); document.getElementById('exc-krw').value=12500; calcExchange('krw');" style="background: #FFF; border: 2px solid var(--ac-tan); border-radius: 12px; padding: 10px; display: flex; justify-content: space-between; font-weight: 900; color: var(--ac-brown);">₩ 12,500 <span style="color:var(--ac-brown-light); font-size:0.85rem;">NT$ 288</span></div>
-                            <div class="qc-item scale-btn" onclick="playHaptic(); document.getElementById('exc-krw').value=50000; calcExchange('krw');" style="grid-column: span 2; text-align:center; display:block; background: #FFF; border: 2px solid var(--ac-tan); border-radius: 12px; padding: 10px; font-weight: 900; color: var(--ac-brown);">₩ 50,000 <span style="margin-left:10px; color:var(--ac-brown-light); font-size:0.85rem;">NT$ 1,150</span></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="acc-record">
-                <div class="ac-card">
-                    <h3 style="margin-top:0; color: var(--ac-brown); text-align: center; margin-bottom: 20px;">💰 記帳輸入</h3>
-                    
-                    <label class="form-label">日期</label>
-                    <input type="date" class="form-control" id="exp-date" value="2026-06-06">
-
-                    <label class="form-label">幣別</label>
-                    <div class="currency-tabs" style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
-                        <div class="cur-tab active scale-btn" onclick="setExpCurrency('KRW', this)">KRW</div>
-                        <div class="cur-tab scale-btn" onclick="setExpCurrency('TWD', this)">TWD</div>
-                        <div class="cur-tab scale-btn" onclick="setExpCurrency('USD', this)">USD</div>
-                    </div>
-
-                    <div style="display:flex; gap:10px;">
-                        <div style="flex:1; min-width:0;">
-                            <label class="form-label"><span style="color:var(--mo-pink);">*</span> 金額</label>
-                            <input type="number" class="form-control" id="exp-amount" placeholder="0" oninput="calcApproxTwd()" style="font-size:1.2rem; font-weight:900;">
-                        </div>
-                        <div style="flex:1; min-width:0;">
-                            <label class="form-label">約合台幣</label>
-                            <input type="text" class="form-control" id="exp-approx-twd" value="0" disabled>
-                        </div>
-                    </div>
-
-                    <label class="form-label">支付方式</label>
-                    <div class="method-tabs" style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
-                        <div class="m-tab active scale-btn" onclick="selectMethod(this)">現金</div>
-                        <div class="m-tab scale-btn" onclick="selectMethod(this)">信用卡</div>
-                        <div class="m-tab scale-btn" onclick="selectMethod(this)">T-money</div>
-                    </div>
-
-                    <label class="form-label">地點 (選填)</label>
-                    <input type="text" class="form-control" id="exp-loc" placeholder="📍 例如：便利商店">
-
-                    <label class="form-label"><span style="color:var(--mo-pink);">*</span> 消費項目</label>
-                    <input type="text" class="form-control" id="exp-title" placeholder="例如：午餐">
-
-                    <div style="background: #FCFBFA; padding: 15px; border-radius: 16px; margin-top: 10px; border: 2px dashed var(--ac-tan);">
-                        <label class="form-label"><span style="color:var(--mo-pink);">*</span> 誰付款的？ (單選)</label>
-                        <div class="ava-select-group" id="payer-group-container" style="display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap;"></div>
-
-                        <label class="form-label" style="margin-top:15px;">誰要分攤？ (不選視為個人帳)</label>
-                        <div class="ava-select-group" id="split-group-container" style="display: flex; gap: 15px; flex-wrap: wrap;"></div>
-                    </div>
-
-                    <button class="btn-q btn-add-blue-v11 scale-btn" style="width: 100%; margin-top: 20px; justify-content: center;" onclick="saveExpense()">✔ 記一筆</button>
-                </div>
-            </div>
-
-            <div id="acc-detail" style="display: none;">
-                <div id="settlement-card" style="background: #FDFBF8; border: 2px dashed #8B5A5A; border-radius: 20px; padding: 15px; margin-bottom: 15px; display: none; animation: fadeIn 0.3s;">
-                    <div style="font-weight: 900; color: #8B5A5A; font-size: 0.9rem; margin-bottom: 10px; display: flex; align-items: center; gap: 5px;"><i class="fa-solid fa-scale-balanced"></i> 內部結算結果</div>
-                    <div id="settlement-content" style="color: #8B5A5A;"></div>
-                </div>
-
-                <div class="ac-card acc-total-card">
-                    <div class="title"><span id="detail-filter-name" class="highlight-name">全體</span> 的支出 (TWD)</div>
-                    <div id="detail-total-amount" class="amount">NT$ 0</div>
-                    <div style="background: rgba(255,255,255,0.3); border-radius: 16px; padding: 12px; display: flex; text-align: left; gap: 15px;">
-                        <div style="flex:1; border-right: 1px solid rgba(0,0,0,0.1);">
-                            <div style="font-size:0.75rem; color:var(--ac-brown); font-weight:800; opacity:0.8;">韓元支出</div>
-                            <div style="font-size:1.1rem; font-weight:900; color:var(--ac-brown);" id="detail-total-krw">₩ 0</div>
-                        </div>
-                        <div style="flex:1;">
-                            <div style="font-size:0.75rem; color:var(--ac-brown); font-weight:800; opacity:0.8;">匯率 (預設)</div>
-                            <div style="font-size:1.1rem; font-weight:900; color:var(--ac-brown);">1 : 0.023</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="filter-tags-container" id="expense-filter-container"></div>
-
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; font-weight:900; color:var(--ac-brown-light); font-size:0.85rem;">
-                    <div>帳務明細 (點擊可編輯)</div>
-                    <div id="detail-day-subtotal">本日小計: NT$ 0</div>
-                </div>
-
-                <div class="ac-card" style="padding: 10px 16px;" id="expense-list-container"></div>
-            </div>
-        </div>
-
-        <div id="page-diary" class="page">
-            <div class="section-title" style="margin-bottom: 20px;">
-                <div>
-                    <div>旅行日誌</div>
-                    <div style="font-size:0.75rem; color:var(--ac-brown-light); font-weight:800; margin-top:2px;">紀錄旅途中的每一個精彩瞬間</div>
-                </div>
-                <button class="btn-q btn-add-blue-v11 scale-btn" onclick="playHaptic(); openDiaryModal()"><i class="fa-solid fa-pen-nib"></i> 寫日誌</button>
-            </div>
-            <div id="diary-container"></div>
-        </div>
-        
-        <div id="page-member" class="page">
-            <div class="section-title">
-                <div>
-                    <div>快樂成員</div>
-                    <div style="font-size:0.75rem; color:var(--ac-brown-light); font-weight:800; margin-top:2px;">說好不吵架，吵架的請吃一頓飯!</div>
-                </div>
-                <button class="btn-q btn-add-yellow-v10 scale-btn" onclick="playHaptic(); openMemberModal()">+ 新增成員</button>
-            </div>
-            
-            <div id="member-container"></div>
-        </div>
-    </main>
-
-    <div class="modal-overlay" id="modal-pin" onclick="if(event.target === this) closeModal('modal-pin')">
-        <div class="ac-modal" style="text-align:center; max-width: 320px; background: rgba(255,255,255,0.9); backdrop-filter: blur(15px);">
-            <div style="font-size:3.5rem; color:var(--mo-yellow); margin-bottom:10px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));"><i class="fa-solid fa-lock"></i></div>
-            <h2 style="margin-top:0; color: var(--ac-brown); font-weight: 900; font-size:1.6rem;">安全解鎖</h2>
-            <p style="color: var(--ac-brown-light); font-weight: 800; margin-bottom: 25px; font-size:0.95rem;">請輸入安全碼</p>
-            <input type="hidden" id="pin-target">
-            <input type="password" id="pin-input" class="form-control" style="text-align:center; font-size:1.8rem; letter-spacing:15px; font-weight:900; padding:10px; background:#FFF;" maxlength="4" placeholder="••••">
-            <div style="display: flex; gap: 15px; margin-top: 10px;">
-                <button class="btn-q modal-btn modal-btn-cancel scale-btn" onclick="playHaptic(); closeModal('modal-pin')">取消</button>
-                <button class="btn-q modal-btn modal-btn-save scale-btn" style="background:var(--mo-blue); box-shadow:0 5px 0 #5B8BAA;" onclick="playHaptic(); verifyPin()">解鎖</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="modal-hotel-detail" onclick="if(event.target === this) closeModal('modal-hotel-detail')">
-        <div class="ac-modal" id="modal-hotel-detail-content">
-            <div class="hd-close scale-btn" onclick="playHaptic(); closeModal('modal-hotel-detail')"><i class="fa-solid fa-xmark"></i></div>
-            
-            <div style="display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; width: 100%; height: 220px; border-radius: 24px 24px 0 0; position: relative; flex-shrink: 0;">
-                <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80" style="flex: 0 0 100%; object-fit: cover; scroll-snap-align: start;">
-                <img src="https://images.unsplash.com/photo-1502672260266-1c1c24240f38?w=800&q=80" style="flex: 0 0 100%; object-fit: cover; scroll-snap-align: start;">
-                <img src="https://images.unsplash.com/photo-1513694203232-719a280e022f?w=800&q=80" style="flex: 0 0 100%; object-fit: cover; scroll-snap-align: start;">
-                <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 40%; background: linear-gradient(to top, rgba(0,0,0,0.6), transparent); pointer-events: none;"></div>
-                <div style="position: absolute; bottom: 15px; left: 15px; color: #FFF; pointer-events: none;">
-                    <span style="background: rgba(255,255,255,0.3); padding: 4px 10px; border-radius: 8px; font-size: 0.7rem; font-weight: 900; backdrop-filter: blur(4px);">釜山</span>
-                    <h2 style="margin: 5px 0 0 0; font-size: 1.4rem; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">Airbnb Pop (西面)</h2>
-                </div>
-            </div>
-
-            <div style="flex: 1; padding: 20px; overflow-y: auto; background: #FFF;">
-                <div style="background: #F8F6F2; padding: 15px; border-radius: 16px; margin-bottom: 20px; border: 1px solid var(--ac-tan);">
-                    <div style="font-size: 0.8rem; color: var(--mo-green); font-weight: 900; margin-bottom: 5px;"><i class="fa-solid fa-map-location-dot"></i> 住宿特點</div>
-                    <div style="font-weight: 800; color: var(--ac-brown);">📍 近商圏、精華區、車站、超市</div>
-                </div>
-
-                <div style="border: 2px solid var(--ac-tan); border-radius: 16px; padding: 15px; margin-bottom: 20px;">
-                    <div style="font-size: 0.8rem; color: var(--mo-orange); font-weight: 900; margin-bottom: 10px;"><i class="fa-solid fa-list-check"></i> 住宿設施</div>
-                    <ul style="margin:0; padding-left:20px; color:var(--ac-brown-light); font-weight: 700; line-height: 1.6;">
-                        <li>5張床 / 2間廁所</li>
-                        <li>免費行李寄存</li>
-                        <li>27坪大空間</li>
-                        <li>免費接送服務</li>
-                        <li>下午 1 點退房</li>
-                        <li>步行 5 分鐘到西面站</li>
-                    </ul>
-                </div>
-
-                <div style="background: #F8F6F2; padding: 15px; border-radius: 16px; margin-bottom: 20px; border: 1px dashed var(--ac-tan); display: flex; justify-content: space-between; align-items: center;">
-                    <span style="font-size: 0.85rem; color: var(--ac-brown-light); font-weight: 900;">訂單編號</span>
-                    <span style="font-weight: 900; color: var(--ac-brown);">B-88645</span>
-                </div>
-                
-                <div style="border-top: 2px dashed var(--ac-tan); padding-top: 15px; margin-top: 10px;">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 5px;">
-                        <span style="font-weight: 900; color: var(--ac-brown-light);">總額 (Total)</span>
-                        <span style="font-weight: 900; color: var(--ac-brown); font-size: 1.4rem;">NT$ 16,156</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                        <span style="font-weight: 800; color: var(--ac-brown-light); font-size: 0.9rem;">每人均分 (2人)</span>
-                        <span style="font-weight: 900; color: var(--mo-pink);">NT$ 8,078</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-weight: 800; color: var(--ac-brown-light); font-size: 0.9rem;">每人每晚 (5晚)</span>
-                        <span style="font-weight: 900; color: var(--mo-blue);">NT$ 1,615</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="modal-voucher-detail" onclick="if(event.target === this) closeModal('modal-voucher-detail')">
-        <div class="ac-modal" style="background: #FFF; padding: 25px;">
-            <div class="hd-close scale-btn" onclick="playHaptic(); closeModal('modal-voucher-detail')" style="position: absolute; top: 15px; right: 15px; width: 32px; height: 32px; background: rgba(0,0,0,0.5); color: #FFF; border-radius: 50%; display: flex; justify-content: center; align-items: center; z-index: 10;"><i class="fa-solid fa-xmark"></i></div>
-            <input type="hidden" id="vd-item-id">
-            <h2 id="vd-title" style="margin:0 0 15px 0; color:var(--ac-brown); font-weight:900; text-align:center; padding: 0 20px;">票卷名稱</h2>
-            <div id="vd-img-container" style="width:100%; max-height:250px; border-radius:16px; overflow:hidden; margin-bottom:15px; border:2px solid var(--ac-tan); display:none;">
-                <img id="vd-img" src="" style="width:100%; height:100%; object-fit:cover;">
-            </div>
-            <div style="background:#F8F6F2; padding:15px; border-radius:16px; border:1px dashed var(--ac-tan); margin-bottom:15px;">
-                <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                    <span style="font-size:0.85rem; color:var(--ac-brown-light); font-weight:900;">使用日期</span>
-                    <span id="vd-date" style="font-weight:900; color:var(--mo-blue);"></span>
-                </div>
-                <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                    <span style="font-size:0.85rem; color:var(--ac-brown-light); font-weight:900;">有效期限</span>
-                    <span id="vd-expire" style="font-weight:900; color:var(--mo-pink);"></span>
-                </div>
-                <div style="display:flex; justify-content:space-between;">
-                    <span style="font-size:0.85rem; color:var(--ac-brown-light); font-weight:900;">票卷代碼</span>
-                    <span id="vd-code" style="font-weight:900; color:var(--ac-brown); background:#FFF; padding:2px 8px; border-radius:6px; box-shadow:0 2px 5px rgba(0,0,0,0.05);"></span>
-                </div>
-            </div>
-            <div id="vd-facilities-section" style="display:none;">
-                <h3 style="font-size:0.95rem; color:var(--ac-brown); font-weight:900; margin-bottom:10px;"><i class="fa-solid fa-list-check"></i> 設施打卡清單</h3>
-                <div id="vd-facilities-list" style="display:flex; flex-direction:column; gap:8px;"></div>
-            </div>
-            <button class="btn-q btn-mo-teal scale-btn" style="width:100%; margin-top:20px; background:var(--mo-blue); box-shadow:0 5px 0 #5B8BAA; color:#FFF;" onclick="closeModal('modal-voucher-detail'); openVoucherModal(parseInt(document.getElementById('vd-item-id').value));"><i class="fa-solid fa-pen"></i> 編輯票卷</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="modal-voucher" onclick="if(event.target === this) closeModal('modal-voucher')">
-        <div class="ac-modal" id="modal-voucher-content-box">
-            <h2 style="margin-top:0; margin-bottom: 20px; text-align: center; color: var(--ac-brown); font-weight: 900;" id="modal-voucher-title">新增票卷</h2>
-            <input type="hidden" id="voucher-item-id">
-            
-            <label class="form-label">票卷名稱 <span style="color:var(--mo-pink);">*</span></label>
-            <input type="text" class="form-control" id="voucher-title" placeholder="例如：釜山通行證 Visit Busan Pass">
-            
-            <div style="display:flex; gap:10px;">
-                <div style="flex:1; min-width:0;"><label class="form-label">使用日期</label><input type="date" class="form-control" id="voucher-date"></div>
-                <div style="flex:1; min-width:0;"><label class="form-label">有效期限</label><input type="date" class="form-control" id="voucher-expire"></div>
-            </div>
-            
-            <label class="form-label">票卷代碼 / 備註</label>
-            <input type="text" class="form-control" id="voucher-code" placeholder="輸入 QR Code 編號或取票備註">
-            
-            <label class="form-label" style="margin-top:15px;">預計使用的設施 (打卡清單)</label>
-            <div style="display:flex; gap:10px; margin-bottom:10px;">
-                <input type="text" class="form-control" id="voucher-fac-input" placeholder="例如：樂天世界、觀光巴士" style="margin-bottom:0;">
-                <button class="btn-q btn-mo-teal scale-btn" style="width:auto; border-radius:16px;" onclick="addVoucherFacility()">新增</button>
-            </div>
-            <div id="voucher-fac-list" style="display:flex; flex-direction:column; gap:8px; margin-bottom:15px;"></div>
-
-            <label class="form-label">上傳票卷截圖</label>
-            <div style="display:flex; gap:15px; overflow-x:auto; scrollbar-width:none; padding: 10px 5px 15px 5px;" id="voucher-upload-preview"></div>
-            <input type="file" id="voucher-file-input" accept="image/*" style="display:none;" onchange="handleVoucherPhotoUpload(event)">
-
-            <div style="display: flex; gap: 15px; margin-top: 20px;">
-                <button class="btn-q modal-btn modal-btn-cancel scale-btn" onclick="playHaptic(); closeModal('modal-voucher')">取消</button>
-                <button class="btn-q modal-btn modal-btn-save scale-btn" onclick="playHaptic(); saveVoucher()">✔ 儲存</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="modal-member-edit" onclick="if(event.target === this) closeModal('modal-member-edit')">
-        <div class="ac-modal" style="background: #FFF;">
-            <h2 style="margin-top:0; margin-bottom: 20px; text-align: center; color: var(--ac-brown); font-weight: 900;" id="modal-member-title">新增成員</h2>
-            <input type="hidden" id="member-item-id">
-            
-            <div style="display:flex; justify-content:center; margin-bottom:20px;">
-                <div style="position:relative;">
-                    <div id="member-upload-preview" class="member-avatar scale-btn" style="width:100px; height:100px; cursor:pointer;" onclick="document.getElementById('member-file-input').click()">
-                        <i class="fa-solid fa-camera" style="color:var(--ac-tan);"></i>
-                    </div>
-                    <div style="position:absolute; bottom:0; right:0; background:var(--mo-blue); color:#FFF; width:30px; height:30px; border-radius:50%; display:flex; justify-content:center; align-items:center; font-size:0.9rem; border:2px solid #FFF; pointer-events:none;"><i class="fa-solid fa-plus"></i></div>
-                </div>
-            </div>
-            <input type="file" id="member-file-input" accept="image/*" style="display:none;" onchange="handleMemberPhotoUpload(event)">
-            
-            <div style="display:flex; gap:10px;">
-                <div style="flex:1; min-width:0;">
-                    <label class="form-label">名稱 <span style="color:var(--mo-pink);">*</span></label>
-                    <input type="text" class="form-control" id="member-name" placeholder="例：琳">
-                </div>
-                <div style="flex:1; min-width:0;">
-                    <label class="form-label">Aka 代號</label>
-                    <input type="text" class="form-control" id="member-aka" placeholder="例：財務大臣">
-                </div>
-            </div>
-
-            <label class="form-label">想說的話</label>
-            <textarea class="form-control" id="member-quote" rows="2" placeholder="留下旅行宣言..."></textarea>
-
-            <div style="display: flex; gap: 15px; margin-top: 10px;">
-                <button class="btn-q modal-btn modal-btn-cancel scale-btn" onclick="playHaptic(); closeModal('modal-member-edit')">取消</button>
-                <button class="btn-q modal-btn modal-btn-save scale-btn" onclick="playHaptic(); saveMember()">✔ 儲存</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="modal-cropper">
-        <div class="ac-modal" style="background: #FFF; display: flex; flex-direction: column; align-items: center; overflow:hidden;">
-            <h2 style="margin-top:0; margin-bottom: 20px; text-align: center; color: var(--ac-brown); font-weight: 900;"><i class="fa-solid fa-crop-simple"></i> 調整大頭貼</h2>
-            <div class="crop-container" id="crop-container">
-                <img id="crop-img" class="crop-img" src="" alt="crop">
-                <div class="crop-mask"></div>
-            </div>
-            <label class="form-label" style="text-align:center; width:100%; margin-top:10px;">縮放照片 (支援雙指縮放)</label>
-            <input type="range" id="crop-zoom" min="0.1" max="5" step="0.01" value="1" style="width: 80%; margin-bottom: 20px;">
-            
-            <div style="display: flex; gap: 15px; width: 100%;">
-                <button class="btn-q modal-btn modal-btn-cancel scale-btn" onclick="playHaptic(); closeModal('modal-cropper')">取消</button>
-                <button class="btn-q modal-btn modal-btn-save scale-btn" onclick="playHaptic(); confirmCrop()">✂️ 裁切儲存</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="modal-expense-edit" onclick="if(event.target === this) closeModal('modal-expense-edit')">
-        <div class="ac-modal" style="background: #FFF;">
-            <h2 style="margin-top:0; margin-bottom: 20px; text-align: center; color: var(--ac-brown); font-weight: 900;"><i class="fa-solid fa-pen"></i> 編輯帳務</h2>
-            <input type="hidden" id="edit-exp-id">
-            
-            <label class="form-label">日期</label>
-            <input type="date" class="form-control" id="edit-exp-date">
-            
-            <div style="display:flex; gap:10px;">
-                <div style="flex:1; min-width:0;"><label class="form-label">金額 (KRW)</label><input type="number" class="form-control" id="edit-exp-amount" oninput="calcApproxTwdEdit()"></div>
-                <div style="flex:1; min-width:0;"><label class="form-label">約合台幣 (TWD)</label><input type="text" class="form-control" id="edit-exp-twd" disabled></div>
-            </div>
-
-            <label class="form-label">地點與消費項目</label>
-            <div style="display:flex; gap:10px;">
-                <input type="text" class="form-control" id="edit-exp-loc" placeholder="地點">
-                <input type="text" class="form-control" id="edit-exp-title" placeholder="項目">
-            </div>
-
-            <div style="background: #FCFBFA; padding: 15px; border-radius: 16px; margin-top: 10px; border: 2px dashed var(--ac-tan);">
-                <label class="form-label">付款人 (單選)</label>
-                <div class="ava-select-group" id="edit-payer-group-container"></div>
-                <label class="form-label">分攤人 (複選)</label>
-                <div class="ava-select-group" id="edit-split-group-container"></div>
-            </div>
-
-            <div style="display: flex; gap: 15px; margin-top: 20px;">
-                <button class="btn-q modal-btn modal-btn-cancel scale-btn" onclick="playHaptic(); closeModal('modal-expense-edit')">取消</button>
-                <button class="btn-q modal-btn modal-btn-save scale-btn" onclick="playHaptic(); saveExpenseEdit()">✔ 儲存修改</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="modal-itinerary" onclick="if(event.target === this) closeModal('modal-itinerary')">
-        <div class="ac-modal" id="modal-content-box">
-            <h2 style="margin-top:0; margin-bottom: 20px; text-align: center; color: var(--ac-brown); font-weight: 900;" id="modal-itinerary-title">新增行程</h2>
-            <input type="hidden" id="form-item-id">
-            <div style="display:flex; gap:10px;">
-                <div style="flex:1; min-width:0;"><label class="form-label">日期</label><input type="date" class="form-control" id="form-date"></div>
-                <div style="flex:1; min-width:0;"><label class="form-label">時間</label><input type="time" class="form-control" id="form-time" required></div>
-            </div>
-            
-            <label class="form-label">行程標題 <span style="color:var(--mo-pink);">*</span></label>
-            <input type="text" class="form-control" id="form-title" placeholder="例如：海雲台看海 🌊">
-            
-            <label class="form-label">地點地址 (貼上自動顯示地圖)</label>
-            <input type="text" class="form-control" id="form-loc" placeholder="貼上完整地址..." oninput="checkMapThumbnail()">
-            
-            <div id="map-preview-container" style="display:none;"></div>
-
-            <label class="form-label" style="margin-top:10px;">備註內容</label>
-            <textarea class="form-control" id="form-note" rows="2" placeholder="選填..."></textarea>
-            
-            <label class="form-label">上傳照片</label>
-            <div style="display:flex; gap:15px; overflow-x:auto; scrollbar-width:none; padding: 10px 5px 15px 5px;" id="iti-upload-preview"></div>
-            <input type="file" id="iti-file-input" accept="image/*" style="display:none;" onchange="handleItiPhotoUpload(event)">
-
-            <label class="form-label" style="margin-top:15px;">主題顏色</label>
-            <div class="color-picker-wrapper"><div class="color-picker-group" id="color-picker-group"></div></div>
-            
-            <button class="btn-q scale-btn" style="width: 100%; padding: 12px; border-radius: 16px; background: #E8F4FA; color: var(--mo-blue); border: 2px solid var(--mo-blue); font-size: 0.95rem; margin-bottom: 15px;" onclick="openMap()"><i class="fa-solid fa-map-location-dot"></i> 開啟地圖導航</button>
-
-            <div style="display: flex; gap: 15px;">
-                <button class="btn-q modal-btn modal-btn-cancel scale-btn" onclick="playHaptic(); closeModal('modal-itinerary')">取消</button>
-                <button class="btn-q modal-btn modal-btn-save scale-btn" onclick="playHaptic(); saveItinerary()">✔ 儲存</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="modal-diary" onclick="if(event.target === this) closeModal('modal-diary')">
-        <div class="ac-modal" style="background: #FFF;">
-            <h2 style="margin-top:0; margin-bottom: 20px; text-align: center; color: var(--ac-brown); font-weight: 900;" id="diary-modal-title"><i class="fa-solid fa-book"></i> 寫新日誌</h2>
-            
-            <input type="hidden" id="diary-edit-id">
-
-            <label class="form-label">日期</label>
-            <input type="date" class="form-control" id="diary-date">
-            <label class="form-label">記錄人</label>
-            <div class="ava-select-group" id="diary-author-group-container" style="justify-content: center;"></div>
-            <label class="form-label" style="margin-top: 25px;">內容</label>
-            <textarea class="form-control" id="diary-content" rows="4" placeholder="寫下今天的趣事..."></textarea>
-            <label class="form-label">照片 (最多5張)</label>
-            <div style="display:flex; gap:15px; overflow-x:auto; scrollbar-width:none; padding: 10px 5px 15px 5px;" id="diary-upload-preview"></div>
-            <input type="file" id="diary-file-input" accept="image/*" multiple style="display:none;" onchange="handleDiaryPhotoUpload(event)">
-            <div style="display: flex; gap: 15px; margin-top: 20px;">
-                <button class="btn-q modal-btn modal-btn-cancel scale-btn" onclick="playHaptic(); closeModal('modal-diary')">取消</button>
-                <button class="btn-q modal-btn modal-btn-save scale-btn" onclick="playHaptic(); saveDiary()">保存</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="modal-delete" onclick="if(event.target === this) closeModal('modal-delete')">
-        <div class="ac-modal" style="text-align: center; max-width: 320px;">
-            <div class="delete-icon-bg"><i class="fa-solid fa-trash-can"></i></div>
-            <h2 style="margin-top:0; color: var(--ac-brown); font-weight: 900;">確認刪除？</h2>
-            <p style="color: var(--ac-brown-light); font-weight: 700; margin-bottom: 25px;">這個項目刪除後就找不回來囉！</p>
-            <div style="display: flex; gap: 15px;">
-                <button class="btn-q modal-btn modal-btn-cancel scale-btn" onclick="playHaptic(); closeModal('modal-delete')">再想想</button>
-                <button class="btn-q modal-btn scale-btn" style="background: var(--mo-pink); color: white; box-shadow: 0 5px 0px #B58C8C;" onclick="playHaptic(); executeDelete()">確認刪除</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="toast" id="toast-msg">
-        <i class="fa-solid fa-circle-check"></i>
-        <span id="toast-text">儲存成功</span>
-    </div>
-
-    <nav>
-        <div class="nav-item active" onclick="playHaptic(); switchPage('page-itinerary', this)"><div class="nav-icon"><i class="fa-solid fa-map-location-dot"></i></div>行程</div>
-        <div class="nav-item" onclick="playHaptic(); switchPage('page-booking', this)"><div class="nav-icon"><i class="fa-solid fa-ticket"></i></div>預定</div>
-        <div class="nav-item" onclick="playHaptic(); switchPage('page-accounting', this)"><div class="nav-icon"><i class="fa-solid fa-wallet"></i></div>會計</div>
-        <div class="nav-item" onclick="playHaptic(); switchPage('page-diary', this)"><div class="nav-icon"><i class="fa-solid fa-book"></i></div>日誌</div>
-        <div class="nav-item" onclick="playHaptic(); switchPage('page-member', this)"><div class="nav-icon"><i class="fa-solid fa-user-group"></i></div>成員</div>
-    </nav>
-</div>
 <script>
+    // ================= Firebase 雲端同步設定 (V17 核心) =================
+    const firebaseConfig = {
+      apiKey: "AIzaSyC4IbiHWsJE52xLhjf2eDodtO6UZKOgBhY",
+      authDomain: "busan2026-210a7.firebaseapp.com",
+      projectId: "busan2026-210a7",
+      storageBucket: "busan2026-210a7.firebasestorage.app",
+      messagingSenderId: "861407234236",
+      appId: "1:861407234236:web:95d5e38b3cedd8a8b2a8b9",
+      measurementId: "G-3TTTV5HC4X"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
     // ================= 基礎設定與工具 =================
     function playHaptic() { if (navigator.vibrate) navigator.vibrate(15); }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
@@ -991,6 +431,7 @@
         { date: '2026-06-10', day: 'DAY 5', week: '三', loc: '西面' }, { date: '2026-06-11', day: 'DAY 6', week: '四', loc: '西面' }
     ];
 
+    // 預設資料 (若 Firebase 為空時，將會自動寫入雲端作為初始資料)
     let membersData = [
         { id: 1, name: '琳', aka: '財務大臣', quote: '買買買，錢不是問題！', img: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&q=80', fallback: '👩' },
         { id: 2, name: '貓', aka: '導航雷達', quote: '跟著我走絕對不會迷路', img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&q=80', fallback: '🐱' }
@@ -1009,27 +450,7 @@
         { id: 10, date: '2026-06-07', time: '18:40', title: '廣安木燒肉', note: '晚餐', img: null, loc: '', color: 'pink' },
         { id: 11, date: '2026-06-08', time: '08:00', title: '前往海雲台', note: '', img: null, loc: '', color: 'white' },
         { id: 12, date: '2026-06-08', time: '09:30', title: 'DIART Coffee', note: '', img: null, loc: '', color: 'yellow' },
-        { id: 13, date: '2026-06-08', time: '10:50', title: '海岸列車+拍拍照', note: '', img: null, loc: '', color: 'blue' },
-        { id: 14, date: '2026-06-08', time: '12:10', title: '大海鮑魚粥', note: '午餐', img: null, loc: '', color: 'yellow' },
-        { id: 15, date: '2026-06-08', time: '13:30', title: '海雲台傳統市場', note: '', img: null, loc: '', color: 'white' },
-        { id: 16, date: '2026-06-08', time: '15:45', title: '海雲台小麥麵', note: '晚餐', img: null, loc: '', color: 'pink' },
-        { id: 17, date: '2026-06-08', time: '17:30', title: 'Spa Land 汗蒸幕', note: '天然溫泉(09:00~22:00)', img: null, loc: '', color: 'blue' },
-        { id: 18, date: '2026-06-09', time: '08:00', title: '前往廣安里', note: '', img: null, loc: '', color: 'white' },
-        { id: 19, date: '2026-06-09', time: '09:00', title: 'Your Type', note: '早午餐', img: null, loc: '', color: 'yellow' },
-        { id: 20, date: '2026-06-09', time: '11:00', title: '逛逛小店看風景', note: '', img: null, loc: '', color: 'blue' },
-        { id: 21, date: '2026-06-09', time: '13:00', title: '烤扇貝+海鮮大餐', note: '午餐', img: null, loc: '', color: 'yellow' },
-        { id: 22, date: '2026-06-09', time: '14:30', title: '海邊走走看夕陽+拍照', note: '', img: null, loc: '', color: 'blue' },
-        { id: 23, date: '2026-06-09', time: '15:00', title: '前往南浦洞', note: '逛五福寢具', img: null, loc: '', color: 'white' },
-        { id: 24, date: '2026-06-09', time: '17:30', title: '扎嘎其市場', note: '', img: null, loc: '', color: 'white' },
-        { id: 25, date: '2026-06-09', time: '19:00', title: '樂天超市', note: '', img: null, loc: '', color: 'white' },
-        { id: 26, date: '2026-06-10', time: '08:00', title: '吃早餐', note: '步行5分', img: null, loc: '', color: 'yellow' },
-        { id: 27, date: '2026-06-10', time: '10:30', title: '本思診所 醫美體驗', note: '預約大名:Wang lin / Hsieh chia hao', img: null, loc: '', color: 'green' },
-        { id: 28, date: '2026-06-10', time: '13:00', title: '豬肉湯飯', note: '午餐', img: null, loc: '', color: 'yellow' },
-        { id: 29, date: '2026-06-10', time: '14:30', title: '逛西面地下街+購物', note: '買伴手禮', img: null, loc: '', color: 'white' },
-        { id: 30, date: '2026-06-11', time: '06:00', title: '搭免費接駁車前往機場', note: '車程約30分', img: null, loc: '', color: 'white' },
-        { id: 31, date: '2026-06-11', time: '06:30', title: '機場退稅', note: '', img: null, loc: '', color: 'white' },
-        { id: 32, date: '2026-06-11', time: '07:00', title: '吃東西', note: '', img: null, loc: '', color: 'yellow' },
-        { id: 33, date: '2026-06-11', time: '09:00', title: '飛回台中!', note: '搭乘KE2085航班', img: null, loc: '', color: 'blue' }
+        { id: 13, date: '2026-06-08', time: '10:50', title: '海岸列車+拍拍照', note: '', img: null, loc: '', color: 'blue' }
     ];
 
     let expenses = [
@@ -1044,7 +465,7 @@
 
     let vouchersData = [];
 
-    // ================= 全域刪除核心 (CRUD) =================
+    // ================= 雲端刪除核心 (Firebase Delete) =================
     function confirmDelete(type, id) {
         playHaptic();
         deleteTargetType = type;
@@ -1054,22 +475,11 @@
 
     function executeDelete() {
         playHaptic();
-        if (deleteTargetType === 'itinerary') {
-            itineraryData = itineraryData.filter(item => item.id !== itemToDelete);
-            renderTimeline();
-        } else if (deleteTargetType === 'voucher') {
-            vouchersData = vouchersData.filter(item => item.id !== itemToDelete);
-            renderVouchers();
-        } else if (deleteTargetType === 'expense') {
-            expenses = expenses.filter(item => item.id !== itemToDelete);
-            renderExpenses();
-        } else if (deleteTargetType === 'diary') {
-            diaryData = diaryData.filter(item => item.id !== itemToDelete);
-            renderDiary();
-        } else if (deleteTargetType === 'member') {
-            membersData = membersData.filter(item => item.id !== itemToDelete);
-            renderGlobalAvatars();
-        }
+        if (deleteTargetType === 'itinerary') db.collection('itinerary').doc(String(itemToDelete)).delete();
+        else if (deleteTargetType === 'voucher') db.collection('vouchers').doc(String(itemToDelete)).delete();
+        else if (deleteTargetType === 'expense') db.collection('expenses').doc(String(itemToDelete)).delete();
+        else if (deleteTargetType === 'diary') db.collection('diary').doc(String(itemToDelete)).delete();
+        else if (deleteTargetType === 'member') db.collection('members').doc(String(itemToDelete)).delete();
         
         closeModal('modal-delete');
         showToast('刪除成功');
@@ -1077,22 +487,14 @@
 
     // ================= 全域頭像同步 =================
     function renderGlobalAvatars() {
-        document.getElementById('header-avatars-container').innerHTML = membersData.map(m => `
-            <div class="avatar">${m.img ? `<img src="${m.img}">` : m.fallback}</div>
-        `).join('');
+        document.getElementById('header-avatars-container').innerHTML = membersData.map(m => `<div class="avatar">${m.img ? `<img src="${m.img}">` : m.fallback}</div>`).join('');
 
         const renderExpenseAvatars = (isActiveAll = false, isRadio = false, baseClass = '', toggleFunc = '') => {
             return membersData.map((m, i) => {
                 const activeClass = (isActiveAll || (isRadio && i===0)) ? 'active' : '';
-                const styleStr = activeClass === 'active' 
-                    ? `border-color:var(--mo-yellow); opacity:1; filter:grayscale(0%); background:rgba(255,208,0,0.1);` 
-                    : `border-color:var(--ac-tan); opacity:0.4; filter:grayscale(100%);`;
+                const styleStr = activeClass === 'active' ? `border-color:var(--mo-yellow); opacity:1; filter:grayscale(0%); background:rgba(255,208,0,0.1);` : `border-color:var(--ac-tan); opacity:0.4; filter:grayscale(100%);`;
                 const avatarContent = m.img ? `<img src="${m.img}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">` : `<div style="margin-top:10px;">${m.fallback}</div>`;
-                return `
-                <div class="ava-opt ${baseClass} ${activeClass} scale-btn" data-val="${m.name}" onclick="${toggleFunc}(this)" style="${styleStr}">
-                    ${avatarContent}
-                    <div class="ava-name">${m.name}</div>
-                </div>`;
+                return `<div class="ava-opt ${baseClass} ${activeClass} scale-btn" data-val="${m.name}" onclick="${toggleFunc}(this)" style="${styleStr}">${avatarContent}<div class="ava-name">${m.name}</div></div>`;
             }).join('');
         };
         
@@ -1101,37 +503,18 @@
         document.getElementById('edit-payer-group-container').innerHTML = renderExpenseAvatars(false, true, 'edit-payer-opt', 'toggleEditPayer');
         document.getElementById('edit-split-group-container').innerHTML = renderExpenseAvatars(true, false, 'edit-split-opt', 'toggleEditSplit');
 
-        document.getElementById('expense-filter-container').innerHTML = `
-            <div class="f-tag-pill active scale-btn" onclick="filterExpenses('all', this)">全體</div>
-            ${membersData.map(m => `<div class="f-tag-pill scale-btn" onclick="filterExpenses('${m.name}', this)">${m.name}</div>`).join('')}
-        `;
+        document.getElementById('expense-filter-container').innerHTML = `<div class="f-tag-pill active scale-btn" onclick="filterExpenses('all', this)">全體</div>` + membersData.map(m => `<div class="f-tag-pill scale-btn" onclick="filterExpenses('${m.name}', this)">${m.name}</div>`).join('');
 
         document.getElementById('diary-author-group-container').innerHTML = membersData.map((m, i) => {
             const activeClass = i === 0 ? 'active' : '';
             const styleStr = activeClass === 'active' ? `border-color:var(--mo-blue); opacity:1; filter:grayscale(0%);` : `border-color:var(--ac-tan); opacity:0.4; filter:grayscale(100%);`;
             const avatarContent = m.img ? `<img src="${m.img}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">` : `<div style="margin-top:10px;">${m.fallback}</div>`;
-            return `
-            <div class="ava-opt diary-author-opt ${activeClass} scale-btn" data-val="${m.name}" onclick="toggleDiaryAuthor(this)" style="${styleStr}">
-                ${avatarContent}
-                <div class="ava-name">${m.name}</div>
-            </div>`;
+            return `<div class="ava-opt diary-author-opt ${activeClass} scale-btn" data-val="${m.name}" onclick="toggleDiaryAuthor(this)" style="${styleStr}">${avatarContent}<div class="ava-name">${m.name}</div></div>`;
         }).join('');
 
         document.getElementById('member-container').innerHTML = membersData.map(m => {
             const avatarContent = m.img ? `<img src="${m.img}" class="member-avatar">` : `<div class="member-avatar">${m.fallback}</div>`;
-            return `
-            <div class="member-card">
-                ${avatarContent}
-                <div class="member-info">
-                    <h2 class="member-name">${m.name}</h2>
-                    ${m.aka ? `<span class="member-aka">${m.aka}</span>` : ''}
-                    ${m.quote ? `<div class="member-quote">"${m.quote}"</div>` : ''}
-                </div>
-                <div class="member-actions">
-                    <i class="fa-solid fa-pen-to-square scale-btn" onclick="openMemberModal(${m.id})"></i>
-                    <i class="fa-solid fa-trash-can scale-btn" onclick="confirmDelete('member', ${m.id})"></i>
-                </div>
-            </div>`;
+            return `<div class="member-card">${avatarContent}<div class="member-info"><h2 class="member-name">${m.name}</h2>${m.aka ? `<span class="member-aka">${m.aka}</span>` : ''}${m.quote ? `<div class="member-quote">"${m.quote}"</div>` : ''}</div><div class="member-actions"><i class="fa-solid fa-pen-to-square scale-btn" onclick="openMemberModal(${m.id})"></i><i class="fa-solid fa-trash-can scale-btn" onclick="confirmDelete('member', ${m.id})"></i></div></div>`;
         }).join('');
     }
 
@@ -1169,42 +552,24 @@
         const locName = currentLocObj ? currentLocObj.loc : '釜山';
         const cacheKey = currentDateSelect + '_' + locName;
 
-        if (weatherCache[cacheKey]) {
-            renderWeatherCard(weatherCache[cacheKey].loc, weatherCache[cacheKey].txt, weatherCache[cacheKey].m, weatherCache[cacheKey].a, weatherCache[cacheKey].n, weatherCache[cacheKey].tip, weatherCache[cacheKey].outfit);
-            return;
-        }
+        if (weatherCache[cacheKey]) { renderWeatherCard(weatherCache[cacheKey].loc, weatherCache[cacheKey].txt, weatherCache[cacheKey].m, weatherCache[cacheKey].a, weatherCache[cacheKey].n, weatherCache[cacheKey].tip, weatherCache[cacheKey].outfit); return; }
 
         const container = document.getElementById('weather-section');
         container.innerHTML = `<div style="text-align:center; padding:15px; color:var(--ac-brown-light); font-weight:700;"><i class="fa-solid fa-spinner fa-spin"></i> 獲取當地天氣中...</div>`;
         
         if ("geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition(position => {
-                setTimeout(() => { 
-                    const data = { loc: `📍 釜山 ${locName} (即時)`, txt: "晴朗無雲", m: "☀️", a: "☀️", n: "🌙", tip: "天氣超棒，適合出遊！", outfit: "👕 推薦穿搭：短袖、薄外套與墨鏡" };
-                    weatherCache[cacheKey] = data;
-                    renderWeatherCard(data.loc, data.txt, data.m, data.a, data.n, data.tip, data.outfit); 
-                }, 600);
+                setTimeout(() => { const data = { loc: `📍 釜山 ${locName} (即時)`, txt: "晴朗無雲", m: "☀️", a: "☀️", n: "🌙", tip: "天氣超棒，適合出遊！", outfit: "👕 推薦穿搭：短袖、薄外套與墨鏡" }; weatherCache[cacheKey] = data; renderWeatherCard(data.loc, data.txt, data.m, data.a, data.n, data.tip, data.outfit); }, 600);
             }, () => { 
-                setTimeout(() => { 
-                    const data = { loc: `📍 釜山 (預設)`, txt: "晴時多雲", m: "☀️", a: "⛅", n: "☁️", tip: "無法獲取定位，顯示預設天氣。", outfit: "🧥 推薦穿搭：洋蔥式穿搭、攜帶雨具" };
-                    weatherCache[cacheKey] = data;
-                    renderWeatherCard(data.loc, data.txt, data.m, data.a, data.n, data.tip, data.outfit); 
-                }, 500); 
+                setTimeout(() => { const data = { loc: `📍 釜山 (預設)`, txt: "晴時多雲", m: "☀️", a: "⛅", n: "☁️", tip: "無法獲取定位，顯示預設天氣。", outfit: "🧥 推薦穿搭：洋蔥式穿搭、攜帶雨具" }; weatherCache[cacheKey] = data; renderWeatherCard(data.loc, data.txt, data.m, data.a, data.n, data.tip, data.outfit); }, 500); 
             });
         } else { 
-            const data = { loc: "釜山 (預設)", txt: "未知", m: "❓", a: "❓", n: "❓", tip: "設備不支援定位。", outfit: "🎒 推薦穿搭：輕便舒適為主" };
-            weatherCache[cacheKey] = data;
-            renderWeatherCard(data.loc, data.txt, data.m, data.a, data.n, data.tip, data.outfit); 
+            const data = { loc: "釜山 (預設)", txt: "未知", m: "❓", a: "❓", n: "❓", tip: "設備不支援定位。", outfit: "🎒 推薦穿搭：輕便舒適為主" }; weatherCache[cacheKey] = data; renderWeatherCard(data.loc, data.txt, data.m, data.a, data.n, data.tip, data.outfit); 
         }
     }
 
     function renderWeatherCard(loc, txt, m, a, n, tip, outfit) {
-        document.getElementById('weather-section').innerHTML = `
-            <div class="weather-top"><div class="weather-info"><div style="font-size:0.85rem; margin-bottom: 4px; color: var(--mo-blue);">${loc}</div><div style="font-size: 1.4rem; color: var(--ac-brown);">${txt}</div></div>
-            <div style="display:flex; gap:10px; background:#FFF; padding:8px 12px; border-radius:16px; border: 2px solid #EAF4FA;"><div style="text-align:center; font-size:0.75rem; color:var(--ac-brown-light); font-weight:800;"><span>${m}</span><br>早</div><div style="text-align:center; font-size:0.75rem; color:var(--ac-brown-light); font-weight:800;"><span>${a}</span><br>中</div><div style="text-align:center; font-size:0.75rem; color:var(--ac-brown-light); font-weight:800;"><span>${n}</span><br>晚</div></div></div>
-            <div style="font-size: 0.85rem; font-weight: 800; color: #4B6E3F; background: var(--ac-green-light); padding: 10px 15px; border-radius: 16px; margin-top:8px;">💡 ${tip}</div>
-            <div style="font-size: 0.85rem; font-weight: 800; color: #8B5A5A; background: #FDFBF8; padding: 10px 15px; border-radius: 16px; margin-top:8px; border: 1px dashed #E2C87A;">${outfit}</div>
-        `;
+        document.getElementById('weather-section').innerHTML = `<div class="weather-top"><div class="weather-info"><div style="font-size:0.85rem; margin-bottom: 4px; color: var(--mo-blue);">${loc}</div><div style="font-size: 1.4rem; color: var(--ac-brown);">${txt}</div></div><div style="display:flex; gap:10px; background:#FFF; padding:8px 12px; border-radius:16px; border: 2px solid #EAF4FA;"><div style="text-align:center; font-size:0.75rem; color:var(--ac-brown-light); font-weight:800;"><span>${m}</span><br>早</div><div style="text-align:center; font-size:0.75rem; color:var(--ac-brown-light); font-weight:800;"><span>${a}</span><br>中</div><div style="text-align:center; font-size:0.75rem; color:var(--ac-brown-light); font-weight:800;"><span>${n}</span><br>晚</div></div></div><div style="font-size: 0.85rem; font-weight: 800; color: #4B6E3F; background: var(--ac-green-light); padding: 10px 15px; border-radius: 16px; margin-top:8px;">💡 ${tip}</div><div style="font-size: 0.85rem; font-weight: 800; color: #8B5A5A; background: #FDFBF8; padding: 10px 15px; border-radius: 16px; margin-top:8px; border: 1px dashed #E2C87A;">${outfit}</div>`;
     }
 
     let currentItiImage = null;
@@ -1212,10 +577,7 @@
         const container = document.getElementById('timeline-container');
         let todaysEvents = itineraryData.filter(e => e.date === currentDateSelect).sort((a, b) => a.time.localeCompare(b.time));
 
-        if(todaysEvents.length === 0) {
-            container.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--ac-brown-light); font-weight: 800;">當日尚無行程 🍃</div>`;
-            return;
-        }
+        if(todaysEvents.length === 0) { container.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--ac-brown-light); font-weight: 800;">當日尚無行程 🍃</div>`; return; }
 
         container.innerHTML = todaysEvents.map(event => {
             const cInfo = themeColors.find(c => c.name === event.color) || themeColors[0];
@@ -1223,33 +585,22 @@
             <div class="timeline-item">
                 <div class="timeline-dot" style="border-color: ${cInfo.dot};"></div>
                 <div class="event-card" style="background-color: ${cInfo.hex}; border-color: ${cInfo.name === 'white' ? 'transparent' : cInfo.dot};" onclick="toggleEventDetail(${event.id})">
-                    <div class="event-header">
-                        <div class="time-picker-wrapper" onclick="event.stopPropagation()">
-                            <div class="time-display-btn">${event.time}</div>
-                            <input type="time" value="${event.time}" onchange="updateEventTime(${event.id}, this.value)">
-                        </div>
-                        <span class="event-title">${event.title}</span>
-                        <i class="fa-solid fa-chevron-down" style="color:var(--ac-tan);"></i>
-                    </div>
-                    
+                    <div class="event-header"><div class="time-picker-wrapper" onclick="event.stopPropagation()"><div class="time-display-btn">${event.time}</div><input type="time" value="${event.time}" onchange="updateEventTime(${event.id}, this.value)"></div><span class="event-title">${event.title}</span><i class="fa-solid fa-chevron-down" style="color:var(--ac-tan);"></i></div>
                     <div class="event-detail" id="detail-${event.id}">
                         ${event.note ? `<div class="event-note">${event.note}</div>` : ''}
-                        
                         ${event.loc ? `<div class="map-thumbnail" onclick="openMap(); event.stopPropagation();"><div class="map-overlay"><i class="fa-solid fa-location-arrow" style="margin-right:8px;"></i> 導航</div></div>` : ''}
                         ${event.img ? `<img src="${event.img}" style="width:100%; height:140px; object-fit:cover; border-radius:18px; margin-bottom:10px; border:1px solid var(--ac-tan); margin-top:10px;">` : ''}
-
-                        <div class="event-actions">
-                            <span onclick="event.stopPropagation(); playHaptic(); openItineraryModal(${event.id})"><i class="fa-solid fa-pen-to-square"></i></span>
-                            <span onclick="event.stopPropagation(); playHaptic(); confirmDelete('itinerary', ${event.id})"><i class="fa-solid fa-trash-can"></i></span>
-                        </div>
+                        <div class="event-actions"><span onclick="event.stopPropagation(); playHaptic(); openItineraryModal(${event.id})"><i class="fa-solid fa-pen-to-square"></i></span><span onclick="event.stopPropagation(); playHaptic(); confirmDelete('itinerary', ${event.id})"><i class="fa-solid fa-trash-can"></i></span></div>
                     </div>
                 </div>
-            </div>
-        `}).join('');
+            </div>`;
+        }).join('');
     }
 
     function toggleEventDetail(id) { playHaptic(); const detail = document.getElementById(`detail-${id}`); detail.style.display = (detail.style.display === 'block') ? 'none' : 'block'; }
-    function updateEventTime(id, newTime) { const event = itineraryData.find(e => e.id === id); if(event) { event.time = newTime; renderTimeline(); } }
+    
+    // Firebase Update
+    function updateEventTime(id, newTime) { db.collection('itinerary').doc(String(id)).update({ time: newTime }); }
 
     function easeOutQuart(t) { return 1 - (--t) * t * t * t; }
     function triggerCountdownAnimation() {
@@ -1269,48 +620,24 @@
     }
 
     function checkMapThumbnail() {
-        const val = document.getElementById('form-loc').value.trim();
-        const container = document.getElementById('map-preview-container');
-        const urlPattern = /(https?:\/\/[^\s]+)/i;
-        
+        const val = document.getElementById('form-loc').value.trim(); const container = document.getElementById('map-preview-container'); const urlPattern = /(https?:\/\/[^\s]+)/i;
         if (urlPattern.test(val) || val.toLowerCase().includes('maps')) {
-            container.innerHTML = `
-            <div class="map-thumbnail" style="background: url('https://images.unsplash.com/photo-1524661135-423995f22d0b?w=400&q=80') center/cover;" onclick="openMap()">
-                <div class="map-overlay" style="opacity: 1; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px);"><i class="fa-solid fa-map-location-dot" style="margin-right:8px; color: #FFD000;"></i> 點擊前往 Google Maps</div>
-            </div>`;
+            container.innerHTML = `<div class="map-thumbnail" style="background: url('https://images.unsplash.com/photo-1524661135-423995f22d0b?w=400&q=80') center/cover;" onclick="openMap()"><div class="map-overlay" style="opacity: 1; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px);"><i class="fa-solid fa-map-location-dot" style="margin-right:8px; color: #FFD000;"></i> 點擊前往 Google Maps</div></div>`;
             container.style.display = 'block';
         } else if (val.length > 3) {
             container.innerHTML = `<div class="map-thumbnail" onclick="openMap()"><div class="map-overlay"><i class="fa-solid fa-location-arrow" style="margin-right:8px;"></i> 搜尋此地點</div></div>`;
             container.style.display = 'block';
-        } else { 
-            container.style.display = 'none'; 
-        }
+        } else { container.style.display = 'none'; }
     }
 
     function openMap() { 
-        playHaptic(); 
-        const val = document.getElementById('form-loc').value.trim();
-        const urlPattern = /(https?:\/\/[^\s]+)/i;
-        const match = val.match(urlPattern);
-        
-        if (match) {
-            window.open(match[0], '_blank');
-        } else {
-            const loc = val || '釜山';
-            window.open(`http://googleusercontent.com/maps.google.com/maps?q=${encodeURIComponent(loc)}`, '_blank'); 
-        }
+        playHaptic(); const val = document.getElementById('form-loc').value.trim(); const urlPattern = /(https?:\/\/[^\s]+)/i; const match = val.match(urlPattern);
+        if (match) { window.open(match[0], '_blank'); } else { const loc = val || '釜山'; window.open(`http://googleusercontent.com/maps.google.com/maps?q=${encodeURIComponent(loc)}`, '_blank'); }
     }
 
     function handleItiPhotoUpload(event) {
         const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                currentItiImage = e.target.result;
-                renderItiUploadPreview();
-            }
-            reader.readAsDataURL(file);
-        }
+        if (file) { const reader = new FileReader(); reader.onload = function(e) { currentItiImage = e.target.result; renderItiUploadPreview(); }; reader.readAsDataURL(file); }
     }
     
     function renderItiUploadPreview() {
@@ -1323,9 +650,7 @@
 
     function buildColorPicker() {
         const group = document.getElementById('color-picker-group');
-        group.innerHTML = themeColors.map(c => `
-            <div class="color-dot scale-btn ${selectedFormColor === c.name ? 'active' : ''}" style="background-color: ${c.dot}; ${c.name==='white' ? 'border: 3px solid #DCD7D0;' : ''}" onclick="selectColor('${c.name}')"></div>
-        `).join('');
+        group.innerHTML = themeColors.map(c => `<div class="color-dot scale-btn ${selectedFormColor === c.name ? 'active' : ''}" style="background-color: ${c.dot}; ${c.name==='white' ? 'border: 3px solid #DCD7D0;' : ''}" onclick="selectColor('${c.name}')"></div>`).join('');
     }
     
     function selectColor(name) { selectedFormColor = name; const activeColor = themeColors.find(c => c.name === name); document.documentElement.style.setProperty('--modal-dynamic-bg', activeColor.hex); buildColorPicker(); playHaptic(); }
@@ -1333,29 +658,30 @@
     function openItineraryModal(id = null) {
         const modal = document.getElementById('modal-itinerary');
         if (id) {
-            const event = itineraryData.find(e => e.id === id);
-            document.getElementById('modal-itinerary-title').innerText = "編輯行程"; document.getElementById('form-item-id').value = event.id; document.getElementById('form-date').value = event.date; document.getElementById('form-time').value = event.time; document.getElementById('form-title').value = event.title; document.getElementById('form-note').value = event.note || ""; document.getElementById('form-loc').value = event.loc || ""; selectedFormColor = event.color || 'white'; currentItiImage = event.img || null;
+            const event = itineraryData.find(e => e.id === id); document.getElementById('modal-itinerary-title').innerText = "編輯行程"; document.getElementById('form-item-id').value = event.id; document.getElementById('form-date').value = event.date; document.getElementById('form-time').value = event.time; document.getElementById('form-title').value = event.title; document.getElementById('form-note').value = event.note || ""; document.getElementById('form-loc').value = event.loc || ""; selectedFormColor = event.color || 'white'; currentItiImage = event.img || null;
         } else {
             document.getElementById('modal-itinerary-title').innerText = "新增行程"; document.getElementById('form-item-id').value = ""; document.getElementById('form-date').value = currentDateSelect; document.getElementById('form-time').value = "12:00"; document.getElementById('form-title').value = ""; document.getElementById('form-note').value = ""; document.getElementById('form-loc').value = ""; selectedFormColor = 'white'; currentItiImage = null;
         }
-        checkMapThumbnail(); renderItiUploadPreview();
-        const activeColor = themeColors.find(c => c.name === selectedFormColor); document.documentElement.style.setProperty('--modal-dynamic-bg', activeColor.hex); buildColorPicker(); modal.style.display = 'flex';
+        checkMapThumbnail(); renderItiUploadPreview(); const activeColor = themeColors.find(c => c.name === selectedFormColor); document.documentElement.style.setProperty('--modal-dynamic-bg', activeColor.hex); buildColorPicker(); modal.style.display = 'flex';
     }
 
+    // Firebase Save
     function saveItinerary() {
         const id = document.getElementById('form-item-id').value; const date = document.getElementById('form-date').value; const time = document.getElementById('form-time').value; const title = document.getElementById('form-title').value.trim(); const note = document.getElementById('form-note').value.trim(); const loc = document.getElementById('form-loc').value.trim();
         if(!title) { alert("⚠️ 行程標題為必填！"); return; }
-        if (id) { const index = itineraryData.findIndex(e => e.id == id); itineraryData[index] = { ...itineraryData[index], date, time, title, note, loc, color: selectedFormColor, img: currentItiImage }; } 
-        else { itineraryData.push({ id: Date.now(), date, time, title, note, loc, img: currentItiImage, color: selectedFormColor }); }
-        closeModal('modal-itinerary'); showToast('儲存成功');
-        if(date !== currentDateSelect && tripDates.find(t=>t.date===date)) selectDate(date); else renderTimeline();
+        
+        const newId = id ? parseInt(id) : Date.now();
+        const data = { id: newId, date, time, title, note, loc, color: selectedFormColor, img: currentItiImage };
+        
+        db.collection('itinerary').doc(String(newId)).set(data).then(() => {
+            closeModal('modal-itinerary'); showToast('儲存成功');
+            if(date !== currentDateSelect && tripDates.find(t=>t.date===date)) selectDate(date);
+        });
     }
-
 
     // ================= 模組 2: 預定票務 =================
     function requirePin(targetId) {
-        document.getElementById('pin-target').value = targetId; document.getElementById('pin-input').value = '';
-        document.getElementById('modal-pin').style.display = 'flex'; setTimeout(() => document.getElementById('pin-input').focus(), 100);
+        document.getElementById('pin-target').value = targetId; document.getElementById('pin-input').value = ''; document.getElementById('modal-pin').style.display = 'flex'; setTimeout(() => document.getElementById('pin-input').focus(), 100);
     }
     
     function verifyPin() {
@@ -1364,43 +690,25 @@
             playHaptic(); const targetId = document.getElementById('pin-target').value;
             const card = document.getElementById(targetId); card.classList.add('editable-mode');
             card.querySelectorAll('.editable-field').forEach(field => { field.setAttribute('contenteditable', 'true'); field.addEventListener('keypress', (e) => { if(e.key === 'Enter') e.preventDefault(); }); });
-            
-            const btn = card.querySelector('.btn-edit-trigger');
-            btn.innerHTML = '<i class="fa-solid fa-check"></i> 儲存修改';
-            btn.classList.add('is-editing'); 
-            
-            btn.onclick = function(e) { e.stopPropagation(); lockCard(targetId, this); };
-            closeModal('modal-pin');
+            const btn = card.querySelector('.btn-edit-trigger'); btn.innerHTML = '<i class="fa-solid fa-check"></i> 儲存修改'; btn.classList.add('is-editing'); 
+            btn.onclick = function(e) { e.stopPropagation(); lockCard(targetId, this); }; closeModal('modal-pin');
         } else { alert('❌ 密碼錯誤！'); document.getElementById('pin-input').value = ''; document.getElementById('pin-input').focus(); }
     }
     
     function lockCard(cardId, btn) {
-        playHaptic(); const card = document.getElementById(cardId); card.classList.remove('editable-mode');
-        card.querySelectorAll('.editable-field').forEach(field => field.setAttribute('contenteditable', 'false'));
-        
-        const isFlight = cardId.includes('flight');
-        btn.innerHTML = `<i class="fa-solid fa-pen"></i> ${isFlight ? '編輯航班資訊' : '編輯住宿資訊'}`;
-        btn.classList.remove('is-editing'); 
-        
-        btn.onclick = function(e) { e.stopPropagation(); requirePin(cardId); };
-        showToast('儲存成功');
+        playHaptic(); const card = document.getElementById(cardId); card.classList.remove('editable-mode'); card.querySelectorAll('.editable-field').forEach(field => field.setAttribute('contenteditable', 'false'));
+        const isFlight = cardId.includes('flight'); btn.innerHTML = `<i class="fa-solid fa-pen"></i> ${isFlight ? '編輯航班資訊' : '編輯住宿資訊'}`; btn.classList.remove('is-editing'); 
+        btn.onclick = function(e) { e.stopPropagation(); requirePin(cardId); }; showToast('儲存成功');
     }
     
     function openHotelDetailModal() { playHaptic(); document.getElementById('modal-hotel-detail').style.display = 'flex'; }
 
     // ================= 票卷設施打卡功能 =================
-    let currentVoucherImage = null;
-    let currentVoucherFacilities = [];
+    let currentVoucherImage = null; let currentVoucherFacilities = [];
     
     function addVoucherFacility() {
-        playHaptic();
-        const input = document.getElementById('voucher-fac-input');
-        const val = input.value.trim();
-        if(val) {
-            currentVoucherFacilities.push({ name: val, checked: false });
-            input.value = '';
-            renderVoucherFacList();
-        }
+        playHaptic(); const input = document.getElementById('voucher-fac-input'); const val = input.value.trim();
+        if(val) { currentVoucherFacilities.push({ name: val, checked: false }); input.value = ''; renderVoucherFacList(); }
     }
 
     function renderVoucherFacList() {
@@ -1409,7 +717,7 @@
             <div style="display:flex; justify-content:space-between; align-items:center; background:#F8F6F2; padding:10px 15px; border-radius:12px; border:1px solid var(--ac-tan);">
                 <div style="display:flex; align-items:center; gap:10px;">
                     <input type="checkbox" ${f.checked ? 'checked' : ''} onchange="toggleVoucherFacEdit(${i}, this.checked)" style="transform:scale(1.3);">
-                    <span style="font-weight:900; color:var(--ac-brown); text-decoration:${f.checked ? 'line-through' : 'none'}; opacity:${f.checked ? 0.5 : 1};">${f.name}</span>
+                    <span style="font-weight:900; color:var(--ac-brown); text-decoration:none; opacity:1;">${f.name}</span>
                 </div>
                 <i class="fa-solid fa-xmark scale-btn" style="color:var(--mo-pink); cursor:pointer; padding:5px;" onclick="removeVoucherFacility(${i})"></i>
             </div>
@@ -1422,33 +730,15 @@
     function openVoucherModal(id = null) {
         playHaptic(); 
         if (id) {
-            const v = vouchersData.find(item => item.id === id);
-            document.getElementById('modal-voucher-title').innerText = "編輯票卷";
-            document.getElementById('voucher-item-id').value = v.id; 
-            document.getElementById('voucher-title').value = v.title; 
-            document.getElementById('voucher-date').value = v.date; 
-            document.getElementById('voucher-expire').value = v.expire || ""; 
-            document.getElementById('voucher-code').value = v.code || ""; 
-            currentVoucherImage = v.img || null;
-            currentVoucherFacilities = v.facilities ? JSON.parse(JSON.stringify(v.facilities)) : [];
+            const v = vouchersData.find(item => item.id === id); document.getElementById('modal-voucher-title').innerText = "編輯票卷"; document.getElementById('voucher-item-id').value = v.id; document.getElementById('voucher-title').value = v.title; document.getElementById('voucher-date').value = v.date; document.getElementById('voucher-expire').value = v.expire || ""; document.getElementById('voucher-code').value = v.code || ""; currentVoucherImage = v.img || null; currentVoucherFacilities = v.facilities ? JSON.parse(JSON.stringify(v.facilities)) : [];
         } else {
-            document.getElementById('modal-voucher-title').innerText = "新增票卷";
-            document.getElementById('voucher-item-id').value = ""; 
-            document.getElementById('voucher-title').value = ""; 
-            document.getElementById('voucher-date').value = currentDateSelect; 
-            document.getElementById('voucher-expire').value = ""; 
-            document.getElementById('voucher-code').value = ""; 
-            currentVoucherImage = null; 
-            currentVoucherFacilities = [];
+            document.getElementById('modal-voucher-title').innerText = "新增票卷"; document.getElementById('voucher-item-id').value = ""; document.getElementById('voucher-title').value = ""; document.getElementById('voucher-date').value = currentDateSelect; document.getElementById('voucher-expire').value = ""; document.getElementById('voucher-code').value = ""; currentVoucherImage = null; currentVoucherFacilities = [];
         }
-        renderVoucherUploadPreview(); 
-        renderVoucherFacList();
-        document.getElementById('modal-voucher').style.display = 'flex';
+        renderVoucherUploadPreview(); renderVoucherFacList(); document.getElementById('modal-voucher').style.display = 'flex';
     }
 
     function handleVoucherPhotoUpload(event) {
-        const file = event.target.files[0];
-        if (file) { const reader = new FileReader(); reader.onload = function(e) { currentVoucherImage = e.target.result; renderVoucherUploadPreview(); }; reader.readAsDataURL(file); }
+        const file = event.target.files[0]; if (file) { const reader = new FileReader(); reader.onload = function(e) { currentVoucherImage = e.target.result; renderVoucherUploadPreview(); }; reader.readAsDataURL(file); }
     }
 
     function renderVoucherUploadPreview() {
@@ -1459,30 +749,17 @@
         }
     }
 
+    // Firebase Save
     function saveVoucher() {
-        const id = document.getElementById('voucher-item-id').value;
-        const title = document.getElementById('voucher-title').value.trim();
+        const id = document.getElementById('voucher-item-id').value; const title = document.getElementById('voucher-title').value.trim();
         if(!title) { alert('請填寫票卷名稱'); return; }
         
-        const date = document.getElementById('voucher-date').value; 
-        const expire = document.getElementById('voucher-expire').value; 
-        const code = document.getElementById('voucher-code').value;
+        const date = document.getElementById('voucher-date').value; const expire = document.getElementById('voucher-expire').value; const code = document.getElementById('voucher-code').value;
 
-        if (id) {
-            const index = vouchersData.findIndex(v => v.id == id);
-            vouchersData[index] = { ...vouchersData[index], title, date, expire, code, img: currentVoucherImage, facilities: currentVoucherFacilities };
-            showToast('編輯成功');
-        } else {
-            vouchersData.unshift({ id: Date.now(), title, date, expire, code, img: currentVoucherImage, facilities: currentVoucherFacilities });
-            showToast('票卷儲存成功');
-        }
+        const newId = id ? parseInt(id) : Date.now();
+        const data = { id: newId, title, date, expire, code, img: currentVoucherImage, facilities: currentVoucherFacilities };
         
-        closeModal('modal-voucher');  
-        renderVouchers();
-        
-        if (document.getElementById('modal-voucher-detail').style.display === 'flex' && id) {
-            openVoucherDetail(parseInt(id));
-        }
+        db.collection('vouchers').doc(String(newId)).set(data).then(() => { closeModal('modal-voucher'); showToast(id ? '編輯成功' : '票卷儲存成功'); });
     }
 
     function renderVouchers() {
@@ -1492,10 +769,7 @@
         container.innerHTML = vouchersData.map(v => `
             <div class="ac-card glowing-hover" style="display:flex; gap:15px; align-items:center; padding:16px; cursor:pointer;" onclick="openVoucherDetail(${v.id})">
                 ${v.img ? `<img src="${v.img}" style="width:60px; height:60px; border-radius:12px; object-fit:cover; border:1px solid var(--ac-tan);">` : `<div style="width:60px; height:60px; border-radius:12px; background:#F8F6F2; display:flex; justify-content:center; align-items:center; font-size:1.5rem; border:1px solid var(--ac-tan);">🎫</div>`}
-                <div style="flex:1;">
-                    <div style="font-weight:900; color:var(--ac-brown); font-size:1.1rem; margin-bottom:5px;">${v.title}</div>
-                    <div style="font-size:0.8rem; color:var(--ac-brown-light); font-weight:800;">使用: ${v.date} ${v.expire ? ` | 期限: ${v.expire}` : ''}</div>
-                </div>
+                <div style="flex:1;"><div style="font-weight:900; color:var(--ac-brown); font-size:1.1rem; margin-bottom:5px;">${v.title}</div><div style="font-size:0.8rem; color:var(--ac-brown-light); font-weight:800;">使用: ${v.date} ${v.expire ? ` | 期限: ${v.expire}` : ''}</div></div>
                 <div style="display:flex; gap:8px;">
                     <div class="scale-btn" onclick="event.stopPropagation(); openVoucherModal(${v.id})" style="color:var(--mo-blue); font-size:1.2rem; padding: 10px;"><i class="fa-solid fa-pen"></i></div>
                     <div class="scale-btn" onclick="event.stopPropagation(); confirmDelete('voucher', ${v.id})" style="color:var(--ac-tan); font-size:1.2rem; padding: 10px;"><i class="fa-solid fa-trash-can"></i></div>
@@ -1504,30 +778,15 @@
         `).join('');
     }
 
-    // V16: 取消已勾選項目的 text-decoration 刪除線
     function openVoucherDetail(id) {
-        playHaptic();
-        const v = vouchersData.find(item => item.id === id);
-        if(!v) return;
+        playHaptic(); const v = vouchersData.find(item => item.id === id); if(!v) return;
+        document.getElementById('vd-item-id').value = v.id; document.getElementById('vd-title').innerText = v.title;
+        const imgContainer = document.getElementById('vd-img-container'); const imgEl = document.getElementById('vd-img');
+        if(v.img) { imgEl.src = v.img; imgContainer.style.display = 'block'; } else { imgContainer.style.display = 'none'; }
         
-        document.getElementById('vd-item-id').value = v.id;
-        document.getElementById('vd-title').innerText = v.title;
-        const imgContainer = document.getElementById('vd-img-container');
-        const imgEl = document.getElementById('vd-img');
-        if(v.img) {
-            imgEl.src = v.img;
-            imgContainer.style.display = 'block';
-        } else {
-            imgContainer.style.display = 'none';
-        }
+        document.getElementById('vd-date').innerText = v.date; document.getElementById('vd-expire').innerText = v.expire || '無設定'; document.getElementById('vd-code').innerText = v.code || '無代碼';
         
-        document.getElementById('vd-date').innerText = v.date;
-        document.getElementById('vd-expire').innerText = v.expire || '無設定';
-        document.getElementById('vd-code').innerText = v.code || '無代碼';
-        
-        const facSection = document.getElementById('vd-facilities-section');
-        const facList = document.getElementById('vd-facilities-list');
-        const facilities = v.facilities || [];
+        const facSection = document.getElementById('vd-facilities-section'); const facList = document.getElementById('vd-facilities-list'); const facilities = v.facilities || [];
         
         if(facilities.length > 0) {
             facList.innerHTML = facilities.map((f, i) => `
@@ -1537,26 +796,21 @@
                 </div>
             `).join('');
             facSection.style.display = 'block';
-        } else {
-            facSection.style.display = 'none';
-        }
-        
+        } else { facSection.style.display = 'none'; }
         document.getElementById('modal-voucher-detail').style.display = 'flex';
     }
 
 
     // ================= 模組 3: 帳務系統核心 =================
     function setExpCurrency(curr, el) {
-        playHaptic();
-        document.querySelectorAll('.cur-tab').forEach(e => { e.classList.remove('active'); e.style.background='transparent'; e.style.borderColor='var(--ac-tan)'; e.style.color='var(--ac-brown-light)';});
+        playHaptic(); document.querySelectorAll('.cur-tab').forEach(e => { e.classList.remove('active'); e.style.background='transparent'; e.style.borderColor='var(--ac-tan)'; e.style.color='var(--ac-brown-light)';});
         el.classList.add('active'); el.style.background='rgba(226, 200, 122, 0.2)'; el.style.borderColor='var(--mo-yellow)'; el.style.color='var(--ac-brown)';
         currentExpCurrency = curr; calcApproxTwd();
     }
 
     function calcExchange(source) {
         const krwInput = document.getElementById('exc-krw'); const twdInput = document.getElementById('exc-twd');
-        if(source === 'krw') { twdInput.value = Math.round((parseFloat(krwInput.value) || 0) * EXCHANGE_RATE); } 
-        else { krwInput.value = Math.round((parseFloat(twdInput.value) || 0) / EXCHANGE_RATE); }
+        if(source === 'krw') { twdInput.value = Math.round((parseFloat(krwInput.value) || 0) * EXCHANGE_RATE); } else { krwInput.value = Math.round((parseFloat(twdInput.value) || 0) / EXCHANGE_RATE); }
     }
     
     function calcApproxTwd() { 
@@ -1564,15 +818,9 @@
         if(currentExpCurrency === 'KRW') twd = Math.round(amt * EXCHANGE_RATE); else if(currentExpCurrency === 'USD') twd = Math.round(amt * EXCHANGE_RATE_USD); else twd = amt;
         document.getElementById('exp-approx-twd').value = `≈ NT$ ${twd.toLocaleString()}`; 
     }
-    function calcApproxTwdEdit() { 
-        const krw = parseFloat(document.getElementById('edit-exp-amount').value) || 0; 
-        document.getElementById('edit-exp-twd').value = `≈ NT$ ${Math.round(krw * EXCHANGE_RATE).toLocaleString()}`; 
-    }
+    function calcApproxTwdEdit() { const krw = parseFloat(document.getElementById('edit-exp-amount').value) || 0; document.getElementById('edit-exp-twd').value = `≈ NT$ ${Math.round(krw * EXCHANGE_RATE).toLocaleString()}`; }
 
-    function selectMethod(el) { 
-        playHaptic(); document.querySelectorAll('.m-tab').forEach(t => { t.classList.remove('active'); t.style.background='transparent'; t.style.borderColor='var(--ac-tan)'; t.style.color='var(--ac-brown-light)';}); 
-        el.classList.add('active'); el.style.background='rgba(226, 200, 122, 0.2)'; el.style.borderColor='var(--mo-yellow)'; el.style.color='var(--ac-brown)';
-    }
+    function selectMethod(el) { playHaptic(); document.querySelectorAll('.m-tab').forEach(t => { t.classList.remove('active'); t.style.background='transparent'; t.style.borderColor='var(--ac-tan)'; t.style.color='var(--ac-brown-light)';}); el.classList.add('active'); el.style.background='rgba(226, 200, 122, 0.2)'; el.style.borderColor='var(--mo-yellow)'; el.style.color='var(--ac-brown)'; }
 
     function togglePayer(el) { playHaptic(); document.querySelectorAll('.payer-opt').forEach(opt => { opt.classList.remove('active'); opt.style.borderColor="var(--ac-tan)"; opt.style.opacity="0.4"; opt.style.filter="grayscale(100%)"; opt.style.background="#FFF";}); el.classList.add('active'); el.style.borderColor="var(--mo-yellow)"; el.style.opacity="1"; el.style.filter="grayscale(0%)"; el.style.background="rgba(255,208,0,0.1)";}
     function toggleSplit(el) { playHaptic(); el.classList.toggle('active'); if(el.classList.contains('active')) { el.style.borderColor="var(--mo-yellow)"; el.style.opacity="1"; el.style.filter="grayscale(0%)"; el.style.background="rgba(255,208,0,0.1)"; } else { el.style.borderColor="var(--ac-tan)"; el.style.opacity="0.4"; el.style.filter="grayscale(100%)"; el.style.background="#FFF"; } }
@@ -1580,6 +828,7 @@
     function toggleEditPayer(el) { playHaptic(); document.querySelectorAll('.edit-payer-opt').forEach(opt => { opt.classList.remove('active'); opt.style.borderColor="var(--ac-tan)"; opt.style.opacity="0.4"; opt.style.filter="grayscale(100%)"; opt.style.background="#FFF";}); el.classList.add('active'); el.style.borderColor="var(--mo-yellow)"; el.style.opacity="1"; el.style.filter="grayscale(0%)"; el.style.background="rgba(255,208,0,0.1)";}
     function toggleEditSplit(el) { playHaptic(); el.classList.toggle('active'); if(el.classList.contains('active')) { el.style.borderColor="var(--mo-yellow)"; el.style.opacity="1"; el.style.filter="grayscale(0%)"; el.style.background="rgba(255,208,0,0.1)"; } else { el.style.borderColor="var(--ac-tan)"; el.style.opacity="0.4"; el.style.filter="grayscale(100%)"; el.style.background="#FFF"; } }
 
+    // Firebase Save
     function saveExpense() {
         const amt = parseFloat(document.getElementById('exp-amount').value); const title = document.getElementById('exp-title').value.trim();
         if(!amt || amt <= 0) { alert('⚠️ 請輸入有效的消費金額！'); return; } if(!title) { alert('⚠️ 請輸入消費項目！'); return; }
@@ -1589,10 +838,13 @@
         let amountKrw = (currentExpCurrency === 'KRW') ? amt : Math.round(amountTwd / EXCHANGE_RATE);
         const splitAmountTwd = splitters.length > 0 ? Math.round(amountTwd / splitters.length) : 0;
 
-        expenses.unshift({ id: Date.now(), date, title, loc, method, amountKrw, amountTwd, payer, splitters, splitAmountTwd });
-        playHaptic(); showToast('已新增一筆');
-        document.getElementById('exp-amount').value = ''; document.getElementById('exp-title').value = ''; document.getElementById('exp-loc').value = ''; document.getElementById('exp-approx-twd').value = '0';
-        renderExpenses(); setTimeout(() => { switchSubTab('acc', 'detail', document.getElementById('tab-acc-detail')); }, 600);
+        const newId = Date.now();
+        const data = { id: newId, date, title, loc, method, amountKrw, amountTwd, payer, splitters, splitAmountTwd };
+        db.collection('expenses').doc(String(newId)).set(data).then(() => {
+            playHaptic(); showToast('已新增一筆');
+            document.getElementById('exp-amount').value = ''; document.getElementById('exp-title').value = ''; document.getElementById('exp-loc').value = ''; document.getElementById('exp-approx-twd').value = '0';
+            setTimeout(() => { switchSubTab('acc', 'detail', document.getElementById('tab-acc-detail')); }, 600);
+        });
     }
 
     function openExpenseEdit(id) {
@@ -1603,21 +855,18 @@
         document.getElementById('modal-expense-edit').style.display = 'flex';
     }
 
+    // Firebase Update
     function saveExpenseEdit() {
         const id = parseInt(document.getElementById('edit-exp-id').value); const amountKrw = parseFloat(document.getElementById('edit-exp-amount').value); const title = document.getElementById('edit-exp-title').value.trim();
         if(!amountKrw || amountKrw <= 0) { alert('⚠️ 金額無效！'); return; } if(!title) { alert('⚠️ 項目無效！'); return; }
-        const expIndex = expenses.findIndex(e => e.id === id);
-        if(expIndex > -1) {
-            const date = document.getElementById('edit-exp-date').value; const loc = document.getElementById('edit-exp-loc').value.trim(); const payer = document.querySelector('.edit-payer-opt.active').dataset.val; const splitters = Array.from(document.querySelectorAll('.edit-split-opt.active')).map(el => el.dataset.val); const amountTwd = Math.round(amountKrw * EXCHANGE_RATE); const splitAmountTwd = splitters.length > 0 ? Math.round(amountTwd / splitters.length) : 0;
-            expenses[expIndex] = { ...expenses[expIndex], date, title, loc, amountKrw, amountTwd, payer, splitters, splitAmountTwd };
-            closeModal('modal-expense-edit'); renderExpenses(); showToast('修改成功');
-        }
+        
+        const date = document.getElementById('edit-exp-date').value; const loc = document.getElementById('edit-exp-loc').value.trim(); const payer = document.querySelector('.edit-payer-opt.active').dataset.val; const splitters = Array.from(document.querySelectorAll('.edit-split-opt.active')).map(el => el.dataset.val); const amountTwd = Math.round(amountKrw * EXCHANGE_RATE); const splitAmountTwd = splitters.length > 0 ? Math.round(amountTwd / splitters.length) : 0;
+        
+        const data = { date, title, loc, amountKrw, amountTwd, payer, splitters, splitAmountTwd };
+        db.collection('expenses').doc(String(id)).set(data, { merge: true }).then(() => { closeModal('modal-expense-edit'); showToast('修改成功'); });
     }
 
-    function filterExpenses(filterName, el) { 
-        playHaptic(); document.querySelectorAll('.f-tag-pill').forEach(tag => { tag.classList.remove('active'); }); 
-        el.classList.add('active'); currentExpFilter = filterName; renderExpenses(); 
-    }
+    function filterExpenses(filterName, el) { playHaptic(); document.querySelectorAll('.f-tag-pill').forEach(tag => { tag.classList.remove('active'); }); el.classList.add('active'); currentExpFilter = filterName; renderExpenses(); }
 
     function calculateSettlement() {
         let balances = { "琳": 0, "貓": 0 };
@@ -1638,7 +887,7 @@
         return settlements;
     }
 
-    // V16: 同步計算動態渲染 KRW 總額
+    // V16: 渲染包含 KRW 總額
     function renderExpenses() {
         const container = document.getElementById('expense-list-container'); const filterTitle = document.getElementById('detail-filter-name'); const totalElem = document.getElementById('detail-total-amount'); const totalKrwElem = document.getElementById('detail-total-krw'); const settlementCard = document.getElementById('settlement-card'); const subtotalElem = document.getElementById('detail-day-subtotal');
         expenses.sort((a, b) => new Date(b.date) - new Date(a.date)); 
@@ -1648,17 +897,12 @@
 
         expenses.forEach(exp => {
             let includeInList = false; let myAmt = 0; let myAmtKrw = 0;
-            
             if (currentExpFilter === 'all') { 
                 includeInList = true; myAmt = exp.amountTwd; myAmtKrw = exp.amountKrw; 
             } else { 
-                if (exp.splitters.length > 0 && exp.splitters.includes(currentExpFilter)) { 
-                    includeInList = true; myAmt = exp.splitAmountTwd; myAmtKrw = Math.round(exp.amountKrw / exp.splitters.length); 
-                } else if (exp.splitters.length === 0 && exp.payer === currentExpFilter) { 
-                    includeInList = true; myAmt = exp.amountTwd; myAmtKrw = exp.amountKrw; 
-                } 
+                if (exp.splitters.length > 0 && exp.splitters.includes(currentExpFilter)) { includeInList = true; myAmt = exp.splitAmountTwd; myAmtKrw = Math.round(exp.amountKrw / exp.splitters.length); } 
+                else if (exp.splitters.length === 0 && exp.payer === currentExpFilter) { includeInList = true; myAmt = exp.amountTwd; myAmtKrw = exp.amountKrw; } 
             }
-            
             if (includeInList) { filtered.push(exp); totalDisplay += myAmt; totalDisplayKrw += myAmtKrw; }
         });
 
@@ -1674,29 +918,20 @@
         if(filtered.length === 0) { container.innerHTML = `<div style="text-align:center; padding:30px; color:var(--ac-brown-light); font-weight:800;">尚無記帳資料 💸</div>`; subtotalElem.innerText = `本日小計: NT$ 0`; return; }
 
         const grouped = filtered.reduce((acc, curr) => { if(!acc[curr.date]) acc[curr.date] = []; acc[curr.date].push(curr); return acc; }, {});
-        let html = '';
-        const latestDate = Object.keys(grouped)[0];
-        let subtotalAmt = 0;
+        let html = ''; const latestDate = Object.keys(grouped)[0]; let subtotalAmt = 0;
 
         for(let date in grouped) {
             html += `<div class="date-divider">${date.substring(5).replace('-','/')}</div>`;
             grouped[date].forEach(exp => {
-                const isPersonal = exp.splitters.length === 0;
-                const icon = exp.method === '現金' ? '💵' : (exp.method === '信用卡' ? '💳' : '📱');
-                const locText = exp.loc ? `<span style="font-size:0.7rem; color:var(--ac-brown-light); margin-left:5px;">📍 ${exp.loc}</span>` : '';
-                let amountDisplayHtml = currentExpFilter === 'all' 
-                    ? `<div style="font-weight: 900; font-size: 1.15rem; color: var(--ac-brown);">₩ ${exp.amountKrw.toLocaleString()}</div><div style="font-size: 0.85rem; color: var(--mo-orange); font-weight:800;">NT$ ${exp.amountTwd.toLocaleString()}</div>`
-                    : `<div style="font-weight: 900; font-size: 1.15rem; color: var(--ac-brown);">NT$ ${(isPersonal ? exp.amountTwd : exp.splitAmountTwd).toLocaleString()}</div><div style="font-size: 0.75rem; color: var(--ac-brown-light);">原額 ₩ ${exp.amountKrw.toLocaleString()}</div>`;
+                const isPersonal = exp.splitters.length === 0; const icon = exp.method === '現金' ? '💵' : (exp.method === '信用卡' ? '💳' : '📱'); const locText = exp.loc ? `<span style="font-size:0.7rem; color:var(--ac-brown-light); margin-left:5px;">📍 ${exp.loc}</span>` : '';
+                let amountDisplayHtml = currentExpFilter === 'all' ? `<div style="font-weight: 900; font-size: 1.15rem; color: var(--ac-brown);">₩ ${exp.amountKrw.toLocaleString()}</div><div style="font-size: 0.85rem; color: var(--mo-orange); font-weight:800;">NT$ ${exp.amountTwd.toLocaleString()}</div>` : `<div style="font-weight: 900; font-size: 1.15rem; color: var(--ac-brown);">NT$ ${(isPersonal ? exp.amountTwd : exp.splitAmountTwd).toLocaleString()}</div><div style="font-size: 0.75rem; color: var(--ac-brown-light);">原額 ₩ ${exp.amountKrw.toLocaleString()}</div>`;
                 const badgeHtml = isPersonal ? `<span style="background:var(--ac-bg); color:var(--ac-brown-light); padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:900;">${exp.payer} 個人帳</span>` : `<span style="background:var(--ac-tan); color:var(--ac-brown); padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:900;">${exp.payer} 先付</span>`;
 
                 html += `
                 <div class="bill-item">
                     <div style="display: flex; align-items: flex-start; gap: 12px; flex:1;" onclick="openExpenseEdit(${exp.id})">
                         <div class="bill-icon">${icon}</div>
-                        <div>
-                            <div style="font-weight: 900; font-size: 1.05rem; color:var(--ac-brown); margin-bottom:4px;">${exp.title}</div>
-                            <div style="display:flex; align-items:center; gap:5px; flex-wrap:wrap;">${badgeHtml} ${locText}</div>
-                        </div>
+                        <div><div style="font-weight: 900; font-size: 1.05rem; color:var(--ac-brown); margin-bottom:4px;">${exp.title}</div><div style="display:flex; align-items:center; gap:5px; flex-wrap:wrap;">${badgeHtml} ${locText}</div></div>
                     </div>
                     <div style="display: flex; align-items: center; gap: 15px;">
                         <div style="text-align: right;" onclick="openExpenseEdit(${exp.id})">${amountDisplayHtml}</div>
@@ -1714,16 +949,10 @@
 
     // ================= 模組 4: 日誌 =================
     function renderDiary() {
-        const container = document.getElementById('diary-container');
-        diaryData.sort((a, b) => new Date(b.date) - new Date(a.date)); 
-
+        const container = document.getElementById('diary-container'); diaryData.sort((a, b) => new Date(b.date) - new Date(a.date)); 
         if(diaryData.length === 0) { container.innerHTML = `<div style="text-align:center; padding:40px; color:var(--ac-brown-light); font-weight:800;">尚無日誌記錄 📖</div>`; return; }
 
-        const grouped = diaryData.reduce((acc, curr) => {
-            if(!acc[curr.date]) acc[curr.date] = [];
-            acc[curr.date].push(curr); return acc;
-        }, {});
-
+        const grouped = diaryData.reduce((acc, curr) => { if(!acc[curr.date]) acc[curr.date] = []; acc[curr.date].push(curr); return acc; }, {});
         let html = '';
         for(let date in grouped) {
             html += `<div class="diary-date-badge">${date}</div>`;
@@ -1751,20 +980,15 @@
     }
 
     function toggleDiaryAuthor(el) {
-        playHaptic();
-        document.querySelectorAll('.diary-author-opt').forEach(opt => { opt.classList.remove('active'); opt.style.borderColor="var(--ac-tan)"; opt.style.opacity="0.4"; opt.style.filter="grayscale(100%)";});
+        playHaptic(); document.querySelectorAll('.diary-author-opt').forEach(opt => { opt.classList.remove('active'); opt.style.borderColor="var(--ac-tan)"; opt.style.opacity="0.4"; opt.style.filter="grayscale(100%)";});
         el.classList.add('active'); el.style.borderColor="var(--mo-blue)"; el.style.opacity="1"; el.style.filter="grayscale(0%)";
     }
 
     function openDiaryModal(id = null) {
         playHaptic();
         if (id) {
-            const entry = diaryData.find(d => d.id === id);
-            document.getElementById('diary-edit-id').value = entry.id; document.getElementById('diary-date').value = entry.date; document.getElementById('diary-content').value = entry.content; document.getElementById('diary-modal-title').innerHTML = '<i class="fa-solid fa-pen"></i> 編輯日誌';
-            document.querySelectorAll('.diary-author-opt').forEach(opt => {
-                opt.classList.remove('active'); opt.style.borderColor="var(--ac-tan)"; opt.style.opacity="0.4"; opt.style.filter="grayscale(100%)";
-                if(opt.dataset.val === entry.author) { opt.classList.add('active'); opt.style.borderColor="var(--mo-blue)"; opt.style.opacity="1"; opt.style.filter="grayscale(0%)"; }
-            });
+            const entry = diaryData.find(d => d.id === id); document.getElementById('diary-edit-id').value = entry.id; document.getElementById('diary-date').value = entry.date; document.getElementById('diary-content').value = entry.content; document.getElementById('diary-modal-title').innerHTML = '<i class="fa-solid fa-pen"></i> 編輯日誌';
+            document.querySelectorAll('.diary-author-opt').forEach(opt => { opt.classList.remove('active'); opt.style.borderColor="var(--ac-tan)"; opt.style.opacity="0.4"; opt.style.filter="grayscale(100%)"; if(opt.dataset.val === entry.author) { opt.classList.add('active'); opt.style.borderColor="var(--mo-blue)"; opt.style.opacity="1"; opt.style.filter="grayscale(0%)"; } });
             currentDiaryImages = [...entry.images];
         } else {
             document.getElementById('diary-edit-id').value = ""; document.getElementById('diary-date').value = currentDateSelect; document.getElementById('diary-content').value = ''; document.getElementById('diary-modal-title').innerHTML = '<i class="fa-solid fa-book"></i> 寫新日誌'; currentDiaryImages = [];
@@ -1773,8 +997,7 @@
     }
 
     function handleDiaryPhotoUpload(event) {
-        const files = event.target.files;
-        if(currentDiaryImages.length + files.length > 5) { alert('最多只能上傳 5 張照片喔！'); return; }
+        const files = event.target.files; if(currentDiaryImages.length + files.length > 5) { alert('最多只能上傳 5 張照片喔！'); return; }
         Array.from(files).forEach(file => { const reader = new FileReader(); reader.onload = (e) => { currentDiaryImages.push(e.target.result); renderDiaryUploadPreview(); }; reader.readAsDataURL(file); });
     }
 
@@ -1790,29 +1013,23 @@
         container.innerHTML = html;
     }
 
+    // Firebase Save
     function saveDiary() {
         const id = document.getElementById('diary-edit-id').value; const date = document.getElementById('diary-date').value; const author = document.querySelector('.diary-author-opt.active').dataset.val; const content = document.getElementById('diary-content').value.trim();
         if(!content && currentDiaryImages.length === 0) { alert('請填寫內容或上傳照片喔！'); return; }
 
-        if (id) {
-            const index = diaryData.findIndex(d => d.id == id);
-            if (index > -1) { diaryData[index] = { ...diaryData[index], date, author, content, images: [...currentDiaryImages] }; }
-        } else { diaryData.unshift({ id: Date.now(), date, author, content, images: [...currentDiaryImages] }); }
-        closeModal('modal-diary'); showToast(id ? '修改成功' : '日誌發布成功'); renderDiary();
+        const newId = id ? parseInt(id) : Date.now();
+        const data = { id: newId, date, author, content, images: [...currentDiaryImages] };
+        db.collection('diary').doc(String(newId)).set(data).then(() => { closeModal('modal-diary'); showToast(id ? '修改成功' : '日誌發布成功'); });
     }
 
     // ================= 模組 5: 快樂成員 =================
-    let currentMemberImage = null;
-    
-    let cropImgElement = document.getElementById('crop-img');
-    let cropZoomInput = document.getElementById('crop-zoom');
-    let isDragging = false; let startX, startY; let imgX = 0, imgY = 0; let currentScale = 1;
+    let currentMemberImage = null; let cropImgElement = document.getElementById('crop-img'); let cropZoomInput = document.getElementById('crop-zoom'); let isDragging = false; let startX, startY; let imgX = 0, imgY = 0; let currentScale = 1;
 
     function openMemberModal(id = null) {
         playHaptic();
         if (id) {
-            const member = membersData.find(m => m.id === id);
-            document.getElementById('member-item-id').value = member.id; document.getElementById('member-name').value = member.name; document.getElementById('member-aka').value = member.aka || ""; document.getElementById('member-quote').value = member.quote || ""; currentMemberImage = member.img || null; document.getElementById('modal-member-title').innerText = "編輯成員";
+            const member = membersData.find(m => m.id === id); document.getElementById('member-item-id').value = member.id; document.getElementById('member-name').value = member.name; document.getElementById('member-aka').value = member.aka || ""; document.getElementById('member-quote').value = member.quote || ""; currentMemberImage = member.img || null; document.getElementById('modal-member-title').innerText = "編輯成員";
         } else {
             document.getElementById('member-item-id').value = ""; document.getElementById('member-name').value = ""; document.getElementById('member-aka').value = ""; document.getElementById('member-quote').value = ""; currentMemberImage = null; document.getElementById('modal-member-title').innerText = "新增成員";
         }
@@ -1820,24 +1037,13 @@
     }
 
     function handleMemberPhotoUpload(event) {
-        const file = event.target.files[0];
-        if (file) { const reader = new FileReader(); reader.onload = function(e) { openCropper(e.target.result); }; reader.readAsDataURL(file); }
+        const file = event.target.files[0]; if (file) { const reader = new FileReader(); reader.onload = function(e) { openCropper(e.target.result); }; reader.readAsDataURL(file); }
     }
     
     function openCropper(src) {
         cropImgElement.src = src;
         cropImgElement.onload = () => {
-            const size = 200;
-            currentScale = Math.min(size / cropImgElement.width, size / cropImgElement.height);
-            imgX = (size - cropImgElement.width * currentScale) / 2;
-            imgY = (size - cropImgElement.height * currentScale) / 2;
-            
-            cropZoomInput.min = currentScale * 0.2;
-            cropZoomInput.max = currentScale * 5;
-            cropZoomInput.value = currentScale;
-
-            updateCropTransform();
-            document.getElementById('modal-cropper').style.display = 'flex';
+            const size = 200; currentScale = Math.min(size / cropImgElement.width, size / cropImgElement.height); imgX = (size - cropImgElement.width * currentScale) / 2; imgY = (size - cropImgElement.height * currentScale) / 2; cropZoomInput.min = currentScale * 0.2; cropZoomInput.max = currentScale * 5; cropZoomInput.value = currentScale; updateCropTransform(); document.getElementById('modal-cropper').style.display = 'flex';
         };
     }
     
@@ -1845,81 +1051,67 @@
 
     const cropContainer = document.getElementById('crop-container');
     cropContainer.addEventListener('mousedown', dragStart);
-    
     let initialDistance = null; let initialScaleDrag = 1;
-    cropContainer.addEventListener('touchstart', (e) => {
-        if(e.touches.length === 2) {
-            isDragging = false;
-            initialDistance = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-            initialScaleDrag = currentScale;
-            e.preventDefault();
-        } else if(e.touches.length === 1) { dragStart(e); }
-    }, {passive: false});
+    cropContainer.addEventListener('touchstart', (e) => { if(e.touches.length === 2) { isDragging = false; initialDistance = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY); initialScaleDrag = currentScale; e.preventDefault(); } else if(e.touches.length === 1) { dragStart(e); } }, {passive: false});
 
     window.addEventListener('mousemove', drag);
-    window.addEventListener('touchmove', (e) => {
-        if(e.touches && e.touches.length === 2 && initialDistance) {
-            e.preventDefault();
-            const currentDistance = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-            currentScale = initialScaleDrag * (currentDistance / initialDistance);
-            cropZoomInput.value = currentScale;
-            updateCropTransform();
-        } else { drag(e); }
-    }, {passive: false});
-
+    window.addEventListener('touchmove', (e) => { if(e.touches && e.touches.length === 2 && initialDistance) { e.preventDefault(); const currentDistance = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY); currentScale = initialScaleDrag * (currentDistance / initialDistance); cropZoomInput.value = currentScale; updateCropTransform(); } else { drag(e); } }, {passive: false});
     window.addEventListener('mouseup', dragEnd); window.addEventListener('touchend', dragEnd);
 
-    function dragStart(e) {
-        isDragging = true;
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX; const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        startX = clientX - imgX; startY = clientY - imgY;
-    }
-    function drag(e) {
-        if(!isDragging) return; e.preventDefault();
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX; const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        imgX = clientX - startX; imgY = clientY - startY; updateCropTransform();
-    }
+    function dragStart(e) { isDragging = true; const clientX = e.touches ? e.touches[0].clientX : e.clientX; const clientY = e.touches ? e.touches[0].clientY : e.clientY; startX = clientX - imgX; startY = clientY - imgY; }
+    function drag(e) { if(!isDragging) return; e.preventDefault(); const clientX = e.touches ? e.touches[0].clientX : e.clientX; const clientY = e.touches ? e.touches[0].clientY : e.clientY; imgX = clientX - startX; imgY = clientY - startY; updateCropTransform(); }
     function dragEnd() { isDragging = false; }
-    
     function updateCropTransform() { cropImgElement.style.transform = `translate(${imgX}px, ${imgY}px) scale(${currentScale})`; }
 
     function confirmCrop() {
-        playHaptic();
-        const canvas = document.createElement('canvas'); canvas.width = 200; canvas.height = 200;
-        const ctx = canvas.getContext('2d');
-        ctx.beginPath(); ctx.arc(100, 100, 100, 0, Math.PI * 2); ctx.clip();
-        ctx.drawImage(cropImgElement, imgX, imgY, cropImgElement.width * currentScale, cropImgElement.height * currentScale);
-        currentMemberImage = canvas.toDataURL('image/jpeg', 0.9);
-        renderMemberUploadPreview(); closeModal('modal-cropper');
+        playHaptic(); const canvas = document.createElement('canvas'); canvas.width = 200; canvas.height = 200; const ctx = canvas.getContext('2d'); ctx.beginPath(); ctx.arc(100, 100, 100, 0, Math.PI * 2); ctx.clip(); ctx.drawImage(cropImgElement, imgX, imgY, cropImgElement.width * currentScale, cropImgElement.height * currentScale); currentMemberImage = canvas.toDataURL('image/jpeg', 0.9); renderMemberUploadPreview(); closeModal('modal-cropper');
     }
 
     function renderMemberUploadPreview() {
         const preview = document.getElementById('member-upload-preview');
-        if (currentMemberImage) { preview.innerHTML = `<img src="${currentMemberImage}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`; } 
-        else { preview.innerHTML = `<i class="fa-solid fa-camera" style="color:var(--ac-tan);"></i>`; }
+        if (currentMemberImage) { preview.innerHTML = `<img src="${currentMemberImage}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`; } else { preview.innerHTML = `<i class="fa-solid fa-camera" style="color:var(--ac-tan);"></i>`; }
     }
 
+    // Firebase Save
     function saveMember() {
         const id = document.getElementById('member-item-id').value; const name = document.getElementById('member-name').value.trim(); const aka = document.getElementById('member-aka').value.trim(); const quote = document.getElementById('member-quote').value.trim();
         if(!name) { alert("⚠️ 成員名稱為必填！"); return; }
-
-        if (id) {
-            const index = membersData.findIndex(m => m.id == id);
-            membersData[index] = { ...membersData[index], name, aka, quote, img: currentMemberImage };
-        } else { membersData.push({ id: Date.now(), name, aka, quote, img: currentMemberImage, fallback: '👤' }); }
-        
-        closeModal('modal-member-edit'); showToast('儲存成功'); renderGlobalAvatars(); 
+        const newId = id ? parseInt(id) : Date.now();
+        const data = { id: newId, name, aka, quote, img: currentMemberImage, fallback: id ? membersData.find(m=>m.id==id).fallback : '👤' };
+        db.collection('members').doc(String(newId)).set(data, { merge: true }).then(() => { closeModal('modal-member-edit'); showToast('儲存成功'); });
     }
 
-    // ================= 初始化 =================
-    window.onload = () => {
-        renderGlobalAvatars(); 
-        renderDateScroller(); 
-        renderTimeline();
-        renderExpenses();
-        renderDiary();
-        renderVouchers();
-        setTimeout(triggerCountdownAnimation, 200); 
+    // ================= 雲端資料庫初始化與即時監聽 (V17 核心) =================
+    async function migrateDataIfEmpty() {
+        const snap = await db.collection('members').get();
+        if (snap.empty) {
+            console.log("初始化 Firebase 預設資料...");
+            const batch = db.batch();
+            membersData.forEach(m => batch.set(db.collection('members').doc(String(m.id)), m));
+            itineraryData.forEach(i => batch.set(db.collection('itinerary').doc(String(i.id)), i));
+            expenses.forEach(e => batch.set(db.collection('expenses').doc(String(e.id)), e));
+            diaryData.forEach(d => batch.set(db.collection('diary').doc(String(d.id)), d));
+            vouchersData.forEach(v => batch.set(db.collection('vouchers').doc(String(v.id)), v));
+            await batch.commit();
+        }
+    }
+
+    function setupRealtimeSync() {
+        db.collection('members').onSnapshot(snap => { membersData = snap.docs.map(d => d.data()); renderGlobalAvatars(); });
+        db.collection('itinerary').onSnapshot(snap => { itineraryData = snap.docs.map(d => d.data()); renderTimeline(); });
+        db.collection('expenses').onSnapshot(snap => { expenses = snap.docs.map(d => d.data()); renderExpenses(); });
+        db.collection('diary').onSnapshot(snap => { diaryData = snap.docs.map(d => d.data()); renderDiary(); });
+        db.collection('vouchers').onSnapshot(snap => { 
+            vouchersData = snap.docs.map(d => d.data()).sort((a,b) => b.id - a.id); 
+            renderVouchers();
+            if(document.getElementById('modal-voucher-detail').style.display === 'flex') { const vdId = document.getElementById('vd-item-id').value; if(vdId) openVoucherDetail(parseInt(vdId)); }
+        });
+    }
+
+    // ================= 系統啟動 =================
+    window.onload = async () => {
+        renderDateScroller(); setTimeout(triggerCountdownAnimation, 200); 
+        await migrateDataIfEmpty(); setupRealtimeSync();
     };
 </script>
 
