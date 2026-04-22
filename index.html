@@ -3,11 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>琳和貓的自由行 - 旅遊 V16 終極定案版</title>
+    <title>琳和貓的自由行 - 旅遊 V17 雲端同步版</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
     <style>
-        /* ================= 莫蘭迪色板 (Morandi Palette - 嚴格保留) ================= */
+        /* ================= 莫蘭迪色板 ================= */
         :root {
             --ac-bg: #F4F0EA;          
             --ac-card: #FFFFFF;        
@@ -36,48 +40,31 @@
             --modal-dynamic-bg: #FFFFFF;
         }
 
-        /* V15: 全域 UI 縮放與防溢出優化 (Mobile-First 微調) */
         html { font-size: 13.8px; } 
         * { box-sizing: border-box; font-family: 'Nunito', 'Noto Sans TC', sans-serif; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; scrollbar-width: none; -ms-overflow-style: none; word-wrap: break-word; }
         *::-webkit-scrollbar { display: none !important; }
         
         html, body { height: 100%; width: 100%; overflow-x: hidden; background-color: var(--ac-bg); color: var(--ac-brown); overscroll-behavior-y: none; }
         
-        body { 
-            background-image: radial-gradient(rgba(220, 215, 208, 0.7) 2px, transparent 2px);
-            background-size: 24px 24px; display: flex; justify-content: center;
-        }
+        body { background-image: radial-gradient(rgba(220, 215, 208, 0.7) 2px, transparent 2px); background-size: 24px 24px; display: flex; justify-content: center; }
 
-        .app-container {
-            width: 100%; max-width: 430px; height: 100%; margin: 0 auto;
-            position: relative; display: flex; flex-direction: column;
-            box-shadow: 0 0 35px rgba(0,0,0,0.06); background: transparent; overflow-x: hidden;
-        }
+        .app-container { width: 100%; max-width: 430px; height: 100%; margin: 0 auto; position: relative; display: flex; flex-direction: column; box-shadow: 0 0 35px rgba(0,0,0,0.06); background: transparent; overflow-x: hidden; }
 
-        /* ================= Header ================= */
-        header {
-            padding: 20px 16px 12px 16px; display: flex; justify-content: space-between; align-items: center;
-            background: rgba(244, 240, 234, 0.95); backdrop-filter: blur(12px); z-index: 50; flex-shrink: 0;
-        }
+        header { padding: 20px 16px 12px 16px; display: flex; justify-content: space-between; align-items: center; background: rgba(244, 240, 234, 0.95); backdrop-filter: blur(12px); z-index: 50; flex-shrink: 0; }
         .header-title h1 { font-size: 1.5rem; font-weight: 900; color: var(--ac-brown); }
         .header-avatars { display: flex; gap: -8px; }
         .avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--ac-card); border: 3px solid #FFF; display: flex; justify-content: center; align-items: center; font-size: 1.3rem; margin-left: -10px; box-shadow: var(--shadow-soft); overflow: hidden;}
         .avatar img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* ================= 內容區 ================= */
         main { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 10px 16px 120px 16px; scroll-behavior: smooth; width: 100%; }
         .page { display: none; animation: fadeIn 0.3s ease; }
         .page.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ================= 核心按鈕與微互動 ================= */
         .btn-q { border: none; cursor: pointer; font-weight: 900; transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.15s, background 0.3s, color 0.3s; display: inline-flex; align-items: center; justify-content: center; }
         .scale-btn { transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1); cursor: pointer; }
         .scale-btn:active { transform: scale(0.92); }
         
-        .btn-primary-action { background: var(--mo-green); color: #FFF; padding: 10px 22px; font-size: 1rem; border-radius: 30px; border: 3px solid #FFF; box-shadow: var(--shadow-btn); text-shadow: 0 1px 2px rgba(0,0,0,0.1); }
-        .btn-primary-action:active { transform: translateY(5px) scale(0.96); box-shadow: 0 0px 0px transparent; }
-
         .btn-add-yellow-v10 { background: var(--mo-yellow-muted); color: var(--ac-brown); padding: 10px 22px; font-size: 1rem; border-radius: 30px; border: 3px solid #FFF; box-shadow: var(--shadow-btn-yellow); text-shadow: none; }
         .btn-add-yellow-v10:active { transform: translateY(5px) scale(0.96); box-shadow: 0 0px 0px transparent; }
 
@@ -95,11 +82,7 @@
 
         .form-label { display: block; font-size: 0.85rem; font-weight: 900; margin-bottom: 8px; color: var(--ac-brown-light); }
         
-        .form-control, input[type="date"].form-control, input[type="time"].form-control { 
-            width: 100%; max-width: 100%; padding: 14px 15px; border-radius: 16px; border: 2px solid var(--ac-tan); 
-            font-size: 1rem; font-weight: 800; outline: none; background: #FFF; margin-bottom: 15px; color: var(--ac-brown); 
-            transition: 0.2s; box-sizing: border-box; -webkit-appearance: none;
-        }
+        .form-control, input[type="date"].form-control, input[type="time"].form-control { width: 100%; max-width: 100%; padding: 14px 15px; border-radius: 16px; border: 2px solid var(--ac-tan); font-size: 1rem; font-weight: 800; outline: none; background: #FFF; margin-bottom: 15px; color: var(--ac-brown); transition: 0.2s; box-sizing: border-box; -webkit-appearance: none;}
         .form-control:focus { border-color: var(--mo-green); box-shadow: 0 0 0 3px rgba(120, 160, 131, 0.2); }
         .form-control:disabled { background: #F8F6F2; color: var(--ac-brown-light); font-weight: 900;}
         .form-control::placeholder { color: #C4C0B8; font-weight: 600; } 
@@ -113,11 +96,9 @@
         .scroll-nav-pink .scroll-item.active { background: var(--mo-pink); color: #FFF; border: 2px solid var(--mo-pink-deep); box-shadow: none; transform: scale(1.02); }
 
         .glowing-hover:hover, .glowing-hover:active { border-color: var(--mo-yellow) !important; box-shadow: 0 0 20px 2px rgba(255, 208, 0, 0.6), inset 0 0 10px rgba(255, 208, 0, 0.2) !important; transform: scale(0.98); }
-        .glowing-border { border-color: var(--mo-yellow) !important; box-shadow: 0 0 20px 2px rgba(255, 208, 0, 0.6), inset 0 0 10px rgba(255, 208, 0, 0.2) !important; transform: scale(0.98); }
 
         /* ================= 模組 1: 行程 ================= */
         .date-scroller { display: flex; gap: 8px; overflow-x: auto; padding: 5px 0 15px 0; scroll-behavior: smooth; margin: 0 -5px; }
-        /* V16: Inactive 狀態新增 currentColor 邊框 */
         .date-tab { min-width: 56px; text-align: center; padding: 6px 4px; border-radius: 16px; background: #FCECEC; border: 2px solid currentColor; cursor: pointer; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); color: var(--mo-pink-deep); opacity: 0.8; transform: scale(0.92); margin: 0 2px; }
         .date-tab .day { font-size: 0.7rem; font-weight: 900; display: block; margin-bottom: 2px; }
         .date-tab .date { font-size: 1.05rem; font-weight: 900; }
@@ -192,7 +173,6 @@
         .hc-title { font-size: 1.4rem; font-weight: 900; color: var(--ac-brown); margin: 0 0 5px 0;}
         .hc-address { font-size: 0.85rem; font-weight: 800; color: var(--ac-brown-light); margin-bottom: 20px;}
         
-        /* V16: 雙色夾擊邊框 (左藍右粉) */
         .hc-checkin-box { display: flex; justify-content: space-between; align-items: center; border: 2px solid #F4F0EA; border-left: 6px solid var(--mo-blue); border-right: 6px solid #D47A7A; border-radius: 16px; padding: 12px; margin-bottom: 20px; background: #FCFBFA; }
         .hc-ci-col { display: flex; flex-direction: column; gap: 4px; }
         .hc-ci-title { font-size: 0.7rem; font-weight: 900; color: var(--ac-brown-light); text-transform: uppercase;}
@@ -229,11 +209,7 @@
         .cur-tab.active { border-color: var(--mo-yellow-muted); color: var(--ac-brown); background: rgba(240, 213, 130, 0.3); transform: scale(1.05);}
 
         .ava-select-group { display: flex; gap: 12px; margin-bottom: 15px; flex-wrap: wrap;}
-        .ava-opt { 
-            width: 48px; height: 48px; border-radius: 50%; display: flex; justify-content: center; align-items: center; flex-direction: column;
-            font-size: 1.3rem; background: #FFF; border: 3px solid var(--ac-tan); cursor: pointer; transition: 0.2s;
-            opacity: 0.4; filter: grayscale(100%); position: relative;
-        }
+        .ava-opt { width: 48px; height: 48px; border-radius: 50%; display: flex; justify-content: center; align-items: center; flex-direction: column; font-size: 1.3rem; background: #FFF; border: 3px solid var(--ac-tan); cursor: pointer; transition: 0.2s; opacity: 0.4; filter: grayscale(100%); position: relative; }
         .ava-opt.active { opacity: 1; filter: grayscale(0%); border-color: var(--mo-blue); transform: scale(1.1); box-shadow: 0 4px 10px rgba(114, 177, 214, 0.3); }
         .ava-name { position: absolute; bottom: -18px; font-size: 0.7rem; font-weight: 900; color: var(--ac-brown); }
 
@@ -280,17 +256,9 @@
         .member-quote { font-size: 0.9rem; color: var(--mo-blue); font-weight: 700; margin-top: 8px; font-style: italic;}
         .member-actions { position: absolute; top: 15px; right: 15px; display: flex; gap: 10px; color: var(--ac-tan); font-size: 1.1rem; }
 
-        /* ================= 居中遊戲通知 Modal ================= */
+        /* ================= 模態視窗 UI ================= */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(92, 84, 77, 0.6); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 1000;}
-        .ac-modal { 
-            background: var(--modal-dynamic-bg); 
-            width: 90%; max-width: 360px; border-radius: 28px; padding: 20px; 
-            border: 4px solid var(--ac-brown);
-            box-shadow: 0 15px 0px rgba(0,0,0,0.1), inset 0 0 0 3px rgba(255,255,255,0.5); 
-            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            height: fit-content; max-height: 90vh; overflow-y: auto; overflow-x: hidden; position: relative;
-            scrollbar-width: none; -ms-overflow-style: none; box-sizing: border-box;
-        }
+        .ac-modal { background: var(--modal-dynamic-bg); width: 90%; max-width: 360px; border-radius: 28px; padding: 20px; border: 4px solid var(--ac-brown); box-shadow: 0 15px 0px rgba(0,0,0,0.1), inset 0 0 0 3px rgba(255,255,255,0.5); animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); height: fit-content; max-height: 90vh; overflow-y: auto; overflow-x: hidden; position: relative; scrollbar-width: none; -ms-overflow-style: none; box-sizing: border-box;}
         .ac-modal::-webkit-scrollbar { display: none; }
         @keyframes popIn { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
@@ -308,50 +276,25 @@
 
         .delete-icon-bg { width: 60px; height: 60px; background: var(--mo-pink); border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 15px auto; font-size: 1.8rem; color: #FFF; border: 3px solid #FFF; box-shadow: var(--shadow-soft);}
 
-        /* 住宿詳細資訊 Modal */
-        #modal-hotel-detail-content {
-            background: #FFF; width: 90%; max-width: 360px; height: fit-content; max-height: 90vh; border-radius: 28px; padding: 0; 
-            border: 4px solid var(--ac-brown); box-shadow: 0 15px 0px rgba(0,0,0,0.1), inset 0 0 0 3px rgba(255,255,255,0.5); 
-            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1); overflow: hidden; display: flex; flex-direction: column;
-            box-sizing: border-box; overflow-x: hidden;
-        }
+        #modal-hotel-detail-content { background: #FFF; width: 90%; max-width: 360px; height: fit-content; max-height: 90vh; border-radius: 28px; padding: 0; border: 4px solid var(--ac-brown); box-shadow: 0 15px 0px rgba(0,0,0,0.1), inset 0 0 0 3px rgba(255,255,255,0.5); animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1); overflow: hidden; display: flex; flex-direction: column; box-sizing: border-box; overflow-x: hidden; }
         .hd-close { position: absolute; top: 15px; right: 15px; width: 32px; height: 32px; background: rgba(0,0,0,0.5); color: #FFF; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1rem; z-index: 10; cursor: pointer; backdrop-filter: blur(4px); transition: 0.2s;}
         .hd-close:active { transform: scale(0.9); }
 
-        /* 頭像裁切器 UI */
         .crop-container { width: 200px; height: 200px; margin: 0 auto 15px auto; position: relative; border-radius: 50%; overflow: hidden; border: 4px dashed var(--ac-tan); background: #F8F6F2; box-shadow: inset 0 4px 10px rgba(0,0,0,0.1);}
         .crop-img { position: absolute; top: 0; left: 0; transform-origin: top left; cursor: move; }
         .crop-mask { position: absolute; inset: 0; border: 20px solid rgba(255,255,255,0.6); border-radius: 50%; pointer-events: none; z-index: 5;}
 
-        /* 動態 Toast */
-        .toast {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9);
-            background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);
-            padding: 20px 30px; border-radius: 24px; box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-            border: 3px solid var(--mo-green); display: flex; flex-direction: column; align-items: center; gap: 10px;
-            opacity: 0; pointer-events: none; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 2000;
-        }
+        .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); padding: 20px 30px; border-radius: 24px; box-shadow: 0 15px 35px rgba(0,0,0,0.15); border: 3px solid var(--mo-green); display: flex; flex-direction: column; align-items: center; gap: 10px; opacity: 0; pointer-events: none; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 2000; }
         .toast.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
         .toast i { font-size: 3rem; color: var(--mo-green); }
         .toast span { font-weight: 900; color: var(--ac-brown); font-size: 1.2rem; }
 
-        /* ================= 底部導覽列 ================= */
-        nav {
-            position: fixed; bottom: 0; width: 100%; max-width: 430px;
-            background: rgba(244, 240, 234, 0.95); backdrop-filter: blur(10px);
-            display: flex; justify-content: space-around;
-            padding: 10px 10px 25px 10px; border-radius: 30px 30px 0 0; 
-            border-top: 2px solid var(--ac-tan); z-index: 100;
-        }
+        nav { position: fixed; bottom: 0; width: 100%; max-width: 430px; background: rgba(244, 240, 234, 0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 10px 10px 25px 10px; border-radius: 30px 30px 0 0; border-top: 2px solid var(--ac-tan); z-index: 100; }
         .nav-item { text-align: center; color: var(--ac-brown-light); font-size: 0.7rem; font-weight: 900; cursor: pointer; flex: 1; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center;}
         .nav-icon { font-size: 1.4rem; margin-bottom: 4px; padding: 8px 15px; border-radius: 20px; transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
         .nav-item:active .nav-icon { transform: scale(0.8); }
         .nav-item.active { color: var(--ac-brown); transform: translateY(-4px); }
-        .nav-item.active .nav-icon { 
-            background: var(--mo-yellow-muted); color: var(--ac-brown); 
-            box-shadow: 0 0 15px 2px rgba(240, 213, 130, 0.5), inset 0 0 8px rgba(240, 213, 130, 0.3);
-            font-size: 1.4rem; border: 2px solid #FFF;
-        }
+        .nav-item.active .nav-icon { background: var(--mo-yellow-muted); color: var(--ac-brown); box-shadow: 0 0 15px 2px rgba(240, 213, 130, 0.5), inset 0 0 8px rgba(240, 213, 130, 0.3); font-size: 1.4rem; border: 2px solid #FFF; }
     </style>
 </head>
 <body>
@@ -382,7 +325,6 @@
                 <span>當日行程</span>
                 <button class="btn-q btn-add-yellow-v10 scale-btn" onclick="playHaptic(); openItineraryModal()">+ 新增</button>
             </div>
-
             <div class="timeline-wrapper" id="timeline-container"></div>
         </div>
         
@@ -400,19 +342,9 @@
                         <div class="fc-header"><span>大韓航空</span> <span class="fc-badge">同一張訂單</span></div>
                         <div class="fc-number"><span class="editable-field">KE 2086</span></div>
                         <div class="fc-route-box">
-                            <div class="fc-route-point">
-                                <h2><span class="editable-field">TPE</span></h2>
-                                <div style="font-size: 0.75rem; color: var(--ac-brown-light); font-weight: 900; margin-top: -3px;"><span class="editable-field">桃園</span></div>
-                                <div class="time"><span class="editable-field">12:00</span></div>
-                            </div>
-                            <div class="fc-duration">
-                                <span>02h30m</span><div class="line"><i class="fa-solid fa-plane"></i></div><span><span class="editable-field">2026/06/06</span></span>
-                            </div>
-                            <div class="fc-route-point">
-                                <h2><span class="editable-field">PUS</span></h2>
-                                <div style="font-size: 0.75rem; color: var(--ac-brown-light); font-weight: 900; margin-top: -3px;"><span class="editable-field">釜山</span></div>
-                                <div class="time"><span class="editable-field">15:30</span></div>
-                            </div>
+                            <div class="fc-route-point"><h2><span class="editable-field">TPE</span></h2><div style="font-size: 0.75rem; color: var(--ac-brown-light); font-weight: 900; margin-top: -3px;"><span class="editable-field">桃園</span></div><div class="time"><span class="editable-field">12:00</span></div></div>
+                            <div class="fc-duration"><span>02h30m</span><div class="line"><i class="fa-solid fa-plane"></i></div><span><span class="editable-field">2026/06/06</span></span></div>
+                            <div class="fc-route-point"><h2><span class="editable-field">PUS</span></h2><div style="font-size: 0.75rem; color: var(--ac-brown-light); font-weight: 900; margin-top: -3px;"><span class="editable-field">釜山</span></div><div class="time"><span class="editable-field">15:30</span></div></div>
                         </div>
                         <div class="fc-grid">
                             <div class="fc-grid-item" style="grid-column: span 2;"><div class="fc-grid-title">BAGGAGE</div><div class="fc-grid-val"><i class="fa-solid fa-suitcase" style="color:var(--mo-yellow);"></i> <span class="editable-field">23kg</span> &nbsp;&nbsp; <i class="fa-solid fa-briefcase" style="color:var(--mo-blue);"></i> <span class="editable-field">10kg</span></div></div>
@@ -429,19 +361,9 @@
                         <div class="fc-header"><span>大韓航空</span> <span class="fc-badge">同一張訂單</span></div>
                         <div class="fc-number"><span class="editable-field">KE 2085</span></div>
                         <div class="fc-route-box">
-                            <div class="fc-route-point">
-                                <h2><span class="editable-field">PUS</span></h2>
-                                <div style="font-size: 0.75rem; color: var(--ac-brown-light); font-weight: 900; margin-top: -3px;"><span class="editable-field">釜山</span></div>
-                                <div class="time"><span class="editable-field">09:00</span></div>
-                            </div>
-                            <div class="fc-duration">
-                                <span>02h30m</span><div class="line"><i class="fa-solid fa-plane" style="transform: scaleX(-1);"></i></div><span><span class="editable-field">2026/06/11</span></span>
-                            </div>
-                            <div class="fc-route-point">
-                                <h2><span class="editable-field">TPE</span></h2>
-                                <div style="font-size: 0.75rem; color: var(--ac-brown-light); font-weight: 900; margin-top: -3px;"><span class="editable-field">桃園</span></div>
-                                <div class="time"><span class="editable-field">10:30</span></div>
-                            </div>
+                            <div class="fc-route-point"><h2><span class="editable-field">PUS</span></h2><div style="font-size: 0.75rem; color: var(--ac-brown-light); font-weight: 900; margin-top: -3px;"><span class="editable-field">釜山</span></div><div class="time"><span class="editable-field">09:00</span></div></div>
+                            <div class="fc-duration"><span>02h30m</span><div class="line"><i class="fa-solid fa-plane" style="transform: scaleX(-1);"></i></div><span><span class="editable-field">2026/06/11</span></span></div>
+                            <div class="fc-route-point"><h2><span class="editable-field">TPE</span></h2><div style="font-size: 0.75rem; color: var(--ac-brown-light); font-weight: 900; margin-top: -3px;"><span class="editable-field">桃園</span></div><div class="time"><span class="editable-field">10:30</span></div></div>
                         </div>
                         <div class="fc-grid">
                             <div class="fc-grid-item" style="grid-column: span 2;"><div class="fc-grid-title">BAGGAGE</div><div class="fc-grid-val"><i class="fa-solid fa-suitcase" style="color:var(--mo-yellow);"></i> <span class="editable-field">23kg</span> &nbsp;&nbsp; <i class="fa-solid fa-briefcase" style="color:var(--mo-blue);"></i> <span class="editable-field">10kg</span></div></div>
@@ -451,12 +373,10 @@
                         <button class="btn-q btn-mo-teal scale-btn btn-edit-trigger" onclick="requirePin('flight-inbound'); event.stopPropagation();"><i class="fa-solid fa-pen"></i> 編輯回程航班</button>
                     </div>
                 </div>
-            </div>
-
-            <div id="booking-hotel" style="display:none;">
+            </div><div id="booking-hotel" style="display:none;">
                 <div class="hotel-card2 glowing-hover scale-btn" id="hotel-stay" onclick="openHotelDetailModal()">
                     <div class="hc-img-wrapper">
-                        <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80" alt="Hotel Cover">
+                        <img src="./封面.jpg" alt="Hotel Cover">
                         <div class="hc-tag-loc"><i class="fa-solid fa-location-dot"></i> <span class="editable-field">釜山 西面</span></div>
                     </div>
                     <div class="hc-body">
@@ -464,17 +384,9 @@
                         <p class="hc-address">📍 近商圏、精華區、車站、超市 (點擊查看詳細)</p>
                         
                         <div class="hc-checkin-box">
-                            <div class="hc-ci-col">
-                                <span class="hc-ci-title">Check-in</span>
-                                <span class="hc-ci-date"><span class="editable-field">2026-06-06</span></span>
-                                <span class="hc-ci-time"><span class="editable-field">15:00</span></span>
-                            </div>
+                            <div class="hc-ci-col"><span class="hc-ci-title">Check-in</span><span class="hc-ci-date"><span class="editable-field">2026-06-06</span></span><span class="hc-ci-time"><span class="editable-field">15:00</span></span></div>
                             <div class="hc-ci-mid">5<br>Nights<br>➔</div>
-                            <div class="hc-ci-col" style="text-align: right;">
-                                <span class="hc-ci-title">Check-out</span>
-                                <span class="hc-ci-date"><span class="editable-field">2026-06-11</span></span>
-                                <span class="hc-ci-time"><span class="editable-field">13:00</span></span>
-                            </div>
+                            <div class="hc-ci-col" style="text-align: right;"><span class="hc-ci-title">Check-out</span><span class="hc-ci-date"><span class="editable-field">2026-06-11</span></span><span class="hc-ci-time"><span class="editable-field">13:00</span></span></div>
                         </div>
 
                         <div class="hc-price-area">
@@ -510,26 +422,26 @@
                     <h3 style="margin-top:0; color: var(--ac-brown); text-align: center; margin-bottom:20px;">💱 即時匯率換算</h3>
                     <div style="font-size:0.8rem; font-weight:900; color:var(--ac-brown-light); text-align:center; margin-bottom:15px;">預設匯率 1 KRW = 0.023 TWD</div>
                     
-                    <div class="exchange-box scale-btn" onclick="playHaptic()" style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px; background: linear-gradient(135deg, #E8F4FA 0%, #D1E5EE 100%); padding: 15px; border-radius: 24px; box-shadow: inset 0 2px 5px rgba(255,255,255,0.5), 0 8px 15px rgba(114, 177, 214, 0.2);">
-                        <div class="exc-input-group" style="flex: 1; background: #FFF; border: 2px solid transparent; border-radius: 16px; padding: 15px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.03);">
-                            <div class="exc-currency" style="font-size: 0.8rem; font-weight: 900; color: var(--mo-blue); margin-bottom: 5px;">韓元 (KRW)</div>
-                            <input type="number" id="exc-krw" placeholder="0" oninput="calcExchange('krw')" onfocus="this.value=''; calcExchange('krw')" style="width: 100%; border: none; background: transparent; text-align: center; font-size: 1.8rem; font-weight: 900; color: var(--ac-brown); outline: none;">
+                    <div class="exchange-box scale-btn" onclick="playHaptic()">
+                        <div class="exc-input-group">
+                            <div class="exc-currency">韓元 (KRW)</div>
+                            <input type="number" id="exc-krw" placeholder="0" oninput="calcExchange('krw')" onfocus="this.value=''; calcExchange('krw')">
                         </div>
-                        <div class="exc-icon" style="font-size: 1.5rem; color: var(--mo-blue);"><i class="fa-solid fa-right-left"></i></div>
-                        <div class="exc-input-group" style="flex: 1; background: #FFF; border: 2px solid transparent; border-radius: 16px; padding: 15px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.03);">
-                            <div class="exc-currency" style="font-size: 0.8rem; font-weight: 900; color: var(--mo-blue); margin-bottom: 5px;">台幣 (TWD)</div>
-                            <input type="number" id="exc-twd" placeholder="0" oninput="calcExchange('twd')" onfocus="this.value=''; calcExchange('twd')" style="width: 100%; border: none; background: transparent; text-align: center; font-size: 1.8rem; font-weight: 900; color: var(--ac-brown); outline: none;">
+                        <div class="exc-icon"><i class="fa-solid fa-right-left"></i></div>
+                        <div class="exc-input-group">
+                            <div class="exc-currency">台幣 (TWD)</div>
+                            <input type="number" id="exc-twd" placeholder="0" oninput="calcExchange('twd')" onfocus="this.value=''; calcExchange('twd')">
                         </div>
                     </div>
 
                     <div style="margin-top: 30px;">
                         <h4 style="font-size:0.9rem; color:var(--ac-brown-light); margin-bottom:10px;"><i class="fa-solid fa-bolt"></i> 常用面額速查</h4>
-                        <div class="quick-conv-board" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                            <div class="qc-item scale-btn" onclick="playHaptic(); document.getElementById('exc-krw').value=1000; calcExchange('krw');" style="background: #FFF; border: 2px solid var(--ac-tan); border-radius: 12px; padding: 10px; display: flex; justify-content: space-between; font-weight: 900; color: var(--ac-brown);">₩ 1,000 <span style="color:var(--ac-brown-light); font-size:0.85rem;">NT$ 23</span></div>
-                            <div class="qc-item scale-btn" onclick="playHaptic(); document.getElementById('exc-krw').value=5000; calcExchange('krw');" style="background: #FFF; border: 2px solid var(--ac-tan); border-radius: 12px; padding: 10px; display: flex; justify-content: space-between; font-weight: 900; color: var(--ac-brown);">₩ 5,000 <span style="color:var(--ac-brown-light); font-size:0.85rem;">NT$ 115</span></div>
-                            <div class="qc-item scale-btn" onclick="playHaptic(); document.getElementById('exc-krw').value=10000; calcExchange('krw');" style="background: #FFF; border: 2px solid var(--ac-tan); border-radius: 12px; padding: 10px; display: flex; justify-content: space-between; font-weight: 900; color: var(--ac-brown);">₩ 10,000 <span style="color:var(--ac-brown-light); font-size:0.85rem;">NT$ 230</span></div>
-                            <div class="qc-item scale-btn" onclick="playHaptic(); document.getElementById('exc-krw').value=12500; calcExchange('krw');" style="background: #FFF; border: 2px solid var(--ac-tan); border-radius: 12px; padding: 10px; display: flex; justify-content: space-between; font-weight: 900; color: var(--ac-brown);">₩ 12,500 <span style="color:var(--ac-brown-light); font-size:0.85rem;">NT$ 288</span></div>
-                            <div class="qc-item scale-btn" onclick="playHaptic(); document.getElementById('exc-krw').value=50000; calcExchange('krw');" style="grid-column: span 2; text-align:center; display:block; background: #FFF; border: 2px solid var(--ac-tan); border-radius: 12px; padding: 10px; font-weight: 900; color: var(--ac-brown);">₩ 50,000 <span style="margin-left:10px; color:var(--ac-brown-light); font-size:0.85rem;">NT$ 1,150</span></div>
+                        <div class="quick-conv-board">
+                            <div class="qc-item scale-btn" onclick="playHaptic(); document.getElementById('exc-krw').value=1000; calcExchange('krw');">₩ 1,000 <span>NT$ 23</span></div>
+                            <div class="qc-item scale-btn" onclick="playHaptic(); document.getElementById('exc-krw').value=5000; calcExchange('krw');">₩ 5,000 <span>NT$ 115</span></div>
+                            <div class="qc-item scale-btn" onclick="playHaptic(); document.getElementById('exc-krw').value=10000; calcExchange('krw');">₩ 10,000 <span>NT$ 230</span></div>
+                            <div class="qc-item scale-btn" onclick="playHaptic(); document.getElementById('exc-krw').value=12500; calcExchange('krw');">₩ 12,500 <span>NT$ 288</span></div>
+                            <div class="qc-item scale-btn" onclick="playHaptic(); document.getElementById('exc-krw').value=50000; calcExchange('krw');" style="grid-column: span 2; text-align:center; display:block;">₩ 50,000 <span style="margin-left:10px;">NT$ 1,150</span></div>
                         </div>
                     </div>
                 </div>
@@ -543,42 +455,32 @@
                     <input type="date" class="form-control" id="exp-date" value="2026-06-06">
 
                     <label class="form-label">幣別</label>
-                    <div class="currency-tabs" style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+                    <div class="currency-tabs">
                         <div class="cur-tab active scale-btn" onclick="setExpCurrency('KRW', this)">KRW</div>
                         <div class="cur-tab scale-btn" onclick="setExpCurrency('TWD', this)">TWD</div>
                         <div class="cur-tab scale-btn" onclick="setExpCurrency('USD', this)">USD</div>
                     </div>
 
                     <div style="display:flex; gap:10px;">
-                        <div style="flex:1; min-width:0;">
-                            <label class="form-label"><span style="color:var(--mo-pink);">*</span> 金額</label>
-                            <input type="number" class="form-control" id="exp-amount" placeholder="0" oninput="calcApproxTwd()" style="font-size:1.2rem; font-weight:900;">
-                        </div>
-                        <div style="flex:1; min-width:0;">
-                            <label class="form-label">約合台幣</label>
-                            <input type="text" class="form-control" id="exp-approx-twd" value="0" disabled>
-                        </div>
+                        <div style="flex:1; min-width:0;"><label class="form-label"><span style="color:var(--mo-pink);">*</span> 金額</label><input type="number" class="form-control" id="exp-amount" placeholder="0" oninput="calcApproxTwd()" style="font-size:1.2rem; font-weight:900;"></div>
+                        <div style="flex:1; min-width:0;"><label class="form-label">約合台幣</label><input type="text" class="form-control" id="exp-approx-twd" value="0" disabled></div>
                     </div>
 
                     <label class="form-label">支付方式</label>
-                    <div class="method-tabs" style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+                    <div class="method-tabs">
                         <div class="m-tab active scale-btn" onclick="selectMethod(this)">現金</div>
                         <div class="m-tab scale-btn" onclick="selectMethod(this)">信用卡</div>
                         <div class="m-tab scale-btn" onclick="selectMethod(this)">T-money</div>
                     </div>
 
-                    <label class="form-label">地點 (選填)</label>
-                    <input type="text" class="form-control" id="exp-loc" placeholder="📍 例如：便利商店">
-
-                    <label class="form-label"><span style="color:var(--mo-pink);">*</span> 消費項目</label>
-                    <input type="text" class="form-control" id="exp-title" placeholder="例如：午餐">
+                    <label class="form-label">地點 (選填)</label><input type="text" class="form-control" id="exp-loc" placeholder="📍 例如：便利商店">
+                    <label class="form-label"><span style="color:var(--mo-pink);">*</span> 消費項目</label><input type="text" class="form-control" id="exp-title" placeholder="例如：午餐">
 
                     <div style="background: #FCFBFA; padding: 15px; border-radius: 16px; margin-top: 10px; border: 2px dashed var(--ac-tan);">
                         <label class="form-label"><span style="color:var(--mo-pink);">*</span> 誰付款的？ (單選)</label>
-                        <div class="ava-select-group" id="payer-group-container" style="display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap;"></div>
-
+                        <div class="ava-select-group" id="payer-group-container"></div>
                         <label class="form-label" style="margin-top:15px;">誰要分攤？ (不選視為個人帳)</label>
-                        <div class="ava-select-group" id="split-group-container" style="display: flex; gap: 15px; flex-wrap: wrap;"></div>
+                        <div class="ava-select-group" id="split-group-container"></div>
                     </div>
 
                     <button class="btn-q btn-add-blue-v11 scale-btn" style="width: 100%; margin-top: 20px; justify-content: center;" onclick="saveExpense()">✔ 記一筆</button>
@@ -586,8 +488,8 @@
             </div>
 
             <div id="acc-detail" style="display: none;">
-                <div id="settlement-card" style="background: #FDFBF8; border: 2px dashed #8B5A5A; border-radius: 20px; padding: 15px; margin-bottom: 15px; display: none; animation: fadeIn 0.3s;">
-                    <div style="font-weight: 900; color: #8B5A5A; font-size: 0.9rem; margin-bottom: 10px; display: flex; align-items: center; gap: 5px;"><i class="fa-solid fa-scale-balanced"></i> 內部結算結果</div>
+                <div id="settlement-card" class="settlement-card">
+                    <div class="settlement-title"><i class="fa-solid fa-scale-balanced"></i> 內部結算結果</div>
                     <div id="settlement-content" style="color: #8B5A5A;"></div>
                 </div>
 
@@ -595,14 +497,8 @@
                     <div class="title"><span id="detail-filter-name" class="highlight-name">全體</span> 的支出 (TWD)</div>
                     <div id="detail-total-amount" class="amount">NT$ 0</div>
                     <div style="background: rgba(255,255,255,0.3); border-radius: 16px; padding: 12px; display: flex; text-align: left; gap: 15px;">
-                        <div style="flex:1; border-right: 1px solid rgba(0,0,0,0.1);">
-                            <div style="font-size:0.75rem; color:var(--ac-brown); font-weight:800; opacity:0.8;">韓元支出</div>
-                            <div style="font-size:1.1rem; font-weight:900; color:var(--ac-brown);" id="detail-total-krw">₩ 0</div>
-                        </div>
-                        <div style="flex:1;">
-                            <div style="font-size:0.75rem; color:var(--ac-brown); font-weight:800; opacity:0.8;">匯率 (預設)</div>
-                            <div style="font-size:1.1rem; font-weight:900; color:var(--ac-brown);">1 : 0.023</div>
-                        </div>
+                        <div style="flex:1; border-right: 1px solid rgba(0,0,0,0.1);"><div style="font-size:0.75rem; color:var(--ac-brown); font-weight:800; opacity:0.8;">韓元總支出</div><div style="font-size:1.1rem; font-weight:900; color:var(--ac-brown);" id="detail-total-krw">₩ 0</div></div>
+                        <div style="flex:1;"><div style="font-size:0.75rem; color:var(--ac-brown); font-weight:800; opacity:0.8;">匯率 (預設)</div><div style="font-size:1.1rem; font-weight:900; color:var(--ac-brown);">1 : 0.023</div></div>
                     </div>
                 </div>
                 
@@ -612,17 +508,13 @@
                     <div>帳務明細 (點擊可編輯)</div>
                     <div id="detail-day-subtotal">本日小計: NT$ 0</div>
                 </div>
-
                 <div class="ac-card" style="padding: 10px 16px;" id="expense-list-container"></div>
             </div>
         </div>
 
         <div id="page-diary" class="page">
             <div class="section-title" style="margin-bottom: 20px;">
-                <div>
-                    <div>旅行日誌</div>
-                    <div style="font-size:0.75rem; color:var(--ac-brown-light); font-weight:800; margin-top:2px;">紀錄旅途中的每一個精彩瞬間</div>
-                </div>
+                <div><div>旅行日誌</div><div style="font-size:0.75rem; color:var(--ac-brown-light); font-weight:800; margin-top:2px;">紀錄旅途中的每一個精彩瞬間</div></div>
                 <button class="btn-q btn-add-blue-v11 scale-btn" onclick="playHaptic(); openDiaryModal()"><i class="fa-solid fa-pen-nib"></i> 寫日誌</button>
             </div>
             <div id="diary-container"></div>
@@ -630,13 +522,9 @@
         
         <div id="page-member" class="page">
             <div class="section-title">
-                <div>
-                    <div>快樂成員</div>
-                    <div style="font-size:0.75rem; color:var(--ac-brown-light); font-weight:800; margin-top:2px;">說好不吵架，吵架的請吃一頓飯!</div>
-                </div>
+                <div><div>快樂成員</div><div style="font-size:0.75rem; color:var(--ac-brown-light); font-weight:800; margin-top:2px;">說好不吵架，吵架的請吃一頓飯!</div></div>
                 <button class="btn-q btn-add-yellow-v10 scale-btn" onclick="playHaptic(); openMemberModal()">+ 新增成員</button>
             </div>
-            
             <div id="member-container"></div>
         </div>
     </main>
@@ -658,54 +546,25 @@
     <div class="modal-overlay" id="modal-hotel-detail" onclick="if(event.target === this) closeModal('modal-hotel-detail')">
         <div class="ac-modal" id="modal-hotel-detail-content">
             <div class="hd-close scale-btn" onclick="playHaptic(); closeModal('modal-hotel-detail')"><i class="fa-solid fa-xmark"></i></div>
-            
             <div style="display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; width: 100%; height: 220px; border-radius: 24px 24px 0 0; position: relative; flex-shrink: 0;">
-                <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80" style="flex: 0 0 100%; object-fit: cover; scroll-snap-align: start;">
-                <img src="https://images.unsplash.com/photo-1502672260266-1c1c24240f38?w=800&q=80" style="flex: 0 0 100%; object-fit: cover; scroll-snap-align: start;">
-                <img src="https://images.unsplash.com/photo-1513694203232-719a280e022f?w=800&q=80" style="flex: 0 0 100%; object-fit: cover; scroll-snap-align: start;">
+                <img src="./封面.jpg" style="flex: 0 0 100%; object-fit: cover; scroll-snap-align: start;">
+                <img src="./2.jpg" style="flex: 0 0 100%; object-fit: cover; scroll-snap-align: start;">
+                <img src="./3.jpg" style="flex: 0 0 100%; object-fit: cover; scroll-snap-align: start;">
+                <img src="./4.jpg" style="flex: 0 0 100%; object-fit: cover; scroll-snap-align: start;">
                 <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 40%; background: linear-gradient(to top, rgba(0,0,0,0.6), transparent); pointer-events: none;"></div>
                 <div style="position: absolute; bottom: 15px; left: 15px; color: #FFF; pointer-events: none;">
                     <span style="background: rgba(255,255,255,0.3); padding: 4px 10px; border-radius: 8px; font-size: 0.7rem; font-weight: 900; backdrop-filter: blur(4px);">釜山</span>
                     <h2 style="margin: 5px 0 0 0; font-size: 1.4rem; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">Airbnb Pop (西面)</h2>
                 </div>
             </div>
-
             <div style="flex: 1; padding: 20px; overflow-y: auto; background: #FFF;">
-                <div style="background: #F8F6F2; padding: 15px; border-radius: 16px; margin-bottom: 20px; border: 1px solid var(--ac-tan);">
-                    <div style="font-size: 0.8rem; color: var(--mo-green); font-weight: 900; margin-bottom: 5px;"><i class="fa-solid fa-map-location-dot"></i> 住宿特點</div>
-                    <div style="font-weight: 800; color: var(--ac-brown);">📍 近商圏、精華區、車站、超市</div>
-                </div>
-
-                <div style="border: 2px solid var(--ac-tan); border-radius: 16px; padding: 15px; margin-bottom: 20px;">
-                    <div style="font-size: 0.8rem; color: var(--mo-orange); font-weight: 900; margin-bottom: 10px;"><i class="fa-solid fa-list-check"></i> 住宿設施</div>
-                    <ul style="margin:0; padding-left:20px; color:var(--ac-brown-light); font-weight: 700; line-height: 1.6;">
-                        <li>5張床 / 2間廁所</li>
-                        <li>免費行李寄存</li>
-                        <li>27坪大空間</li>
-                        <li>免費接送服務</li>
-                        <li>下午 1 點退房</li>
-                        <li>步行 5 分鐘到西面站</li>
-                    </ul>
-                </div>
-
-                <div style="background: #F8F6F2; padding: 15px; border-radius: 16px; margin-bottom: 20px; border: 1px dashed var(--ac-tan); display: flex; justify-content: space-between; align-items: center;">
-                    <span style="font-size: 0.85rem; color: var(--ac-brown-light); font-weight: 900;">訂單編號</span>
-                    <span style="font-weight: 900; color: var(--ac-brown);">B-88645</span>
-                </div>
-                
+                <div style="background: #F8F6F2; padding: 15px; border-radius: 16px; margin-bottom: 20px; border: 1px solid var(--ac-tan);"><div style="font-size: 0.8rem; color: var(--mo-green); font-weight: 900; margin-bottom: 5px;"><i class="fa-solid fa-map-location-dot"></i> 住宿特點</div><div style="font-weight: 800; color: var(--ac-brown);">📍 近商圏、精華區、車站、超市</div></div>
+                <div style="border: 2px solid var(--ac-tan); border-radius: 16px; padding: 15px; margin-bottom: 20px;"><div style="font-size: 0.8rem; color: var(--mo-orange); font-weight: 900; margin-bottom: 10px;"><i class="fa-solid fa-list-check"></i> 住宿設施</div><ul style="margin:0; padding-left:20px; color:var(--ac-brown-light); font-weight: 700; line-height: 1.6;"><li>5張床 / 2間廁所</li><li>免費行李寄存</li><li>27坪大空間</li><li>免費接送服務</li><li>下午 1 點退房</li><li>步行 5 分鐘到西面站</li></ul></div>
+                <div style="background: #F8F6F2; padding: 15px; border-radius: 16px; margin-bottom: 20px; border: 1px dashed var(--ac-tan); display: flex; justify-content: space-between; align-items: center;"><span style="font-size: 0.85rem; color: var(--ac-brown-light); font-weight: 900;">訂單編號</span><span style="font-weight: 900; color: var(--ac-brown);">B-88645</span></div>
                 <div style="border-top: 2px dashed var(--ac-tan); padding-top: 15px; margin-top: 10px;">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 5px;">
-                        <span style="font-weight: 900; color: var(--ac-brown-light);">總額 (Total)</span>
-                        <span style="font-weight: 900; color: var(--ac-brown); font-size: 1.4rem;">NT$ 16,156</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                        <span style="font-weight: 800; color: var(--ac-brown-light); font-size: 0.9rem;">每人均分 (2人)</span>
-                        <span style="font-weight: 900; color: var(--mo-pink);">NT$ 8,078</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-weight: 800; color: var(--ac-brown-light); font-size: 0.9rem;">每人每晚 (5晚)</span>
-                        <span style="font-weight: 900; color: var(--mo-blue);">NT$ 1,615</span>
-                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 5px;"><span style="font-weight: 900; color: var(--ac-brown-light);">總額 (Total)</span><span style="font-weight: 900; color: var(--ac-brown); font-size: 1.4rem;">NT$ 16,156</span></div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;"><span style="font-weight: 800; color: var(--ac-brown-light); font-size: 0.9rem;">每人均分 (2人)</span><span style="font-weight: 900; color: var(--mo-pink);">NT$ 8,078</span></div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;"><span style="font-weight: 800; color: var(--ac-brown-light); font-size: 0.9rem;">每人每晚 (5晚)</span><span style="font-weight: 900; color: var(--mo-blue);">NT$ 1,615</span></div>
                 </div>
             </div>
         </div>
@@ -713,25 +572,14 @@
 
     <div class="modal-overlay" id="modal-voucher-detail" onclick="if(event.target === this) closeModal('modal-voucher-detail')">
         <div class="ac-modal" style="background: #FFF; padding: 25px;">
-            <div class="hd-close scale-btn" onclick="playHaptic(); closeModal('modal-voucher-detail')" style="position: absolute; top: 15px; right: 15px; width: 32px; height: 32px; background: rgba(0,0,0,0.5); color: #FFF; border-radius: 50%; display: flex; justify-content: center; align-items: center; z-index: 10;"><i class="fa-solid fa-xmark"></i></div>
+            <div class="hd-close scale-btn" onclick="playHaptic(); closeModal('modal-voucher-detail')"><i class="fa-solid fa-xmark"></i></div>
             <input type="hidden" id="vd-item-id">
             <h2 id="vd-title" style="margin:0 0 15px 0; color:var(--ac-brown); font-weight:900; text-align:center; padding: 0 20px;">票卷名稱</h2>
-            <div id="vd-img-container" style="width:100%; max-height:250px; border-radius:16px; overflow:hidden; margin-bottom:15px; border:2px solid var(--ac-tan); display:none;">
-                <img id="vd-img" src="" style="width:100%; height:100%; object-fit:cover;">
-            </div>
+            <div id="vd-img-container" style="width:100%; max-height:250px; border-radius:16px; overflow:hidden; margin-bottom:15px; border:2px solid var(--ac-tan); display:none;"><img id="vd-img" src="" style="width:100%; height:100%; object-fit:cover;"></div>
             <div style="background:#F8F6F2; padding:15px; border-radius:16px; border:1px dashed var(--ac-tan); margin-bottom:15px;">
-                <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                    <span style="font-size:0.85rem; color:var(--ac-brown-light); font-weight:900;">使用日期</span>
-                    <span id="vd-date" style="font-weight:900; color:var(--mo-blue);"></span>
-                </div>
-                <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                    <span style="font-size:0.85rem; color:var(--ac-brown-light); font-weight:900;">有效期限</span>
-                    <span id="vd-expire" style="font-weight:900; color:var(--mo-pink);"></span>
-                </div>
-                <div style="display:flex; justify-content:space-between;">
-                    <span style="font-size:0.85rem; color:var(--ac-brown-light); font-weight:900;">票卷代碼</span>
-                    <span id="vd-code" style="font-weight:900; color:var(--ac-brown); background:#FFF; padding:2px 8px; border-radius:6px; box-shadow:0 2px 5px rgba(0,0,0,0.05);"></span>
-                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span style="font-size:0.85rem; color:var(--ac-brown-light); font-weight:900;">使用日期</span><span id="vd-date" style="font-weight:900; color:var(--mo-blue);"></span></div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span style="font-size:0.85rem; color:var(--ac-brown-light); font-weight:900;">有效期限</span><span id="vd-expire" style="font-weight:900; color:var(--mo-pink);"></span></div>
+                <div style="display:flex; justify-content:space-between;"><span style="font-size:0.85rem; color:var(--ac-brown-light); font-weight:900;">票卷代碼</span><span id="vd-code" style="font-weight:900; color:var(--ac-brown); background:#FFF; padding:2px 8px; border-radius:6px; box-shadow:0 2px 5px rgba(0,0,0,0.05);"></span></div>
             </div>
             <div id="vd-facilities-section" style="display:none;">
                 <h3 style="font-size:0.95rem; color:var(--ac-brown); font-weight:900; margin-bottom:10px;"><i class="fa-solid fa-list-check"></i> 設施打卡清單</h3>
@@ -745,33 +593,19 @@
         <div class="ac-modal" id="modal-voucher-content-box">
             <h2 style="margin-top:0; margin-bottom: 20px; text-align: center; color: var(--ac-brown); font-weight: 900;" id="modal-voucher-title">新增票卷</h2>
             <input type="hidden" id="voucher-item-id">
-            
-            <label class="form-label">票卷名稱 <span style="color:var(--mo-pink);">*</span></label>
-            <input type="text" class="form-control" id="voucher-title" placeholder="例如：釜山通行證 Visit Busan Pass">
-            
+            <label class="form-label">票卷名稱 <span style="color:var(--mo-pink);">*</span></label><input type="text" class="form-control" id="voucher-title" placeholder="例如：釜山通行證 Visit Busan Pass">
             <div style="display:flex; gap:10px;">
                 <div style="flex:1; min-width:0;"><label class="form-label">使用日期</label><input type="date" class="form-control" id="voucher-date"></div>
                 <div style="flex:1; min-width:0;"><label class="form-label">有效期限</label><input type="date" class="form-control" id="voucher-expire"></div>
             </div>
-            
-            <label class="form-label">票卷代碼 / 備註</label>
-            <input type="text" class="form-control" id="voucher-code" placeholder="輸入 QR Code 編號或取票備註">
-            
+            <label class="form-label">票卷代碼 / 備註</label><input type="text" class="form-control" id="voucher-code" placeholder="輸入 QR Code 編號或取票備註">
             <label class="form-label" style="margin-top:15px;">預計使用的設施 (打卡清單)</label>
-            <div style="display:flex; gap:10px; margin-bottom:10px;">
-                <input type="text" class="form-control" id="voucher-fac-input" placeholder="例如：樂天世界、觀光巴士" style="margin-bottom:0;">
-                <button class="btn-q btn-mo-teal scale-btn" style="width:auto; border-radius:16px;" onclick="addVoucherFacility()">新增</button>
-            </div>
+            <div style="display:flex; gap:10px; margin-bottom:10px;"><input type="text" class="form-control" id="voucher-fac-input" placeholder="例如：樂天世界、觀光巴士" style="margin-bottom:0;"><button class="btn-q btn-mo-teal scale-btn" style="width:auto; border-radius:16px;" onclick="addVoucherFacility()">新增</button></div>
             <div id="voucher-fac-list" style="display:flex; flex-direction:column; gap:8px; margin-bottom:15px;"></div>
-
             <label class="form-label">上傳票卷截圖</label>
             <div style="display:flex; gap:15px; overflow-x:auto; scrollbar-width:none; padding: 10px 5px 15px 5px;" id="voucher-upload-preview"></div>
             <input type="file" id="voucher-file-input" accept="image/*" style="display:none;" onchange="handleVoucherPhotoUpload(event)">
-
-            <div style="display: flex; gap: 15px; margin-top: 20px;">
-                <button class="btn-q modal-btn modal-btn-cancel scale-btn" onclick="playHaptic(); closeModal('modal-voucher')">取消</button>
-                <button class="btn-q modal-btn modal-btn-save scale-btn" onclick="playHaptic(); saveVoucher()">✔ 儲存</button>
-            </div>
+            <div style="display: flex; gap: 15px; margin-top: 20px;"><button class="btn-q modal-btn modal-btn-cancel scale-btn" onclick="playHaptic(); closeModal('modal-voucher')">取消</button><button class="btn-q modal-btn modal-btn-save scale-btn" onclick="playHaptic(); saveVoucher()">✔ 儲存</button></div>
         </div>
     </div>
 
@@ -779,52 +613,28 @@
         <div class="ac-modal" style="background: #FFF;">
             <h2 style="margin-top:0; margin-bottom: 20px; text-align: center; color: var(--ac-brown); font-weight: 900;" id="modal-member-title">新增成員</h2>
             <input type="hidden" id="member-item-id">
-            
             <div style="display:flex; justify-content:center; margin-bottom:20px;">
                 <div style="position:relative;">
-                    <div id="member-upload-preview" class="member-avatar scale-btn" style="width:100px; height:100px; cursor:pointer;" onclick="document.getElementById('member-file-input').click()">
-                        <i class="fa-solid fa-camera" style="color:var(--ac-tan);"></i>
-                    </div>
+                    <div id="member-upload-preview" class="member-avatar scale-btn" style="width:100px; height:100px; cursor:pointer;" onclick="document.getElementById('member-file-input').click()"><i class="fa-solid fa-camera" style="color:var(--ac-tan);"></i></div>
                     <div style="position:absolute; bottom:0; right:0; background:var(--mo-blue); color:#FFF; width:30px; height:30px; border-radius:50%; display:flex; justify-content:center; align-items:center; font-size:0.9rem; border:2px solid #FFF; pointer-events:none;"><i class="fa-solid fa-plus"></i></div>
                 </div>
             </div>
             <input type="file" id="member-file-input" accept="image/*" style="display:none;" onchange="handleMemberPhotoUpload(event)">
-            
             <div style="display:flex; gap:10px;">
-                <div style="flex:1; min-width:0;">
-                    <label class="form-label">名稱 <span style="color:var(--mo-pink);">*</span></label>
-                    <input type="text" class="form-control" id="member-name" placeholder="例：琳">
-                </div>
-                <div style="flex:1; min-width:0;">
-                    <label class="form-label">Aka 代號</label>
-                    <input type="text" class="form-control" id="member-aka" placeholder="例：財務大臣">
-                </div>
+                <div style="flex:1; min-width:0;"><label class="form-label">名稱 <span style="color:var(--mo-pink);">*</span></label><input type="text" class="form-control" id="member-name" placeholder="例：琳"></div>
+                <div style="flex:1; min-width:0;"><label class="form-label">Aka 代號</label><input type="text" class="form-control" id="member-aka" placeholder="例：財務大臣"></div>
             </div>
-
-            <label class="form-label">想說的話</label>
-            <textarea class="form-control" id="member-quote" rows="2" placeholder="留下旅行宣言..."></textarea>
-
-            <div style="display: flex; gap: 15px; margin-top: 10px;">
-                <button class="btn-q modal-btn modal-btn-cancel scale-btn" onclick="playHaptic(); closeModal('modal-member-edit')">取消</button>
-                <button class="btn-q modal-btn modal-btn-save scale-btn" onclick="playHaptic(); saveMember()">✔ 儲存</button>
-            </div>
+            <label class="form-label">想說的話</label><textarea class="form-control" id="member-quote" rows="2" placeholder="留下旅行宣言..."></textarea>
+            <div style="display: flex; gap: 15px; margin-top: 10px;"><button class="btn-q modal-btn modal-btn-cancel scale-btn" onclick="playHaptic(); closeModal('modal-member-edit')">取消</button><button class="btn-q modal-btn modal-btn-save scale-btn" onclick="playHaptic(); saveMember()">✔ 儲存</button></div>
         </div>
     </div>
 
     <div class="modal-overlay" id="modal-cropper">
         <div class="ac-modal" style="background: #FFF; display: flex; flex-direction: column; align-items: center; overflow:hidden;">
             <h2 style="margin-top:0; margin-bottom: 20px; text-align: center; color: var(--ac-brown); font-weight: 900;"><i class="fa-solid fa-crop-simple"></i> 調整大頭貼</h2>
-            <div class="crop-container" id="crop-container">
-                <img id="crop-img" class="crop-img" src="" alt="crop">
-                <div class="crop-mask"></div>
-            </div>
-            <label class="form-label" style="text-align:center; width:100%; margin-top:10px;">縮放照片 (支援雙指縮放)</label>
-            <input type="range" id="crop-zoom" min="0.1" max="5" step="0.01" value="1" style="width: 80%; margin-bottom: 20px;">
-            
-            <div style="display: flex; gap: 15px; width: 100%;">
-                <button class="btn-q modal-btn modal-btn-cancel scale-btn" onclick="playHaptic(); closeModal('modal-cropper')">取消</button>
-                <button class="btn-q modal-btn modal-btn-save scale-btn" onclick="playHaptic(); confirmCrop()">✂️ 裁切儲存</button>
-            </div>
+            <div class="crop-container" id="crop-container"><img id="crop-img" class="crop-img" src="" alt="crop"><div class="crop-mask"></div></div>
+            <label class="form-label" style="text-align:center; width:100%; margin-top:10px;">縮放照片 (支援雙指縮放)</label><input type="range" id="crop-zoom" min="0.1" max="5" step="0.01" value="1" style="width: 80%; margin-bottom: 20px;">
+            <div style="display: flex; gap: 15px; width: 100%;"><button class="btn-q modal-btn modal-btn-cancel scale-btn" onclick="playHaptic(); closeModal('modal-cropper')">取消</button><button class="btn-q modal-btn modal-btn-save scale-btn" onclick="playHaptic(); confirmCrop()">✂️ 裁切儲存</button></div>
         </div>
     </div>
 
@@ -832,32 +642,18 @@
         <div class="ac-modal" style="background: #FFF;">
             <h2 style="margin-top:0; margin-bottom: 20px; text-align: center; color: var(--ac-brown); font-weight: 900;"><i class="fa-solid fa-pen"></i> 編輯帳務</h2>
             <input type="hidden" id="edit-exp-id">
-            
-            <label class="form-label">日期</label>
-            <input type="date" class="form-control" id="edit-exp-date">
-            
+            <label class="form-label">日期</label><input type="date" class="form-control" id="edit-exp-date">
             <div style="display:flex; gap:10px;">
                 <div style="flex:1; min-width:0;"><label class="form-label">金額 (KRW)</label><input type="number" class="form-control" id="edit-exp-amount" oninput="calcApproxTwdEdit()"></div>
                 <div style="flex:1; min-width:0;"><label class="form-label">約合台幣 (TWD)</label><input type="text" class="form-control" id="edit-exp-twd" disabled></div>
             </div>
-
             <label class="form-label">地點與消費項目</label>
-            <div style="display:flex; gap:10px;">
-                <input type="text" class="form-control" id="edit-exp-loc" placeholder="地點">
-                <input type="text" class="form-control" id="edit-exp-title" placeholder="項目">
-            </div>
-
+            <div style="display:flex; gap:10px;"><input type="text" class="form-control" id="edit-exp-loc" placeholder="地點"><input type="text" class="form-control" id="edit-exp-title" placeholder="項目"></div>
             <div style="background: #FCFBFA; padding: 15px; border-radius: 16px; margin-top: 10px; border: 2px dashed var(--ac-tan);">
-                <label class="form-label">付款人 (單選)</label>
-                <div class="ava-select-group" id="edit-payer-group-container"></div>
-                <label class="form-label">分攤人 (複選)</label>
-                <div class="ava-select-group" id="edit-split-group-container"></div>
+                <label class="form-label">付款人 (單選)</label><div class="ava-select-group" id="edit-payer-group-container"></div>
+                <label class="form-label">分攤人 (複選)</label><div class="ava-select-group" id="edit-split-group-container"></div>
             </div>
-
-            <div style="display: flex; gap: 15px; margin-top: 20px;">
-                <button class="btn-q modal-btn modal-btn-cancel scale-btn" onclick="playHaptic(); closeModal('modal-expense-edit')">取消</button>
-                <button class="btn-q modal-btn modal-btn-save scale-btn" onclick="playHaptic(); saveExpenseEdit()">✔ 儲存修改</button>
-            </div>
+            <div style="display: flex; gap: 15px; margin-top: 20px;"><button class="btn-q modal-btn modal-btn-cancel scale-btn" onclick="playHaptic(); closeModal('modal-expense-edit')">取消</button><button class="btn-q modal-btn modal-btn-save scale-btn" onclick="playHaptic(); saveExpenseEdit()">✔ 儲存修改</button></div>
         </div>
     </div>
 
@@ -869,53 +665,31 @@
                 <div style="flex:1; min-width:0;"><label class="form-label">日期</label><input type="date" class="form-control" id="form-date"></div>
                 <div style="flex:1; min-width:0;"><label class="form-label">時間</label><input type="time" class="form-control" id="form-time" required></div>
             </div>
-            
-            <label class="form-label">行程標題 <span style="color:var(--mo-pink);">*</span></label>
-            <input type="text" class="form-control" id="form-title" placeholder="例如：海雲台看海 🌊">
-            
-            <label class="form-label">地點地址 (貼上自動顯示地圖)</label>
-            <input type="text" class="form-control" id="form-loc" placeholder="貼上完整地址..." oninput="checkMapThumbnail()">
-            
+            <label class="form-label">行程標題 <span style="color:var(--mo-pink);">*</span></label><input type="text" class="form-control" id="form-title" placeholder="例如：海雲台看海 🌊">
+            <label class="form-label">地點地址 (貼上自動顯示地圖)</label><input type="text" class="form-control" id="form-loc" placeholder="貼上完整地址..." oninput="checkMapThumbnail()">
             <div id="map-preview-container" style="display:none;"></div>
-
-            <label class="form-label" style="margin-top:10px;">備註內容</label>
-            <textarea class="form-control" id="form-note" rows="2" placeholder="選填..."></textarea>
-            
+            <label class="form-label" style="margin-top:10px;">備註內容</label><textarea class="form-control" id="form-note" rows="2" placeholder="選填..."></textarea>
             <label class="form-label">上傳照片</label>
             <div style="display:flex; gap:15px; overflow-x:auto; scrollbar-width:none; padding: 10px 5px 15px 5px;" id="iti-upload-preview"></div>
             <input type="file" id="iti-file-input" accept="image/*" style="display:none;" onchange="handleItiPhotoUpload(event)">
-
             <label class="form-label" style="margin-top:15px;">主題顏色</label>
             <div class="color-picker-wrapper"><div class="color-picker-group" id="color-picker-group"></div></div>
-            
             <button class="btn-q scale-btn" style="width: 100%; padding: 12px; border-radius: 16px; background: #E8F4FA; color: var(--mo-blue); border: 2px solid var(--mo-blue); font-size: 0.95rem; margin-bottom: 15px;" onclick="openMap()"><i class="fa-solid fa-map-location-dot"></i> 開啟地圖導航</button>
-
-            <div style="display: flex; gap: 15px;">
-                <button class="btn-q modal-btn modal-btn-cancel scale-btn" onclick="playHaptic(); closeModal('modal-itinerary')">取消</button>
-                <button class="btn-q modal-btn modal-btn-save scale-btn" onclick="playHaptic(); saveItinerary()">✔ 儲存</button>
-            </div>
+            <div style="display: flex; gap: 15px;"><button class="btn-q modal-btn modal-btn-cancel scale-btn" onclick="playHaptic(); closeModal('modal-itinerary')">取消</button><button class="btn-q modal-btn modal-btn-save scale-btn" onclick="playHaptic(); saveItinerary()">✔ 儲存</button></div>
         </div>
     </div>
 
     <div class="modal-overlay" id="modal-diary" onclick="if(event.target === this) closeModal('modal-diary')">
         <div class="ac-modal" style="background: #FFF;">
             <h2 style="margin-top:0; margin-bottom: 20px; text-align: center; color: var(--ac-brown); font-weight: 900;" id="diary-modal-title"><i class="fa-solid fa-book"></i> 寫新日誌</h2>
-            
             <input type="hidden" id="diary-edit-id">
-
-            <label class="form-label">日期</label>
-            <input type="date" class="form-control" id="diary-date">
-            <label class="form-label">記錄人</label>
-            <div class="ava-select-group" id="diary-author-group-container" style="justify-content: center;"></div>
-            <label class="form-label" style="margin-top: 25px;">內容</label>
-            <textarea class="form-control" id="diary-content" rows="4" placeholder="寫下今天的趣事..."></textarea>
+            <label class="form-label">日期</label><input type="date" class="form-control" id="diary-date">
+            <label class="form-label">記錄人</label><div class="ava-select-group" id="diary-author-group-container" style="justify-content: center;"></div>
+            <label class="form-label" style="margin-top: 25px;">內容</label><textarea class="form-control" id="diary-content" rows="4" placeholder="寫下今天的趣事..."></textarea>
             <label class="form-label">照片 (最多5張)</label>
             <div style="display:flex; gap:15px; overflow-x:auto; scrollbar-width:none; padding: 10px 5px 15px 5px;" id="diary-upload-preview"></div>
             <input type="file" id="diary-file-input" accept="image/*" multiple style="display:none;" onchange="handleDiaryPhotoUpload(event)">
-            <div style="display: flex; gap: 15px; margin-top: 20px;">
-                <button class="btn-q modal-btn modal-btn-cancel scale-btn" onclick="playHaptic(); closeModal('modal-diary')">取消</button>
-                <button class="btn-q modal-btn modal-btn-save scale-btn" onclick="playHaptic(); saveDiary()">保存</button>
-            </div>
+            <div style="display: flex; gap: 15px; margin-top: 20px;"><button class="btn-q modal-btn modal-btn-cancel scale-btn" onclick="playHaptic(); closeModal('modal-diary')">取消</button><button class="btn-q modal-btn modal-btn-save scale-btn" onclick="playHaptic(); saveDiary()">保存</button></div>
         </div>
     </div>
 
@@ -924,17 +698,11 @@
             <div class="delete-icon-bg"><i class="fa-solid fa-trash-can"></i></div>
             <h2 style="margin-top:0; color: var(--ac-brown); font-weight: 900;">確認刪除？</h2>
             <p style="color: var(--ac-brown-light); font-weight: 700; margin-bottom: 25px;">這個項目刪除後就找不回來囉！</p>
-            <div style="display: flex; gap: 15px;">
-                <button class="btn-q modal-btn modal-btn-cancel scale-btn" onclick="playHaptic(); closeModal('modal-delete')">再想想</button>
-                <button class="btn-q modal-btn scale-btn" style="background: var(--mo-pink); color: white; box-shadow: 0 5px 0px #B58C8C;" onclick="playHaptic(); executeDelete()">確認刪除</button>
-            </div>
+            <div style="display: flex; gap: 15px;"><button class="btn-q modal-btn modal-btn-cancel scale-btn" onclick="playHaptic(); closeModal('modal-delete')">再想想</button><button class="btn-q modal-btn scale-btn" style="background: var(--mo-pink); color: white; box-shadow: 0 5px 0px #B58C8C;" onclick="playHaptic(); executeDelete()">確認刪除</button></div>
         </div>
     </div>
 
-    <div class="toast" id="toast-msg">
-        <i class="fa-solid fa-circle-check"></i>
-        <span id="toast-text">儲存成功</span>
-    </div>
+    <div class="toast" id="toast-msg"><i class="fa-solid fa-circle-check"></i><span id="toast-text">儲存成功</span></div>
 
     <nav>
         <div class="nav-item active" onclick="playHaptic(); switchPage('page-itinerary', this)"><div class="nav-icon"><i class="fa-solid fa-map-location-dot"></i></div>行程</div>
@@ -968,15 +736,10 @@
         el.classList.add('active');
     }
 
-    function applyNeonGlow(el) { el.classList.add('glowing-border'); playHaptic(); }
-    function removeNeonGlow(el) { setTimeout(() => { el.classList.remove('glowing-border'); }, 200); }
-
-    // ================= 全域變數與系統鎖定 =================
+    // ================= 全域變數與資料庫 (純前端本地版) =================
     const EXCHANGE_RATE = 0.023; const EXCHANGE_RATE_USD = 32; 
     let currentExpFilter = 'all'; let currentExpCurrency = 'KRW';
     let selectedFormColor = 'white';
-    
-    // 全域刪除操作變數
     let deleteTargetType = ''; let itemToDelete = null;
     let animationFrameId;
 
@@ -1009,27 +772,7 @@
         { id: 10, date: '2026-06-07', time: '18:40', title: '廣安木燒肉', note: '晚餐', img: null, loc: '', color: 'pink' },
         { id: 11, date: '2026-06-08', time: '08:00', title: '前往海雲台', note: '', img: null, loc: '', color: 'white' },
         { id: 12, date: '2026-06-08', time: '09:30', title: 'DIART Coffee', note: '', img: null, loc: '', color: 'yellow' },
-        { id: 13, date: '2026-06-08', time: '10:50', title: '海岸列車+拍拍照', note: '', img: null, loc: '', color: 'blue' },
-        { id: 14, date: '2026-06-08', time: '12:10', title: '大海鮑魚粥', note: '午餐', img: null, loc: '', color: 'yellow' },
-        { id: 15, date: '2026-06-08', time: '13:30', title: '海雲台傳統市場', note: '', img: null, loc: '', color: 'white' },
-        { id: 16, date: '2026-06-08', time: '15:45', title: '海雲台小麥麵', note: '晚餐', img: null, loc: '', color: 'pink' },
-        { id: 17, date: '2026-06-08', time: '17:30', title: 'Spa Land 汗蒸幕', note: '天然溫泉(09:00~22:00)', img: null, loc: '', color: 'blue' },
-        { id: 18, date: '2026-06-09', time: '08:00', title: '前往廣安里', note: '', img: null, loc: '', color: 'white' },
-        { id: 19, date: '2026-06-09', time: '09:00', title: 'Your Type', note: '早午餐', img: null, loc: '', color: 'yellow' },
-        { id: 20, date: '2026-06-09', time: '11:00', title: '逛逛小店看風景', note: '', img: null, loc: '', color: 'blue' },
-        { id: 21, date: '2026-06-09', time: '13:00', title: '烤扇貝+海鮮大餐', note: '午餐', img: null, loc: '', color: 'yellow' },
-        { id: 22, date: '2026-06-09', time: '14:30', title: '海邊走走看夕陽+拍照', note: '', img: null, loc: '', color: 'blue' },
-        { id: 23, date: '2026-06-09', time: '15:00', title: '前往南浦洞', note: '逛五福寢具', img: null, loc: '', color: 'white' },
-        { id: 24, date: '2026-06-09', time: '17:30', title: '扎嘎其市場', note: '', img: null, loc: '', color: 'white' },
-        { id: 25, date: '2026-06-09', time: '19:00', title: '樂天超市', note: '', img: null, loc: '', color: 'white' },
-        { id: 26, date: '2026-06-10', time: '08:00', title: '吃早餐', note: '步行5分', img: null, loc: '', color: 'yellow' },
-        { id: 27, date: '2026-06-10', time: '10:30', title: '本思診所 醫美體驗', note: '預約大名:Wang lin / Hsieh chia hao', img: null, loc: '', color: 'green' },
-        { id: 28, date: '2026-06-10', time: '13:00', title: '豬肉湯飯', note: '午餐', img: null, loc: '', color: 'yellow' },
-        { id: 29, date: '2026-06-10', time: '14:30', title: '逛西面地下街+購物', note: '買伴手禮', img: null, loc: '', color: 'white' },
-        { id: 30, date: '2026-06-11', time: '06:00', title: '搭免費接駁車前往機場', note: '車程約30分', img: null, loc: '', color: 'white' },
-        { id: 31, date: '2026-06-11', time: '06:30', title: '機場退稅', note: '', img: null, loc: '', color: 'white' },
-        { id: 32, date: '2026-06-11', time: '07:00', title: '吃東西', note: '', img: null, loc: '', color: 'yellow' },
-        { id: 33, date: '2026-06-11', time: '09:00', title: '飛回台中!', note: '搭乘KE2085航班', img: null, loc: '', color: 'blue' }
+        { id: 13, date: '2026-06-08', time: '10:50', title: '海岸列車+拍拍照', note: '', img: null, loc: '', color: 'blue' }
     ];
 
     let expenses = [
@@ -1044,7 +787,7 @@
 
     let vouchersData = [];
 
-    // ================= 全域刪除核心 (CRUD) =================
+    // ================= 全域刪除核心 =================
     function confirmDelete(type, id) {
         playHaptic();
         deleteTargetType = type;
@@ -1345,8 +1088,14 @@
     function saveItinerary() {
         const id = document.getElementById('form-item-id').value; const date = document.getElementById('form-date').value; const time = document.getElementById('form-time').value; const title = document.getElementById('form-title').value.trim(); const note = document.getElementById('form-note').value.trim(); const loc = document.getElementById('form-loc').value.trim();
         if(!title) { alert("⚠️ 行程標題為必填！"); return; }
-        if (id) { const index = itineraryData.findIndex(e => e.id == id); itineraryData[index] = { ...itineraryData[index], date, time, title, note, loc, color: selectedFormColor, img: currentItiImage }; } 
-        else { itineraryData.push({ id: Date.now(), date, time, title, note, loc, img: currentItiImage, color: selectedFormColor }); }
+        
+        if (id) {
+            const index = itineraryData.findIndex(e => e.id == id);
+            itineraryData[index] = { ...itineraryData[index], date, time, title, note, loc, color: selectedFormColor, img: currentItiImage };
+        } else {
+            itineraryData.push({ id: Date.now(), date, time, title, note, loc, img: currentItiImage, color: selectedFormColor });
+        }
+        
         closeModal('modal-itinerary'); showToast('儲存成功');
         if(date !== currentDateSelect && tripDates.find(t=>t.date===date)) selectDate(date); else renderTimeline();
     }
@@ -1504,7 +1253,6 @@
         `).join('');
     }
 
-    // V16: 取消已勾選項目的 text-decoration 刪除線
     function openVoucherDetail(id) {
         playHaptic();
         const v = vouchersData.find(item => item.id === id);
@@ -1638,7 +1386,6 @@
         return settlements;
     }
 
-    // V16: 同步計算動態渲染 KRW 總額
     function renderExpenses() {
         const container = document.getElementById('expense-list-container'); const filterTitle = document.getElementById('detail-filter-name'); const totalElem = document.getElementById('detail-total-amount'); const totalKrwElem = document.getElementById('detail-total-krw'); const settlementCard = document.getElementById('settlement-card'); const subtotalElem = document.getElementById('detail-day-subtotal');
         expenses.sort((a, b) => new Date(b.date) - new Date(a.date)); 
