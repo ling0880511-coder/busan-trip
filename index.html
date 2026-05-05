@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>琳 ＆ 貓 in BUSAN - 旅遊 V19</title>
+    <title>琳 ＆ 貓 in BUSAN - 旅遊 V27 雲端正式版</title>
+    <!-- Firebase SDK (Compat Version) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
     <style>
@@ -822,7 +826,7 @@
                 <h3 style="font-size:0.95rem; color:var(--ac-brown); font-weight:900; margin-bottom:10px;"><i class="fa-solid fa-list-check"></i> 設施打卡清單</h3>
                 <div id="vd-facilities-list" style="display:flex; flex-direction:column; gap:8px;"></div>
             </div>
-            <button class="btn-q btn-mo-teal scale-btn" style="width:100%; margin-top:20px; background:var(--mo-blue); box-shadow:0 5px 0 #5B8BAA; color:#FFF;" onclick="closeModal('modal-voucher-detail'); openVoucherModal(parseInt(document.getElementById('vd-item-id').value));"><i class="fa-solid fa-pen"></i> 編輯票卷</button>
+            <button class="btn-q btn-mo-teal scale-btn" style="width:100%; margin-top:20px; background:var(--mo-blue); box-shadow:0 5px 0 #5B8BAA; color:#FFF;" onclick="closeModal('modal-voucher-detail'); openVoucherModal(document.getElementById('vd-item-id').value);"><i class="fa-solid fa-pen"></i> 編輯票卷</button>
         </div>
     </div>
 
@@ -1039,6 +1043,14 @@
         toast.style.opacity = '1'; toast.style.transform = 'translate(-50%, -50%) scale(1)';
         setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translate(-50%, -50%) scale(0.9)'; }, 1000);
     }
+    // Firebase 錯誤捕捉專用 (防呆提示)
+    function handleFirebaseError(err) {
+        console.error("Firestore Sync Error:", err);
+        if (err.code === 'permission-denied') {
+            console.warn("⚠️ Firebase 權限被拒絕，請確認資料庫 Rules 設定。");
+        }
+    }
+
     function switchPage(pageId, el) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(pageId).classList.add('active');
@@ -1076,58 +1088,77 @@
         { date: '2026-06-10', day: 'DAY 5', week: '三', loc: '西面' }, { date: '2026-06-11', day: 'DAY 6', week: '四', loc: '西面' }
     ];
 
-    let membersData = [
-        { id: 1, name: '琳', aka: '財務大臣', quote: '買買買，錢不是問題！', img: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&q=80', fallback: '👩' },
-        { id: 2, name: '貓', aka: '導航雷達', quote: '跟著我走絕對不會迷路', img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&q=80', fallback: '🐱' }
-    ];
-
-    let itineraryData = [
-        { id: 1, date: '2026-06-06', time: '15:30', title: '下機後搭車至西面', note: '搭免費接駁前往住宿(車程約30分)', img: null, loc: '', color: 'white' },
-        { id: 2, date: '2026-06-06', time: '18:00', title: '雪夜覓-燒肉', note: '晚餐 訂位大名:Wang lin', img: null, loc: '', color: 'pink' },
-        { id: 3, date: '2026-06-06', time: '20:00', title: '逛街買東西+消夜', note: '買衣服+回住宿休息', img: null, loc: '', color: 'white' },
-        { id: 4, date: '2026-06-07', time: '08:00', title: '前往海雲台', note: '車程約50分', img: null, loc: '', color: 'white' },
-        { id: 5, date: '2026-06-07', time: '09:00', title: '巨大牛骨湯', note: '早午餐', img: null, loc: '', color: 'yellow' },
-        { id: 6, date: '2026-06-07', time: '10:45', title: 'Standard Bread', note: '點心', img: null, loc: '', color: 'yellow' },
-        { id: 7, date: '2026-06-07', time: '12:00', title: 'X The Sky + 最高星巴克朝聖', note: '開始計算釜山 pass 48hr', img: null, loc: '', color: 'blue' },
-        { id: 8, date: '2026-06-07', time: '13:00', title: '搭車前往遊樂設施', note: '車程約45分', img: null, loc: '', color: 'white' },
-        { id: 9, date: '2026-06-07', time: '14:00', title: '玩滑車+樂天世界', note: 'Skyline Luge', img: null, loc: '', color: 'green' },
-        { id: 10, date: '2026-06-07', time: '18:40', title: '廣安木燒肉', note: '晚餐', img: null, loc: '', color: 'pink' },
-        { id: 11, date: '2026-06-08', time: '08:00', title: '前往海雲台', note: '', img: null, loc: '', color: 'white' },
-        { id: 12, date: '2026-06-08', time: '09:30', title: 'DIART Coffee', note: '', img: null, loc: '', color: 'yellow' },
-        { id: 13, date: '2026-06-08', time: '10:50', title: '海岸列車+拍拍照', note: '', img: null, loc: '', color: 'blue' },
-        { id: 14, date: '2026-06-08', time: '12:10', title: '大海鮑魚粥', note: '午餐', img: null, loc: '', color: 'yellow' },
-        { id: 15, date: '2026-06-08', time: '13:30', title: '海雲台傳統市場', note: '', img: null, loc: '', color: 'white' },
-        { id: 16, date: '2026-06-08', time: '15:45', title: '海雲台小麥麵', note: '晚餐', img: null, loc: '', color: 'pink' },
-        { id: 17, date: '2026-06-08', time: '17:30', title: 'Spa Land 汗蒸幕', note: '天然溫泉(09:00~22:00)', img: null, loc: '', color: 'blue' },
-        { id: 18, date: '2026-06-09', time: '08:00', title: '前往廣安里', note: '', img: null, loc: '', color: 'white' },
-        { id: 19, date: '2026-06-09', time: '09:00', title: 'Your Type', note: '早午餐', img: null, loc: '', color: 'yellow' },
-        { id: 20, date: '2026-06-09', time: '11:00', title: '逛逛小店看風景', note: '', img: null, loc: '', color: 'blue' },
-        { id: 21, date: '2026-06-09', time: '13:00', title: '烤扇貝+海鮮大餐', note: '午餐', img: null, loc: '', color: 'yellow' },
-        { id: 22, date: '2026-06-09', time: '14:30', title: '海邊走走看夕陽+拍照', note: '', img: null, loc: '', color: 'blue' },
-        { id: 23, date: '2026-06-09', time: '15:00', title: '前往南浦洞', note: '逛五福寢具', img: null, loc: '', color: 'white' },
-        { id: 24, date: '2026-06-09', time: '17:30', title: '扎嘎其市場', note: '', img: null, loc: '', color: 'white' },
-        { id: 25, date: '2026-06-09', time: '19:00', title: '樂天超市', note: '', img: null, loc: '', color: 'white' },
-        { id: 26, date: '2026-06-10', time: '08:00', title: '吃早餐', note: '步行5分', img: null, loc: '', color: 'yellow' },
-        { id: 27, date: '2026-06-10', time: '10:30', title: '本思診所 醫美體驗', note: '預約大名:Wang lin / Hsieh chia hao', img: null, loc: '', color: 'green' },
-        { id: 28, date: '2026-06-10', time: '13:00', title: '豬肉湯飯', note: '午餐', img: null, loc: '', color: 'yellow' },
-        { id: 29, date: '2026-06-10', time: '14:30', title: '逛西面地下街+購物', note: '買伴手禮', img: null, loc: '', color: 'white' },
-        { id: 30, date: '2026-06-11', time: '06:00', title: '搭免費接駁車前往機場', note: '車程約30分', img: null, loc: '', color: 'white' },
-        { id: 31, date: '2026-06-11', time: '06:30', title: '機場退稅', note: '', img: null, loc: '', color: 'white' },
-        { id: 32, date: '2026-06-11', time: '07:00', title: '吃東西', note: '', img: null, loc: '', color: 'yellow' },
-        { id: 33, date: '2026-06-11', time: '09:00', title: '飛回台中!', note: '搭乘KE2085航班', img: null, loc: '', color: 'blue' }
-    ];
-
-    let expenses = [
-        { id: 1, date: '2026-06-06', title: '雪夜覓燒肉', loc: '西面', method: '信用卡', amountKrw: 80000, amountTwd: 1840, payer: '琳', splitters: ['琳', '貓'], splitAmountTwd: 920 },
-        { id: 2, date: '2026-06-07', title: '巨大牛骨湯', loc: '海雲台', method: '現金', amountKrw: 30000, amountTwd: 690, payer: '貓', splitters: ['琳', '貓'], splitAmountTwd: 345 }
-    ];
-
-    let diaryData = [
-        { id: 1, date: '2026-06-08', author: '貓', content: '終於抵達釜山啦！\n西面真的好好逛，雪夜覓燒肉超好吃！', images: ['https://images.unsplash.com/photo-1580651315530-69c8e0026377?w=500&q=80'] },
-        { id: 2, date: '2026-06-06', author: '琳', content: '出發去機場，好期待！✈️', images: [] }
-    ];
-
+    // ================= 資料淨空 (V27 空殼化) =================
+    let membersData = [];
+    let itineraryData = [];
+    let expenses = [];
+    let diaryData = [];
     let vouchersData = [];
+
+    // ================= Firebase 初始化與監聽 =================
+    const firebaseConfig = {
+      apiKey: "AIzaSyC4IbiHWsJE52xLhjf2eDodtO6UZKOgBhY",
+      authDomain: "busan2026-210a7.firebaseapp.com",
+      projectId: "busan2026-210a7",
+      storageBucket: "busan2026-210a7.firebasestorage.app",
+      messagingSenderId: "861407234236",
+      appId: "1:861407234236:web:95d5e38b3cedd8a8b2a8b9",
+      measurementId: "G-3TTTV5HC4X"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    db.collection("itineraries").onSnapshot(snap => {
+        itineraryData = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderTimeline(); triggerCountdownAnimation();
+    }, handleFirebaseError);
+
+    db.collection("expenses").onSnapshot(snap => {
+        expenses = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderExpenses();
+    }, handleFirebaseError);
+
+    db.collection("diaries").onSnapshot(snap => {
+        diaryData = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderDiary();
+    }, handleFirebaseError);
+
+    db.collection("vouchers").onSnapshot(snap => {
+        vouchersData = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderVouchers();
+    }, handleFirebaseError);
+
+    db.collection("members").onSnapshot(snap => {
+        membersData = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderGlobalAvatars();
+    }, handleFirebaseError);
+
+    // ================= 共用圖片壓縮函數 (Canvas) =================
+    function compressImage(file, callback) {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function(e) {
+            const img = new Image();
+            img.src = e.target.result;
+            img.onload = function() {
+                let width = img.width;
+                let height = img.height;
+                const max = 800;
+                if (width > height && width > max) {
+                    height *= max / width; width = max;
+                } else if (height > width && height > max) {
+                    width *= max / height; height = max;
+                } else if (width === height && width > max) {
+                    width = max; height = max;
+                }
+                const canvas = document.createElement('canvas');
+                canvas.width = width; canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                callback(canvas.toDataURL('image/jpeg', 0.7));
+            }
+        }
+    }
 
     // ================= 全域刪除核心 (CRUD) =================
     function confirmDelete(type, id) {
@@ -1139,32 +1170,29 @@
 
     function executeDelete() {
         playHaptic();
-        if (deleteTargetType === 'itinerary') {
-            itineraryData = itineraryData.filter(item => item.id !== itemToDelete);
-            renderTimeline();
-        } else if (deleteTargetType === 'voucher') {
-            vouchersData = vouchersData.filter(item => item.id !== itemToDelete);
-            renderVouchers();
-        } else if (deleteTargetType === 'expense') {
-            expenses = expenses.filter(item => item.id !== itemToDelete);
-            renderExpenses();
-        } else if (deleteTargetType === 'diary') {
-            diaryData = diaryData.filter(item => item.id !== itemToDelete);
-            renderDiary();
-        } else if (deleteTargetType === 'member') {
-            membersData = membersData.filter(item => item.id !== itemToDelete);
-            renderGlobalAvatars();
-        }
-        
         closeModal('modal-delete');
-        showToast('刪除成功');
+        showToast('刪除中...');
+        
+        let col = '';
+        if (deleteTargetType === 'itinerary') col = 'itineraries';
+        else if (deleteTargetType === 'voucher') col = 'vouchers';
+        else if (deleteTargetType === 'expense') col = 'expenses';
+        else if (deleteTargetType === 'diary') col = 'diaries';
+        else if (deleteTargetType === 'member') col = 'members';
+
+        if(col && itemToDelete) {
+            db.collection(col).doc(itemToDelete).delete().catch(handleFirebaseError);
+        }
     }
 
-    // ================= 全域頭像同步 =================
+    // ================= 全域頭像同步與空值防呆 =================
     function renderGlobalAvatars() {
+        // Header
         document.getElementById('header-avatars-container').innerHTML = membersData.map(m => `
             <div class="avatar">${m.img ? `<img src="${m.img}">` : m.fallback}</div>
         `).join('');
+
+        const emptyWarning = `<div style="color:var(--mo-pink); font-weight:800; font-size:0.9rem; padding:10px 0;">⚠️ 請先至「成員」頁面新增人員</div>`;
 
         const renderExpenseAvatars = (isActiveAll = false, isRadio = false, baseClass = '', toggleFunc = '') => {
             return membersData.map((m, i) => {
@@ -1181,26 +1209,34 @@
             }).join('');
         };
         
-        document.getElementById('payer-group-container').innerHTML = renderExpenseAvatars(false, true, 'payer-opt', 'togglePayer');
-        document.getElementById('split-group-container').innerHTML = renderExpenseAvatars(true, false, 'split-opt', 'toggleSplit');
-        document.getElementById('edit-payer-group-container').innerHTML = renderExpenseAvatars(false, true, 'edit-payer-opt', 'toggleEditPayer');
-        document.getElementById('edit-split-group-container').innerHTML = renderExpenseAvatars(true, false, 'edit-split-opt', 'toggleEditSplit');
+        if (membersData.length === 0) {
+            document.getElementById('payer-group-container').innerHTML = emptyWarning;
+            document.getElementById('split-group-container').innerHTML = emptyWarning;
+            document.getElementById('edit-payer-group-container').innerHTML = emptyWarning;
+            document.getElementById('edit-split-group-container').innerHTML = emptyWarning;
+            document.getElementById('diary-author-group-container').innerHTML = emptyWarning;
+        } else {
+            document.getElementById('payer-group-container').innerHTML = renderExpenseAvatars(false, true, 'payer-opt', 'togglePayer');
+            document.getElementById('split-group-container').innerHTML = renderExpenseAvatars(true, false, 'split-opt', 'toggleSplit');
+            document.getElementById('edit-payer-group-container').innerHTML = renderExpenseAvatars(false, true, 'edit-payer-opt', 'toggleEditPayer');
+            document.getElementById('edit-split-group-container').innerHTML = renderExpenseAvatars(true, false, 'edit-split-opt', 'toggleEditSplit');
+            
+            document.getElementById('diary-author-group-container').innerHTML = membersData.map((m, i) => {
+                const activeClass = i === 0 ? 'active' : '';
+                const styleStr = activeClass === 'active' ? `border-color:var(--mo-blue); opacity:1; filter:grayscale(0%);` : `border-color:var(--ac-tan); opacity:0.4; filter:grayscale(100%);`;
+                const avatarContent = m.img ? `<img src="${m.img}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">` : `<div style="margin-top:10px;">${m.fallback}</div>`;
+                return `
+                <div class="ava-opt diary-author-opt ${activeClass} scale-btn" data-val="${m.name}" onclick="toggleDiaryAuthor(this)" style="${styleStr}">
+                    ${avatarContent}
+                    <div class="ava-name">${m.name}</div>
+                </div>`;
+            }).join('');
+        }
 
         document.getElementById('expense-filter-container').innerHTML = `
             <div class="f-tag-pill active scale-btn" onclick="filterExpenses('all', this)">全體</div>
             ${membersData.map(m => `<div class="f-tag-pill scale-btn" onclick="filterExpenses('${m.name}', this)">${m.name}</div>`).join('')}
         `;
-
-        document.getElementById('diary-author-group-container').innerHTML = membersData.map((m, i) => {
-            const activeClass = i === 0 ? 'active' : '';
-            const styleStr = activeClass === 'active' ? `border-color:var(--mo-blue); opacity:1; filter:grayscale(0%);` : `border-color:var(--ac-tan); opacity:0.4; filter:grayscale(100%);`;
-            const avatarContent = m.img ? `<img src="${m.img}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">` : `<div style="margin-top:10px;">${m.fallback}</div>`;
-            return `
-            <div class="ava-opt diary-author-opt ${activeClass} scale-btn" data-val="${m.name}" onclick="toggleDiaryAuthor(this)" style="${styleStr}">
-                ${avatarContent}
-                <div class="ava-name">${m.name}</div>
-            </div>`;
-        }).join('');
 
         document.getElementById('member-container').innerHTML = membersData.map(m => {
             const avatarContent = m.img ? `<img src="${m.img}" class="member-avatar">` : `<div class="member-avatar">${m.fallback}</div>`;
@@ -1213,8 +1249,8 @@
                     ${m.quote ? `<div class="member-quote">"${m.quote}"</div>` : ''}
                 </div>
                 <div class="member-actions">
-                    <i class="fa-solid fa-pen-to-square scale-btn" onclick="openMemberModal(${m.id})"></i>
-                    <i class="fa-solid fa-trash-can scale-btn" onclick="confirmDelete('member', ${m.id})"></i>
+                    <i class="fa-solid fa-pen-to-square scale-btn" onclick="openMemberModal('${m.id}')"></i>
+                    <i class="fa-solid fa-trash-can scale-btn" onclick="confirmDelete('member', '${m.id}')"></i>
                 </div>
             </div>`;
         }).join('');
@@ -1295,7 +1331,8 @@
     let currentItiImage = null;
     function renderTimeline() {
         const container = document.getElementById('timeline-container');
-        let todaysEvents = itineraryData.filter(e => e.date === currentDateSelect).sort((a, b) => a.time.localeCompare(b.time));
+        // 防呆：確保 time 屬性存在
+        let todaysEvents = itineraryData.filter(e => e.date === currentDateSelect).sort((a, b) => (a.time || '').localeCompare(b.time || ''));
 
         if(todaysEvents.length === 0) {
             container.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--ac-brown-light); font-weight: 800;">當日尚無行程 🍃</div>`;
@@ -1308,11 +1345,11 @@
             return `
             <div class="timeline-item">
                 <div class="timeline-dot" style="border-color: ${cInfo.dot};"></div>
-                <div class="event-card" style="background-color: ${cInfo.hex}; border-color: ${cInfo.name === 'white' ? 'transparent' : cInfo.dot};" onclick="toggleEventDetail(${event.id})">
+                <div class="event-card" style="background-color: ${cInfo.hex}; border-color: ${cInfo.name === 'white' ? 'transparent' : cInfo.dot};" onclick="toggleEventDetail('${event.id}')">
                     <div class="event-header">
                         <div class="time-picker-wrapper" onclick="event.stopPropagation()">
                             <div class="time-display-btn">${event.time}</div>
-                            <input type="time" value="${event.time}" onchange="updateEventTime(${event.id}, this.value)">
+                            <input type="time" value="${event.time}" onchange="updateEventTime('${event.id}', this.value)">
                         </div>
                         <span class="event-title">${event.title}</span>
                         <i class="fa-solid fa-chevron-down" style="color:var(--ac-tan);"></i>
@@ -1325,8 +1362,8 @@
                         ${event.img ? `<img src="${event.img}" style="width:100%; height:140px; object-fit:cover; border-radius:18px; margin-bottom:10px; border:1px solid var(--ac-tan); margin-top:10px;">` : ''}
 
                         <div class="event-actions">
-                            <span onclick="event.stopPropagation(); playHaptic(); openItineraryModal(${event.id})"><i class="fa-solid fa-pen-to-square"></i></span>
-                            <span onclick="event.stopPropagation(); playHaptic(); confirmDelete('itinerary', ${event.id})"><i class="fa-solid fa-trash-can"></i></span>
+                            <span onclick="event.stopPropagation(); playHaptic(); openItineraryModal('${event.id}')"><i class="fa-solid fa-pen-to-square"></i></span>
+                            <span onclick="event.stopPropagation(); playHaptic(); confirmDelete('itinerary', '${event.id}')"><i class="fa-solid fa-trash-can"></i></span>
                         </div>
                     </div>
                 </div>
@@ -1335,7 +1372,7 @@
     }
 
     function toggleEventDetail(id) { playHaptic(); const detail = document.getElementById(`detail-${id}`); detail.style.display = (detail.style.display === 'block') ? 'none' : 'block'; }
-    function updateEventTime(id, newTime) { const event = itineraryData.find(e => e.id === id); if(event) { event.time = newTime; renderTimeline(); } }
+    function updateEventTime(id, newTime) { db.collection("itineraries").doc(id).update({ time: newTime }).catch(handleFirebaseError); }
 
     function easeOutQuart(t) { return 1 - (--t) * t * t * t; }
     function triggerCountdownAnimation() {
@@ -1354,7 +1391,7 @@
         animationFrameId = requestAnimationFrame(animate);
     }
 
-    // ================= V19 升級：地圖預覽卡片與正確跳轉 =================
+    // ================= V27: 地圖預覽卡片與正確跳轉 =================
     function checkMapThumbnail() {
         const val = document.getElementById('form-loc').value.trim();
         const container = document.getElementById('map-preview-container');
@@ -1392,10 +1429,8 @@
         const match = val.match(urlPattern);
         
         if (match) {
-            // 一鍵跳轉原始 URL (喚醒 App)
             window.open(match[0], '_blank');
         } else {
-            // 文字搜尋則精準調用 Google Maps Search 協議
             const loc = val || '釜山';
             window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(loc)}`, '_blank'); 
         }
@@ -1404,12 +1439,10 @@
     function handleItiPhotoUpload(event) {
         const file = event.target.files[0];
         if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                currentItiImage = e.target.result;
+            compressImage(file, base64 => {
+                currentItiImage = base64;
                 renderItiUploadPreview();
-            }
-            reader.readAsDataURL(file);
+            });
         }
     }
     
@@ -1445,14 +1478,25 @@
     function saveItinerary() {
         const id = document.getElementById('form-item-id').value; const date = document.getElementById('form-date').value; const time = document.getElementById('form-time').value; const title = document.getElementById('form-title').value.trim(); const note = document.getElementById('form-note').value.trim(); const loc = document.getElementById('form-loc').value.trim();
         if(!title) { alert("⚠️ 行程標題為必填！"); return; }
-        if (id) { const index = itineraryData.findIndex(e => e.id == id); itineraryData[index] = { ...itineraryData[index], date, time, title, note, loc, color: selectedFormColor, img: currentItiImage }; } 
-        else { itineraryData.push({ id: Date.now(), date, time, title, note, loc, img: currentItiImage, color: selectedFormColor }); }
-        closeModal('modal-itinerary'); showToast('儲存成功');
-        if(date !== currentDateSelect && tripDates.find(t=>t.date===date)) selectDate(date); else renderTimeline();
+        
+        // 嚴格轉換可能為 undefined 的屬性
+        const dataObj = { date, time, title, note: note || null, loc: loc || null, color: selectedFormColor || 'white', img: currentItiImage || null };
+        
+        closeModal('modal-itinerary');
+        showToast('儲存中...');
+        
+        if (id) {
+            db.collection("itineraries").doc(id).update(dataObj).then(() => {
+                if(date !== currentDateSelect && tripDates.find(t=>t.date===date)) selectDate(date);
+            }).catch(handleFirebaseError);
+        } else { 
+            db.collection("itineraries").add(dataObj).then(() => {
+                if(date !== currentDateSelect && tripDates.find(t=>t.date===date)) selectDate(date);
+            }).catch(handleFirebaseError);
+        }
     }
 
-
-    // ================= V19 升級：預定票務表單修改 =================
+    // ================= 預定票務表單修改 =================
     function requirePin(targetId) {
         document.getElementById('pin-target').value = targetId; document.getElementById('pin-input').value = '';
         document.getElementById('modal-pin').style.display = 'flex'; setTimeout(() => document.getElementById('pin-input').focus(), 100);
@@ -1579,7 +1623,12 @@
 
     function handleVoucherPhotoUpload(event) {
         const file = event.target.files[0];
-        if (file) { const reader = new FileReader(); reader.onload = function(e) { currentVoucherImage = e.target.result; renderVoucherUploadPreview(); }; reader.readAsDataURL(file); }
+        if (file) { 
+            compressImage(file, base64 => {
+                currentVoucherImage = base64;
+                renderVoucherUploadPreview();
+            }); 
+        }
     }
 
     function renderVoucherUploadPreview() {
@@ -1599,20 +1648,18 @@
         const expire = document.getElementById('voucher-expire').value; 
         const code = document.getElementById('voucher-code').value;
 
+        // 嚴格轉換
+        const dataObj = { title, date, expire: expire || null, code: code || null, img: currentVoucherImage || null, facilities: currentVoucherFacilities || [] };
+
+        closeModal('modal-voucher');
+        showToast('儲存中...');
+
         if (id) {
-            const index = vouchersData.findIndex(v => v.id == id);
-            vouchersData[index] = { ...vouchersData[index], title, date, expire, code, img: currentVoucherImage, facilities: currentVoucherFacilities };
-            showToast('編輯成功');
+            db.collection("vouchers").doc(id).update(dataObj)
+            .then(() => { if (document.getElementById('modal-voucher-detail').style.display === 'flex') openVoucherDetail(id); })
+            .catch(handleFirebaseError);
         } else {
-            vouchersData.unshift({ id: Date.now(), title, date, expire, code, img: currentVoucherImage, facilities: currentVoucherFacilities });
-            showToast('票卷儲存成功');
-        }
-        
-        closeModal('modal-voucher');  
-        renderVouchers();
-        
-        if (document.getElementById('modal-voucher-detail').style.display === 'flex' && id) {
-            openVoucherDetail(parseInt(id));
+            db.collection("vouchers").add(dataObj).catch(handleFirebaseError);
         }
     }
 
@@ -1621,15 +1668,15 @@
         if(vouchersData.length === 0) { container.innerHTML = `<div class="ac-card" style="text-align:center; padding: 40px; font-weight:900; color:var(--ac-brown-light);">🎫 尚無票卷資料</div>`; return; }
         
         container.innerHTML = vouchersData.map(v => `
-            <div class="ac-card glowing-hover" style="display:flex; gap:15px; align-items:center; padding:16px; cursor:pointer;" onclick="openVoucherDetail(${v.id})">
+            <div class="ac-card glowing-hover" style="display:flex; gap:15px; align-items:center; padding:16px; cursor:pointer;" onclick="openVoucherDetail('${v.id}')">
                 ${v.img ? `<img src="${v.img}" style="width:60px; height:60px; border-radius:12px; object-fit:cover; border:1px solid var(--ac-tan);">` : `<div style="width:60px; height:60px; border-radius:12px; background:#F8F6F2; display:flex; justify-content:center; align-items:center; font-size:1.5rem; border:1px solid var(--ac-tan);">🎫</div>`}
                 <div style="flex:1;">
                     <div style="font-weight:900; color:var(--ac-brown); font-size:1.1rem; margin-bottom:5px;">${v.title}</div>
                     <div style="font-size:0.8rem; color:var(--ac-brown-light); font-weight:800;">使用: ${v.date} ${v.expire ? ` | 期限: ${v.expire}` : ''}</div>
                 </div>
                 <div style="display:flex; gap:8px;">
-                    <div class="scale-btn" onclick="event.stopPropagation(); openVoucherModal(${v.id})" style="color:var(--mo-blue); font-size:1.2rem; padding: 10px;"><i class="fa-solid fa-pen"></i></div>
-                    <div class="scale-btn" onclick="event.stopPropagation(); confirmDelete('voucher', ${v.id})" style="color:var(--ac-tan); font-size:1.2rem; padding: 10px;"><i class="fa-solid fa-trash-can"></i></div>
+                    <div class="scale-btn" onclick="event.stopPropagation(); openVoucherModal('${v.id}')" style="color:var(--mo-blue); font-size:1.2rem; padding: 10px;"><i class="fa-solid fa-pen"></i></div>
+                    <div class="scale-btn" onclick="event.stopPropagation(); confirmDelete('voucher', '${v.id}')" style="color:var(--ac-tan); font-size:1.2rem; padding: 10px;"><i class="fa-solid fa-trash-can"></i></div>
                 </div>
             </div>
         `).join('');
@@ -1713,35 +1760,55 @@
     function saveExpense() {
         const amt = parseFloat(document.getElementById('exp-amount').value); const title = document.getElementById('exp-title').value.trim();
         if(!amt || amt <= 0) { alert('⚠️ 請輸入有效的消費金額！'); return; } if(!title) { alert('⚠️ 請輸入消費項目！'); return; }
-        const date = document.getElementById('exp-date').value; const loc = document.getElementById('exp-loc').value.trim(); const method = document.querySelector('.m-tab.active').innerText; const payer = document.querySelector('.payer-opt.active').dataset.val; const splitters = Array.from(document.querySelectorAll('.split-opt.active')).map(el => el.dataset.val);
+        
+        // 防呆：確保成員存在並已選擇
+        const payerOpt = document.querySelector('.payer-opt.active');
+        if (!payerOpt) { alert('⚠️ 請選擇付款人！若下方無人員選項，請先至「成員」頁面新增。'); return; }
+        
+        const date = document.getElementById('exp-date').value; const loc = document.getElementById('exp-loc').value.trim(); const method = document.querySelector('.m-tab.active').innerText; 
+        const payer = payerOpt.dataset.val; 
+        const splitters = Array.from(document.querySelectorAll('.split-opt.active')).map(el => el.dataset.val);
         
         let amountTwd = 0; if(currentExpCurrency === 'KRW') amountTwd = Math.round(amt * EXCHANGE_RATE); else if(currentExpCurrency === 'USD') amountTwd = Math.round(amt * EXCHANGE_RATE_USD); else amountTwd = amt;
         let amountKrw = (currentExpCurrency === 'KRW') ? amt : Math.round(amountTwd / EXCHANGE_RATE);
         const splitAmountTwd = splitters.length > 0 ? Math.round(amountTwd / splitters.length) : 0;
 
-        expenses.unshift({ id: Date.now(), date, title, loc, method, amountKrw, amountTwd, payer, splitters, splitAmountTwd });
-        playHaptic(); showToast('已新增一筆');
+        // 嚴格轉換
+        const dataObj = { date, title, loc: loc || null, method, amountKrw, amountTwd, payer, splitters: splitters || [], splitAmountTwd };
+
+        // UI 樂觀更新
         document.getElementById('exp-amount').value = ''; document.getElementById('exp-title').value = ''; document.getElementById('exp-loc').value = ''; document.getElementById('exp-approx-twd').value = '0';
-        renderExpenses(); setTimeout(() => { switchSubTab('acc', 'detail', document.getElementById('tab-acc-detail')); }, 600);
+        showToast('已新增一筆');
+        
+        setTimeout(() => { switchSubTab('acc', 'detail', document.getElementById('tab-acc-detail')); }, 600);
+        db.collection("expenses").add(dataObj).catch(handleFirebaseError);
     }
 
     function openExpenseEdit(id) {
         playHaptic(); const exp = expenses.find(e => e.id === id); if(!exp) return;
         document.getElementById('edit-exp-id').value = exp.id; document.getElementById('edit-exp-date').value = exp.date; document.getElementById('edit-exp-amount').value = exp.amountKrw; document.getElementById('edit-exp-twd').value = `≈ NT$ ${exp.amountTwd.toLocaleString()}`; document.getElementById('edit-exp-loc').value = exp.loc || ''; document.getElementById('edit-exp-title').value = exp.title;
         document.querySelectorAll('.edit-payer-opt').forEach(opt => { opt.classList.remove('active'); opt.style.borderColor="var(--ac-tan)"; opt.style.opacity="0.4"; opt.style.filter="grayscale(100%)"; opt.style.background="#FFF"; if(opt.dataset.val === exp.payer) { opt.classList.add('active'); opt.style.borderColor="var(--mo-yellow)"; opt.style.opacity="1"; opt.style.filter="grayscale(0%)"; opt.style.background="rgba(255,208,0,0.1)"; }});
-        document.querySelectorAll('.edit-split-opt').forEach(opt => { opt.classList.remove('active'); opt.style.borderColor="var(--ac-tan)"; opt.style.opacity="0.4"; opt.style.filter="grayscale(100%)"; opt.style.background="#FFF"; if(exp.splitters.includes(opt.dataset.val)) { opt.classList.add('active'); opt.style.borderColor="var(--mo-yellow)"; opt.style.opacity="1"; opt.style.filter="grayscale(0%)"; opt.style.background="rgba(255,208,0,0.1)"; }});
+        document.querySelectorAll('.edit-split-opt').forEach(opt => { opt.classList.remove('active'); opt.style.borderColor="var(--ac-tan)"; opt.style.opacity="0.4"; opt.style.filter="grayscale(100%)"; opt.style.background="#FFF"; if(exp.splitters && exp.splitters.includes(opt.dataset.val)) { opt.classList.add('active'); opt.style.borderColor="var(--mo-yellow)"; opt.style.opacity="1"; opt.style.filter="grayscale(0%)"; opt.style.background="rgba(255,208,0,0.1)"; }});
         document.getElementById('modal-expense-edit').style.display = 'flex';
     }
 
     function saveExpenseEdit() {
-        const id = parseInt(document.getElementById('edit-exp-id').value); const amountKrw = parseFloat(document.getElementById('edit-exp-amount').value); const title = document.getElementById('edit-exp-title').value.trim();
+        const id = document.getElementById('edit-exp-id').value; const amountKrw = parseFloat(document.getElementById('edit-exp-amount').value); const title = document.getElementById('edit-exp-title').value.trim();
         if(!amountKrw || amountKrw <= 0) { alert('⚠️ 金額無效！'); return; } if(!title) { alert('⚠️ 項目無效！'); return; }
-        const expIndex = expenses.findIndex(e => e.id === id);
-        if(expIndex > -1) {
-            const date = document.getElementById('edit-exp-date').value; const loc = document.getElementById('edit-exp-loc').value.trim(); const payer = document.querySelector('.edit-payer-opt.active').dataset.val; const splitters = Array.from(document.querySelectorAll('.edit-split-opt.active')).map(el => el.dataset.val); const amountTwd = Math.round(amountKrw * EXCHANGE_RATE); const splitAmountTwd = splitters.length > 0 ? Math.round(amountTwd / splitters.length) : 0;
-            expenses[expIndex] = { ...expenses[expIndex], date, title, loc, amountKrw, amountTwd, payer, splitters, splitAmountTwd };
-            closeModal('modal-expense-edit'); renderExpenses(); showToast('修改成功');
-        }
+        
+        const payerOpt = document.querySelector('.edit-payer-opt.active');
+        if (!payerOpt) { alert('⚠️ 請選擇付款人！'); return; }
+        
+        const date = document.getElementById('edit-exp-date').value; const loc = document.getElementById('edit-exp-loc').value.trim(); 
+        const payer = payerOpt.dataset.val; 
+        const splitters = Array.from(document.querySelectorAll('.edit-split-opt.active')).map(el => el.dataset.val); const amountTwd = Math.round(amountKrw * EXCHANGE_RATE); const splitAmountTwd = splitters.length > 0 ? Math.round(amountTwd / splitters.length) : 0;
+        
+        const dataObj = { date, title, loc: loc || null, amountKrw, amountTwd, payer, splitters: splitters || [], splitAmountTwd };
+
+        closeModal('modal-expense-edit');
+        showToast('修改中...');
+
+        db.collection("expenses").doc(id).update(dataObj).catch(handleFirebaseError);
     }
 
     function filterExpenses(filterName, el) { 
@@ -1768,7 +1835,6 @@
         return settlements;
     }
 
-    // V16: 同步計算動態渲染 KRW 總額
     function renderExpenses() {
         const container = document.getElementById('expense-list-container'); const filterTitle = document.getElementById('detail-filter-name'); const totalElem = document.getElementById('detail-total-amount'); const totalKrwElem = document.getElementById('detail-total-krw'); const settlementCard = document.getElementById('settlement-card'); const subtotalElem = document.getElementById('detail-day-subtotal');
         expenses.sort((a, b) => new Date(b.date) - new Date(a.date)); 
@@ -1782,9 +1848,9 @@
             if (currentExpFilter === 'all') { 
                 includeInList = true; myAmt = exp.amountTwd; myAmtKrw = exp.amountKrw; 
             } else { 
-                if (exp.splitters.length > 0 && exp.splitters.includes(currentExpFilter)) { 
+                if (exp.splitters && exp.splitters.length > 0 && exp.splitters.includes(currentExpFilter)) { 
                     includeInList = true; myAmt = exp.splitAmountTwd; myAmtKrw = Math.round(exp.amountKrw / exp.splitters.length); 
-                } else if (exp.splitters.length === 0 && exp.payer === currentExpFilter) { 
+                } else if ((!exp.splitters || exp.splitters.length === 0) && exp.payer === currentExpFilter) { 
                     includeInList = true; myAmt = exp.amountTwd; myAmtKrw = exp.amountKrw; 
                 } 
             }
@@ -1795,7 +1861,7 @@
         totalElem.innerText = `NT$ ${totalDisplay.toLocaleString()}`;
         totalKrwElem.innerText = `₩ ${totalDisplayKrw.toLocaleString()}`;
 
-        if(currentExpFilter === 'all' && expenses.some(e => e.splitters.length > 0)) {
+        if(currentExpFilter === 'all' && expenses.some(e => e.splitters && e.splitters.length > 0)) {
             const results = calculateSettlement();
             if(results.length > 0) { document.getElementById('settlement-content').innerHTML = results.join(''); settlementCard.style.display = 'block'; } 
             else { document.getElementById('settlement-content').innerHTML = `<div style="text-align:center; font-size:0.85rem; color:#8B5A5A;">目前無任何債務，大家不互欠！🎉</div>`; settlementCard.style.display = 'block'; }
@@ -1811,7 +1877,7 @@
         for(let date in grouped) {
             html += `<div class="date-divider">${date.substring(5).replace('-','/')}</div>`;
             grouped[date].forEach(exp => {
-                const isPersonal = exp.splitters.length === 0;
+                const isPersonal = !exp.splitters || exp.splitters.length === 0;
                 const icon = exp.method === '現金' ? '💵' : (exp.method === '信用卡' ? '💳' : '📱');
                 const locText = exp.loc ? `<span style="font-size:0.7rem; color:var(--ac-brown-light); margin-left:5px;">📍 ${exp.loc}</span>` : '';
                 let amountDisplayHtml = currentExpFilter === 'all' 
@@ -1821,7 +1887,7 @@
 
                 html += `
                 <div class="bill-item">
-                    <div style="display: flex; align-items: flex-start; gap: 12px; flex:1;" onclick="openExpenseEdit(${exp.id})">
+                    <div style="display: flex; align-items: flex-start; gap: 12px; flex:1;" onclick="openExpenseEdit('${exp.id}')">
                         <div class="bill-icon">${icon}</div>
                         <div>
                             <div style="font-weight: 900; font-size: 1.05rem; color:var(--ac-brown); margin-bottom:4px;">${exp.title}</div>
@@ -1829,8 +1895,8 @@
                         </div>
                     </div>
                     <div style="display: flex; align-items: center; gap: 15px;">
-                        <div style="text-align: right;" onclick="openExpenseEdit(${exp.id})">${amountDisplayHtml}</div>
-                        <div class="scale-btn" onclick="event.stopPropagation(); confirmDelete('expense', ${exp.id})" style="color:var(--ac-tan); font-size:1.2rem;"><i class="fa-solid fa-trash-can"></i></div>
+                        <div style="text-align: right;" onclick="openExpenseEdit('${exp.id}')">${amountDisplayHtml}</div>
+                        <div class="scale-btn" onclick="event.stopPropagation(); confirmDelete('expense', '${exp.id}')" style="color:var(--ac-tan); font-size:1.2rem;"><i class="fa-solid fa-trash-can"></i></div>
                     </div>
                 </div>`;
                 
@@ -1868,8 +1934,8 @@
                         <div class="avatar" style="width:36px; height:36px; margin:0; font-size:1.1rem; border-width:2px; border-color:var(--ac-tan); box-shadow:none;">${avatarImg}</div>
                         <div style="font-weight:900; color:var(--ac-brown); font-size:1.05rem;">${item.author}</div>
                         <div style="flex:1; text-align:right;">
-                            <i class="fa-solid fa-pen-to-square scale-btn" style="color:var(--ac-tan); font-size:1.1rem; margin-right:15px;" onclick="openDiaryModal(${item.id})"></i>
-                            <i class="fa-solid fa-trash-can scale-btn" style="color:var(--ac-tan); font-size:1.1rem;" onclick="event.stopPropagation(); confirmDelete('diary', ${item.id})"></i>
+                            <i class="fa-solid fa-pen-to-square scale-btn" style="color:var(--ac-tan); font-size:1.1rem; margin-right:15px;" onclick="openDiaryModal('${item.id}')"></i>
+                            <i class="fa-solid fa-trash-can scale-btn" style="color:var(--ac-tan); font-size:1.1rem;" onclick="event.stopPropagation(); confirmDelete('diary', '${item.id}')"></i>
                         </div>
                     </div>
                     <div class="diary-content">${item.content}</div>
@@ -1886,6 +1952,7 @@
         el.classList.add('active'); el.style.borderColor="var(--mo-blue)"; el.style.opacity="1"; el.style.filter="grayscale(0%)";
     }
 
+    let currentDiaryImages = [];
     function openDiaryModal(id = null) {
         playHaptic();
         if (id) {
@@ -1895,7 +1962,7 @@
                 opt.classList.remove('active'); opt.style.borderColor="var(--ac-tan)"; opt.style.opacity="0.4"; opt.style.filter="grayscale(100%)";
                 if(opt.dataset.val === entry.author) { opt.classList.add('active'); opt.style.borderColor="var(--mo-blue)"; opt.style.opacity="1"; opt.style.filter="grayscale(0%)"; }
             });
-            currentDiaryImages = [...entry.images];
+            currentDiaryImages = entry.images ? [...entry.images] : [];
         } else {
             document.getElementById('diary-edit-id').value = ""; document.getElementById('diary-date').value = currentDateSelect; document.getElementById('diary-content').value = ''; document.getElementById('diary-modal-title').innerHTML = '<i class="fa-solid fa-book"></i> 寫新日誌'; currentDiaryImages = [];
         }
@@ -1905,7 +1972,12 @@
     function handleDiaryPhotoUpload(event) {
         const files = event.target.files;
         if(currentDiaryImages.length + files.length > 5) { alert('最多只能上傳 5 張照片喔！'); return; }
-        Array.from(files).forEach(file => { const reader = new FileReader(); reader.onload = (e) => { currentDiaryImages.push(e.target.result); renderDiaryUploadPreview(); }; reader.readAsDataURL(file); });
+        Array.from(files).forEach(file => { 
+            compressImage(file, base64 => {
+                currentDiaryImages.push(base64);
+                renderDiaryUploadPreview();
+            }); 
+        });
     }
 
     function renderDiaryUploadPreview() {
@@ -1921,14 +1993,25 @@
     }
 
     function saveDiary() {
-        const id = document.getElementById('diary-edit-id').value; const date = document.getElementById('diary-date').value; const author = document.querySelector('.diary-author-opt.active').dataset.val; const content = document.getElementById('diary-content').value.trim();
+        const id = document.getElementById('diary-edit-id').value; const date = document.getElementById('diary-date').value; const content = document.getElementById('diary-content').value.trim();
         if(!content && currentDiaryImages.length === 0) { alert('請填寫內容或上傳照片喔！'); return; }
 
+        // 防呆：確保成員存在並已選擇
+        const authorOpt = document.querySelector('.diary-author-opt.active');
+        if (!authorOpt) { alert('⚠️ 請選擇記錄人！若下方無人員選項，請先至「成員」頁面新增。'); return; }
+        const author = authorOpt.dataset.val;
+
+        // 嚴格轉換
+        const dataObj = { date, author, content: content || null, images: currentDiaryImages || [] };
+
+        closeModal('modal-diary');
+        showToast('發布中...');
+
         if (id) {
-            const index = diaryData.findIndex(d => d.id == id);
-            if (index > -1) { diaryData[index] = { ...diaryData[index], date, author, content, images: [...currentDiaryImages] }; }
-        } else { diaryData.unshift({ id: Date.now(), date, author, content, images: [...currentDiaryImages] }); }
-        closeModal('modal-diary'); showToast(id ? '修改成功' : '日誌發布成功'); renderDiary();
+            db.collection("diaries").doc(id).update(dataObj).catch(handleFirebaseError);
+        } else { 
+            db.collection("diaries").add(dataObj).catch(handleFirebaseError);
+        }
     }
 
     // ================= 模組 5: 快樂成員 =================
@@ -1951,7 +2034,11 @@
 
     function handleMemberPhotoUpload(event) {
         const file = event.target.files[0];
-        if (file) { const reader = new FileReader(); reader.onload = function(e) { openCropper(e.target.result); }; reader.readAsDataURL(file); }
+        if (file) { 
+            compressImage(file, base64 => {
+                openCropper(base64);
+            }); 
+        }
     }
     
     function openCropper(src) {
@@ -2019,7 +2106,7 @@
         const ctx = canvas.getContext('2d');
         ctx.beginPath(); ctx.arc(100, 100, 100, 0, Math.PI * 2); ctx.clip();
         ctx.drawImage(cropImgElement, imgX, imgY, cropImgElement.width * currentScale, cropImgElement.height * currentScale);
-        currentMemberImage = canvas.toDataURL('image/jpeg', 0.9);
+        currentMemberImage = canvas.toDataURL('image/jpeg', 0.7);
         renderMemberUploadPreview(); closeModal('modal-cropper');
     }
 
@@ -2033,12 +2120,17 @@
         const id = document.getElementById('member-item-id').value; const name = document.getElementById('member-name').value.trim(); const aka = document.getElementById('member-aka').value.trim(); const quote = document.getElementById('member-quote').value.trim();
         if(!name) { alert("⚠️ 成員名稱為必填！"); return; }
 
+        // 嚴格轉換
+        const dataObj = { name, aka: aka || null, quote: quote || null, img: currentMemberImage || null, fallback: '👤' };
+
+        closeModal('modal-member-edit');
+        showToast('儲存中...');
+
         if (id) {
-            const index = membersData.findIndex(m => m.id == id);
-            membersData[index] = { ...membersData[index], name, aka, quote, img: currentMemberImage };
-        } else { membersData.push({ id: Date.now(), name, aka, quote, img: currentMemberImage, fallback: '👤' }); }
-        
-        closeModal('modal-member-edit'); showToast('儲存成功'); renderGlobalAvatars(); 
+            db.collection("members").doc(id).update(dataObj).catch(handleFirebaseError);
+        } else { 
+            db.collection("members").add(dataObj).catch(handleFirebaseError); 
+        }
     }
 
     // ================= 初始化 =================
