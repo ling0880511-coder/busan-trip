@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>琳 ＆ 貓 in BUSAN - 旅遊 V27 雲端正式版</title>
+    <title>琳 ＆ 貓 in BUSAN - 旅遊 V30 雲端正式版</title>
     <!-- Firebase SDK (Compat Version) -->
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
@@ -481,7 +481,9 @@
             <div id="booking-hotel" style="display:none;">
                 <div class="hotel-card2 glowing-hover scale-btn" id="hotel-stay" onclick="openHotelDetailModal()">
                     <div class="hc-img-wrapper">
-                        <img src="./封面.jpg" alt="Hotel Cover">
+                        <!-- V30 新增: 動態圖片取代相對路徑假圖 -->
+                        <img id="hotel-stay-cover" src="" style="display:none; width: 100%; height: 100%; object-fit: cover;" alt="Hotel Cover">
+                        <div id="hotel-stay-placeholder" style="width:100%; height:100%; background:#F8F6F2; display:flex; justify-content:center; align-items:center; color:var(--ac-tan); font-weight:900;"><i class="fa-solid fa-image" style="font-size:2.5rem; opacity:0.5;"></i></div>
                         <div class="hc-tag-loc"><i class="fa-solid fa-location-dot"></i> <span class="editable-field">釜山 西面</span></div>
                     </div>
                     <div class="hc-body">
@@ -736,6 +738,11 @@
                 <div style="flex:1;"><label class="form-label">每晚價格</label><input type="text" class="form-control" id="eh-9"></div>
             </div>
 
+            <!-- V30 新增: 圖片上傳區塊 -->
+            <label class="form-label" style="margin-top:5px;">住宿照片 (最多4張)</label>
+            <div style="display:flex; gap:15px; overflow-x:auto; scrollbar-width:none; padding: 10px 5px 15px 5px;" id="hotel-upload-preview"></div>
+            <input type="file" id="hotel-file-input" accept="image/*" multiple style="display:none;" onchange="handleHotelPhotoUpload(event)">
+
             <div style="display: flex; gap: 15px; margin-top: 15px;">
                 <button class="btn-q modal-btn modal-btn-cancel scale-btn" onclick="playHaptic(); closeModal('modal-hotel-edit')">取消</button>
                 <button class="btn-q modal-btn modal-btn-save scale-btn" onclick="playHaptic(); saveHotelEdit()">✔ 儲存修改</button>
@@ -747,11 +754,11 @@
         <div class="ac-modal" id="modal-hotel-detail-content">
             <div class="hd-close scale-btn" onclick="playHaptic(); closeModal('modal-hotel-detail')"><i class="fa-solid fa-xmark"></i></div>
             
-            <div style="display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; width: 100%; height: 220px; border-radius: 24px 24px 0 0; position: relative; flex-shrink: 0;">
-                <img src="./封面.jpg" style="flex: 0 0 100%; object-fit: cover; scroll-snap-align: start;">
-                <img src="./2.jpg" style="flex: 0 0 100%; object-fit: cover; scroll-snap-align: start;">
-                <img src="./3.jpg" style="flex: 0 0 100%; object-fit: cover; scroll-snap-align: start;">
-                <img src="./4.jpg" style="flex: 0 0 100%; object-fit: cover; scroll-snap-align: start;">
+            <div style="display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; width: 100%; height: 220px; border-radius: 24px 24px 0 0; position: relative; flex-shrink: 0; background: #F8F6F2;">
+                <!-- V30 新增: 動態圖片容器 -->
+                <div id="hotel-detail-images" style="display:flex; width:100%;">
+                    <div style="flex: 0 0 100%; display:flex; justify-content:center; align-items:center; color:var(--ac-tan); font-weight:900;"><i class="fa-solid fa-image" style="font-size:3rem; opacity:0.5;"></i></div>
+                </div>
                 <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 40%; background: linear-gradient(to top, rgba(0,0,0,0.6), transparent); pointer-events: none;"></div>
                 <div style="position: absolute; bottom: 15px; left: 15px; color: #FFF; pointer-events: none;">
                     <span style="background: rgba(255,255,255,0.3); padding: 4px 10px; border-radius: 8px; font-size: 0.7rem; font-weight: 900; backdrop-filter: blur(4px);">釜山</span>
@@ -1088,12 +1095,28 @@
         { date: '2026-06-10', day: 'DAY 5', week: '三', loc: '西面' }, { date: '2026-06-11', day: 'DAY 6', week: '四', loc: '西面' }
     ];
 
-    // ================= 資料淨空 (V27 空殼化) =================
+    // ================= 資料淨空 (V30 空殼化) =================
     let membersData = [];
     let itineraryData = [];
     let expenses = [];
     let diaryData = [];
     let vouchersData = [];
+    
+    // V30: 住宿照片專用記憶體陣列
+    let globalHotelImages = [];
+    let currentHotelImages = [];
+
+    // ================= 關聯式動態對應函數 (V30 核心) =================
+    // 輸入 ID 或 Name，永遠回傳最新的 Name。找不到則回傳原值。
+    function getMemberName(val) {
+        const m = membersData.find(m => m.id === val || m.name === val);
+        return m ? m.name : (val || '未知成員');
+    }
+    // 輸入 ID 或 Name，永遠回傳穩定的 ID。找不到則回傳原值。
+    function getMemberId(val) {
+        const m = membersData.find(m => m.id === val || m.name === val);
+        return m ? m.id : val; 
+    }
 
     // ================= Firebase 初始化與監聽 =================
     const firebaseConfig = {
@@ -1131,6 +1154,7 @@
     db.collection("members").onSnapshot(snap => {
         membersData = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         renderGlobalAvatars();
+        renderExpenses(); // 成員變動時，即時重繪結算畫面以套用新名字
     }, handleFirebaseError);
 
     // ================= 共用圖片壓縮函數 (Canvas) =================
@@ -1194,6 +1218,7 @@
 
         const emptyWarning = `<div style="color:var(--mo-pink); font-weight:800; font-size:0.9rem; padding:10px 0;">⚠️ 請先至「成員」頁面新增人員</div>`;
 
+        // V30: 將 dataset.val 綁定為 m.id，達成關聯式架構
         const renderExpenseAvatars = (isActiveAll = false, isRadio = false, baseClass = '', toggleFunc = '') => {
             return membersData.map((m, i) => {
                 const activeClass = (isActiveAll || (isRadio && i===0)) ? 'active' : '';
@@ -1202,7 +1227,7 @@
                     : `border-color:var(--ac-tan); opacity:0.4; filter:grayscale(100%);`;
                 const avatarContent = m.img ? `<img src="${m.img}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">` : `<div style="margin-top:10px;">${m.fallback}</div>`;
                 return `
-                <div class="ava-opt ${baseClass} ${activeClass} scale-btn" data-val="${m.name}" onclick="${toggleFunc}(this)" style="${styleStr}">
+                <div class="ava-opt ${baseClass} ${activeClass} scale-btn" data-val="${m.id}" onclick="${toggleFunc}(this)" style="${styleStr}">
                     ${avatarContent}
                     <div class="ava-name">${m.name}</div>
                 </div>`;
@@ -1226,16 +1251,17 @@
                 const styleStr = activeClass === 'active' ? `border-color:var(--mo-blue); opacity:1; filter:grayscale(0%);` : `border-color:var(--ac-tan); opacity:0.4; filter:grayscale(100%);`;
                 const avatarContent = m.img ? `<img src="${m.img}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">` : `<div style="margin-top:10px;">${m.fallback}</div>`;
                 return `
-                <div class="ava-opt diary-author-opt ${activeClass} scale-btn" data-val="${m.name}" onclick="toggleDiaryAuthor(this)" style="${styleStr}">
+                <div class="ava-opt diary-author-opt ${activeClass} scale-btn" data-val="${m.id}" onclick="toggleDiaryAuthor(this)" style="${styleStr}">
                     ${avatarContent}
                     <div class="ava-name">${m.name}</div>
                 </div>`;
             }).join('');
         }
 
+        // V30: 明細過濾按鈕的 value 改吃 m.id，確保名字變動時不會壞掉
         document.getElementById('expense-filter-container').innerHTML = `
             <div class="f-tag-pill active scale-btn" onclick="filterExpenses('all', this)">全體</div>
-            ${membersData.map(m => `<div class="f-tag-pill scale-btn" onclick="filterExpenses('${m.name}', this)">${m.name}</div>`).join('')}
+            ${membersData.map(m => `<div class="f-tag-pill scale-btn" onclick="filterExpenses('${m.id}', this)">${m.name}</div>`).join('')}
         `;
 
         document.getElementById('member-container').innerHTML = membersData.map(m => {
@@ -1331,7 +1357,6 @@
     let currentItiImage = null;
     function renderTimeline() {
         const container = document.getElementById('timeline-container');
-        // 防呆：確保 time 屬性存在
         let todaysEvents = itineraryData.filter(e => e.date === currentDateSelect).sort((a, b) => (a.time || '').localeCompare(b.time || ''));
 
         if(todaysEvents.length === 0) {
@@ -1391,7 +1416,6 @@
         animationFrameId = requestAnimationFrame(animate);
     }
 
-    // ================= V27: 地圖預覽卡片與正確跳轉 =================
     function checkMapThumbnail() {
         const val = document.getElementById('form-loc').value.trim();
         const container = document.getElementById('map-preview-container');
@@ -1479,7 +1503,6 @@
         const id = document.getElementById('form-item-id').value; const date = document.getElementById('form-date').value; const time = document.getElementById('form-time').value; const title = document.getElementById('form-title').value.trim(); const note = document.getElementById('form-note').value.trim(); const loc = document.getElementById('form-loc').value.trim();
         if(!title) { alert("⚠️ 行程標題為必填！"); return; }
         
-        // 嚴格轉換可能為 undefined 的屬性
         const dataObj = { date, time, title, note: note || null, loc: loc || null, color: selectedFormColor || 'white', img: currentItiImage || null };
         
         closeModal('modal-itinerary');
@@ -1496,7 +1519,7 @@
         }
     }
 
-    // ================= 預定票務表單修改 =================
+    // ================= 預定票務表單修改 (V30: 住宿照片整合) =================
     function requirePin(targetId) {
         document.getElementById('pin-target').value = targetId; document.getElementById('pin-input').value = '';
         document.getElementById('modal-pin').style.display = 'flex'; setTimeout(() => document.getElementById('pin-input').focus(), 100);
@@ -1538,6 +1561,7 @@
         showToast('儲存修改成功');
     }
 
+    // V30: 住宿編輯功能 (包含圖片)
     function openHotelEditModal(id) {
         playHaptic();
         const card = document.getElementById(id);
@@ -1546,7 +1570,34 @@
         for (let i = 0; i < 10; i++) {
             if (fields[i]) document.getElementById(`eh-${i}`).value = fields[i].innerText.trim();
         }
+        
+        currentHotelImages = [...globalHotelImages];
+        renderHotelUploadPreview();
+
         document.getElementById('modal-hotel-edit').style.display = 'flex';
+    }
+
+    function handleHotelPhotoUpload(event) {
+        const files = event.target.files;
+        if(currentHotelImages.length + files.length > 4) { alert('最多只能上傳 4 張照片喔！'); return; }
+        Array.from(files).forEach(file => { 
+            compressImage(file, base64 => {
+                currentHotelImages.push(base64);
+                renderHotelUploadPreview();
+            }); 
+        });
+    }
+
+    function renderHotelUploadPreview() {
+        const container = document.getElementById('hotel-upload-preview');
+        let html = currentHotelImages.map((src, index) => `
+            <div style="position:relative; flex-shrink:0; padding:5px;">
+                <img src="${src}" style="width:80px; height:80px; object-fit:cover; border-radius:14px; border: 1px solid var(--ac-tan);">
+                <div style="position:absolute; top:0px; right:0px; background:var(--mo-pink); color:#FFF; width:22px; height:22px; border-radius:50%; display:flex; justify-content:center; align-items:center; font-size:0.8rem; font-weight:900; cursor:pointer; box-shadow:0 2px 4px rgba(0,0,0,0.2);" onclick="currentHotelImages.splice(${index}, 1); renderHotelUploadPreview();"><i class="fa-solid fa-xmark"></i></div>
+            </div>
+        `).join('');
+        if(currentHotelImages.length < 4) { html += `<div class="scale-btn" onclick="document.getElementById('hotel-file-input').click()" style="width: 80px; height: 80px; border: 2px dashed var(--ac-tan); border-radius: 14px; background: #F8F6F2; display: flex; justify-content: center; align-items: center; color: var(--ac-tan); font-size: 1.5rem; flex-shrink:0; margin-top:5px;">+</div>`; }
+        container.innerHTML = html;
     }
 
     function saveHotelEdit() {
@@ -1557,8 +1608,33 @@
         for (let i = 0; i < 10; i++) {
             if (fields[i]) fields[i].innerText = document.getElementById(`eh-${i}`).value.trim();
         }
+        
+        globalHotelImages = [...currentHotelImages];
+        updateHotelCardImages();
+
         closeModal('modal-hotel-edit');
         showToast('儲存修改成功');
+    }
+
+    function updateHotelCardImages() {
+        const coverImg = document.getElementById('hotel-stay-cover');
+        const coverPlaceholder = document.getElementById('hotel-stay-placeholder');
+        if(globalHotelImages.length > 0) {
+            coverImg.src = globalHotelImages[0];
+            coverImg.style.display = 'block';
+            coverPlaceholder.style.display = 'none';
+        } else {
+            coverImg.src = '';
+            coverImg.style.display = 'none';
+            coverPlaceholder.style.display = 'flex';
+        }
+
+        const detailContainer = document.getElementById('hotel-detail-images');
+        if(globalHotelImages.length > 0) {
+            detailContainer.innerHTML = globalHotelImages.map(src => `<img src="${src}" style="flex: 0 0 100%; width: 100%; height: 100%; object-fit: cover; scroll-snap-align: start;">`).join('');
+        } else {
+            detailContainer.innerHTML = `<div style="flex: 0 0 100%; display:flex; justify-content:center; align-items:center; color:var(--ac-tan); font-weight:900;"><i class="fa-solid fa-image" style="font-size:3rem; opacity:0.5;"></i></div>`;
+        }
     }
     
     function openHotelDetailModal() { playHaptic(); document.getElementById('modal-hotel-detail').style.display = 'flex'; }
@@ -1648,7 +1724,6 @@
         const expire = document.getElementById('voucher-expire').value; 
         const code = document.getElementById('voucher-code').value;
 
-        // 嚴格轉換
         const dataObj = { title, date, expire: expire || null, code: code || null, img: currentVoucherImage || null, facilities: currentVoucherFacilities || [] };
 
         closeModal('modal-voucher');
@@ -1722,7 +1797,7 @@
     }
 
 
-    // ================= 模組 3: 帳務系統核心 =================
+    // ================= 模組 3: 帳務系統核心 (V30重構動態關聯) =================
     function setExpCurrency(curr, el) {
         playHaptic();
         document.querySelectorAll('.cur-tab').forEach(e => { e.classList.remove('active'); e.style.background='transparent'; e.style.borderColor='var(--ac-tan)'; e.style.color='var(--ac-brown-light)';});
@@ -1761,22 +1836,19 @@
         const amt = parseFloat(document.getElementById('exp-amount').value); const title = document.getElementById('exp-title').value.trim();
         if(!amt || amt <= 0) { alert('⚠️ 請輸入有效的消費金額！'); return; } if(!title) { alert('⚠️ 請輸入消費項目！'); return; }
         
-        // 防呆：確保成員存在並已選擇
         const payerOpt = document.querySelector('.payer-opt.active');
         if (!payerOpt) { alert('⚠️ 請選擇付款人！若下方無人員選項，請先至「成員」頁面新增。'); return; }
         
         const date = document.getElementById('exp-date').value; const loc = document.getElementById('exp-loc').value.trim(); const method = document.querySelector('.m-tab.active').innerText; 
         const payer = payerOpt.dataset.val; 
-        const splitters = Array.from(document.querySelectorAll('.split-opt.active')).map(el => el.dataset.val);
+        const splitters = Array.from(document.querySelectorAll('.split-opt.active')).map(el => el.dataset.val); 
         
         let amountTwd = 0; if(currentExpCurrency === 'KRW') amountTwd = Math.round(amt * EXCHANGE_RATE); else if(currentExpCurrency === 'USD') amountTwd = Math.round(amt * EXCHANGE_RATE_USD); else amountTwd = amt;
         let amountKrw = (currentExpCurrency === 'KRW') ? amt : Math.round(amountTwd / EXCHANGE_RATE);
         const splitAmountTwd = splitters.length > 0 ? Math.round(amountTwd / splitters.length) : 0;
 
-        // 嚴格轉換
         const dataObj = { date, title, loc: loc || null, method, amountKrw, amountTwd, payer, splitters: splitters || [], splitAmountTwd };
 
-        // UI 樂觀更新
         document.getElementById('exp-amount').value = ''; document.getElementById('exp-title').value = ''; document.getElementById('exp-loc').value = ''; document.getElementById('exp-approx-twd').value = '0';
         showToast('已新增一筆');
         
@@ -1786,9 +1858,20 @@
 
     function openExpenseEdit(id) {
         playHaptic(); const exp = expenses.find(e => e.id === id); if(!exp) return;
+        
+        let pId = getMemberId(exp.payer);
+        let sIds = exp.splitters ? exp.splitters.map(s => getMemberId(s)) : [];
+
         document.getElementById('edit-exp-id').value = exp.id; document.getElementById('edit-exp-date').value = exp.date; document.getElementById('edit-exp-amount').value = exp.amountKrw; document.getElementById('edit-exp-twd').value = `≈ NT$ ${exp.amountTwd.toLocaleString()}`; document.getElementById('edit-exp-loc').value = exp.loc || ''; document.getElementById('edit-exp-title').value = exp.title;
-        document.querySelectorAll('.edit-payer-opt').forEach(opt => { opt.classList.remove('active'); opt.style.borderColor="var(--ac-tan)"; opt.style.opacity="0.4"; opt.style.filter="grayscale(100%)"; opt.style.background="#FFF"; if(opt.dataset.val === exp.payer) { opt.classList.add('active'); opt.style.borderColor="var(--mo-yellow)"; opt.style.opacity="1"; opt.style.filter="grayscale(0%)"; opt.style.background="rgba(255,208,0,0.1)"; }});
-        document.querySelectorAll('.edit-split-opt').forEach(opt => { opt.classList.remove('active'); opt.style.borderColor="var(--ac-tan)"; opt.style.opacity="0.4"; opt.style.filter="grayscale(100%)"; opt.style.background="#FFF"; if(exp.splitters && exp.splitters.includes(opt.dataset.val)) { opt.classList.add('active'); opt.style.borderColor="var(--mo-yellow)"; opt.style.opacity="1"; opt.style.filter="grayscale(0%)"; opt.style.background="rgba(255,208,0,0.1)"; }});
+        
+        document.querySelectorAll('.edit-payer-opt').forEach(opt => { 
+            opt.classList.remove('active'); opt.style.borderColor="var(--ac-tan)"; opt.style.opacity="0.4"; opt.style.filter="grayscale(100%)"; opt.style.background="#FFF"; 
+            if(opt.dataset.val === pId) { opt.classList.add('active'); opt.style.borderColor="var(--mo-yellow)"; opt.style.opacity="1"; opt.style.filter="grayscale(0%)"; opt.style.background="rgba(255,208,0,0.1)"; }
+        });
+        document.querySelectorAll('.edit-split-opt').forEach(opt => { 
+            opt.classList.remove('active'); opt.style.borderColor="var(--ac-tan)"; opt.style.opacity="0.4"; opt.style.filter="grayscale(100%)"; opt.style.background="#FFF"; 
+            if(sIds.includes(opt.dataset.val)) { opt.classList.add('active'); opt.style.borderColor="var(--mo-yellow)"; opt.style.opacity="1"; opt.style.filter="grayscale(0%)"; opt.style.background="rgba(255,208,0,0.1)"; }
+        });
         document.getElementById('modal-expense-edit').style.display = 'flex';
     }
 
@@ -1801,7 +1884,8 @@
         
         const date = document.getElementById('edit-exp-date').value; const loc = document.getElementById('edit-exp-loc').value.trim(); 
         const payer = payerOpt.dataset.val; 
-        const splitters = Array.from(document.querySelectorAll('.edit-split-opt.active')).map(el => el.dataset.val); const amountTwd = Math.round(amountKrw * EXCHANGE_RATE); const splitAmountTwd = splitters.length > 0 ? Math.round(amountTwd / splitters.length) : 0;
+        const splitters = Array.from(document.querySelectorAll('.edit-split-opt.active')).map(el => el.dataset.val); 
+        const amountTwd = Math.round(amountKrw * EXCHANGE_RATE); const splitAmountTwd = splitters.length > 0 ? Math.round(amountTwd / splitters.length) : 0;
         
         const dataObj = { date, title, loc: loc || null, amountKrw, amountTwd, payer, splitters: splitters || [], splitAmountTwd };
 
@@ -1811,26 +1895,52 @@
         db.collection("expenses").doc(id).update(dataObj).catch(handleFirebaseError);
     }
 
-    function filterExpenses(filterName, el) { 
+    function filterExpenses(filterId, el) { 
         playHaptic(); document.querySelectorAll('.f-tag-pill').forEach(tag => { tag.classList.remove('active'); }); 
-        el.classList.add('active'); currentExpFilter = filterName; renderExpenses(); 
+        el.classList.add('active'); currentExpFilter = filterId; renderExpenses(); 
     }
 
     function calculateSettlement() {
-        let balances = { "琳": 0, "貓": 0 };
+        let balances = {};
+        
+        membersData.forEach(m => { balances[m.id] = 0; });
+        
         expenses.forEach(exp => {
             if (!exp.splitters || exp.splitters.length === 0) return; 
             if (exp.amountTwd <= 0) return;
-            balances[exp.payer] += exp.amountTwd; 
-            exp.splitters.forEach(person => { balances[person] -= exp.splitAmountTwd; });
+            
+            let payerId = getMemberId(exp.payer);
+            if (balances[payerId] === undefined) balances[payerId] = 0;
+            
+            balances[payerId] += exp.amountTwd; 
+            
+            exp.splitters.forEach(s => { 
+                let sId = getMemberId(s);
+                if (balances[sId] === undefined) balances[sId] = 0;
+                balances[sId] -= exp.splitAmountTwd; 
+            });
         });
+        
         let debtors = []; let creditors = [];
-        for (let person in balances) { let bal = Math.round(balances[person]); if (bal < -1) debtors.push({ person, amount: -bal }); else if (bal > 1) creditors.push({ person, amount: bal }); }
+        for (let id in balances) { 
+            let bal = Math.round(balances[id]); 
+            if (bal < -1) debtors.push({ id, amount: -bal }); 
+            else if (bal > 1) creditors.push({ id, amount: bal }); 
+        }
+        
         let settlements = []; let i = 0, j = 0;
         while (i < debtors.length && j < creditors.length) {
-            let debtor = debtors[i]; let creditor = creditors[j]; let amount = Math.min(debtor.amount, creditor.amount);
-            settlements.push(`<div class="settlement-item"><span>${debtor.person} 需給 ${creditor.person}</span><span class="settlement-amount">NT$ ${amount.toLocaleString()}</span></div>`);
-            debtor.amount -= amount; creditor.amount -= amount; if (debtor.amount === 0) i++; if (creditor.amount === 0) j++;
+            let debtor = debtors[i]; let creditor = creditors[j]; 
+            let amount = Math.min(debtor.amount, creditor.amount);
+            
+            let dName = getMemberName(debtor.id);
+            let cName = getMemberName(creditor.id);
+
+            settlements.push(`<div class="settlement-item"><span>${dName} 需給 ${cName}</span><span class="settlement-amount">NT$ ${amount.toLocaleString()}</span></div>`);
+            
+            debtor.amount -= amount; creditor.amount -= amount; 
+            if (debtor.amount === 0) i++; 
+            if (creditor.amount === 0) j++;
         }
         return settlements;
     }
@@ -1840,17 +1950,20 @@
         expenses.sort((a, b) => new Date(b.date) - new Date(a.date)); 
         
         let totalDisplay = 0; let totalDisplayKrw = 0; let filtered = [];
-        filterTitle.innerText = currentExpFilter === 'all' ? '全體' : currentExpFilter;
+        filterTitle.innerText = currentExpFilter === 'all' ? '全體' : getMemberName(currentExpFilter);
 
         expenses.forEach(exp => {
             let includeInList = false; let myAmt = 0; let myAmtKrw = 0;
             
+            let pId = getMemberId(exp.payer);
+            let sIds = exp.splitters ? exp.splitters.map(s => getMemberId(s)) : [];
+            
             if (currentExpFilter === 'all') { 
                 includeInList = true; myAmt = exp.amountTwd; myAmtKrw = exp.amountKrw; 
             } else { 
-                if (exp.splitters && exp.splitters.length > 0 && exp.splitters.includes(currentExpFilter)) { 
-                    includeInList = true; myAmt = exp.splitAmountTwd; myAmtKrw = Math.round(exp.amountKrw / exp.splitters.length); 
-                } else if ((!exp.splitters || exp.splitters.length === 0) && exp.payer === currentExpFilter) { 
+                if (sIds.length > 0 && sIds.includes(currentExpFilter)) { 
+                    includeInList = true; myAmt = exp.splitAmountTwd; myAmtKrw = Math.round(exp.amountKrw / sIds.length); 
+                } else if (sIds.length === 0 && pId === currentExpFilter) { 
                     includeInList = true; myAmt = exp.amountTwd; myAmtKrw = exp.amountKrw; 
                 } 
             }
@@ -1880,10 +1993,13 @@
                 const isPersonal = !exp.splitters || exp.splitters.length === 0;
                 const icon = exp.method === '現金' ? '💵' : (exp.method === '信用卡' ? '💳' : '📱');
                 const locText = exp.loc ? `<span style="font-size:0.7rem; color:var(--ac-brown-light); margin-left:5px;">📍 ${exp.loc}</span>` : '';
+                
+                const payerName = getMemberName(exp.payer);
+                
                 let amountDisplayHtml = currentExpFilter === 'all' 
                     ? `<div style="font-weight: 900; font-size: 1.15rem; color: var(--ac-brown);">₩ ${exp.amountKrw.toLocaleString()}</div><div style="font-size: 0.85rem; color: var(--mo-orange); font-weight:800;">NT$ ${exp.amountTwd.toLocaleString()}</div>`
                     : `<div style="font-weight: 900; font-size: 1.15rem; color: var(--ac-brown);">NT$ ${(isPersonal ? exp.amountTwd : exp.splitAmountTwd).toLocaleString()}</div><div style="font-size: 0.75rem; color: var(--ac-brown-light);">原額 ₩ ${exp.amountKrw.toLocaleString()}</div>`;
-                const badgeHtml = isPersonal ? `<span style="background:var(--ac-bg); color:var(--ac-brown-light); padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:900;">${exp.payer} 個人帳</span>` : `<span style="background:var(--ac-tan); color:var(--ac-brown); padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:900;">${exp.payer} 先付</span>`;
+                const badgeHtml = isPersonal ? `<span style="background:var(--ac-bg); color:var(--ac-brown-light); padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:900;">${payerName} 個人帳</span>` : `<span style="background:var(--ac-tan); color:var(--ac-brown); padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:900;">${payerName} 先付</span>`;
 
                 html += `
                 <div class="bill-item">
@@ -1924,7 +2040,10 @@
         for(let date in grouped) {
             html += `<div class="diary-date-badge">${date}</div>`;
             grouped[date].forEach(item => {
-                const memberObj = membersData.find(m => m.name === item.author);
+                const authorId = getMemberId(item.author);
+                const memberObj = membersData.find(m => m.id === authorId);
+                const authorName = getMemberName(authorId);
+                
                 const avatarImg = memberObj && memberObj.img ? `<img src="${memberObj.img}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">` : (memberObj ? memberObj.fallback : '👤');
                 const imgsHtml = item.images && item.images.length > 0 ? `<div class="diary-photos">${item.images.map(src => `<img src="${src}" class="diary-img">`).join('')}</div>` : '';
                 
@@ -1932,7 +2051,7 @@
                 <div class="diary-card">
                     <div class="diary-header">
                         <div class="avatar" style="width:36px; height:36px; margin:0; font-size:1.1rem; border-width:2px; border-color:var(--ac-tan); box-shadow:none;">${avatarImg}</div>
-                        <div style="font-weight:900; color:var(--ac-brown); font-size:1.05rem;">${item.author}</div>
+                        <div style="font-weight:900; color:var(--ac-brown); font-size:1.05rem;">${authorName}</div>
                         <div style="flex:1; text-align:right;">
                             <i class="fa-solid fa-pen-to-square scale-btn" style="color:var(--ac-tan); font-size:1.1rem; margin-right:15px;" onclick="openDiaryModal('${item.id}')"></i>
                             <i class="fa-solid fa-trash-can scale-btn" style="color:var(--ac-tan); font-size:1.1rem;" onclick="event.stopPropagation(); confirmDelete('diary', '${item.id}')"></i>
@@ -1957,10 +2076,12 @@
         playHaptic();
         if (id) {
             const entry = diaryData.find(d => d.id === id);
+            let aId = getMemberId(entry.author);
+            
             document.getElementById('diary-edit-id').value = entry.id; document.getElementById('diary-date').value = entry.date; document.getElementById('diary-content').value = entry.content; document.getElementById('diary-modal-title').innerHTML = '<i class="fa-solid fa-pen"></i> 編輯日誌';
             document.querySelectorAll('.diary-author-opt').forEach(opt => {
                 opt.classList.remove('active'); opt.style.borderColor="var(--ac-tan)"; opt.style.opacity="0.4"; opt.style.filter="grayscale(100%)";
-                if(opt.dataset.val === entry.author) { opt.classList.add('active'); opt.style.borderColor="var(--mo-blue)"; opt.style.opacity="1"; opt.style.filter="grayscale(0%)"; }
+                if(opt.dataset.val === aId) { opt.classList.add('active'); opt.style.borderColor="var(--mo-blue)"; opt.style.opacity="1"; opt.style.filter="grayscale(0%)"; }
             });
             currentDiaryImages = entry.images ? [...entry.images] : [];
         } else {
@@ -1996,12 +2117,10 @@
         const id = document.getElementById('diary-edit-id').value; const date = document.getElementById('diary-date').value; const content = document.getElementById('diary-content').value.trim();
         if(!content && currentDiaryImages.length === 0) { alert('請填寫內容或上傳照片喔！'); return; }
 
-        // 防呆：確保成員存在並已選擇
         const authorOpt = document.querySelector('.diary-author-opt.active');
         if (!authorOpt) { alert('⚠️ 請選擇記錄人！若下方無人員選項，請先至「成員」頁面新增。'); return; }
         const author = authorOpt.dataset.val;
 
-        // 嚴格轉換
         const dataObj = { date, author, content: content || null, images: currentDiaryImages || [] };
 
         closeModal('modal-diary');
@@ -2120,7 +2239,6 @@
         const id = document.getElementById('member-item-id').value; const name = document.getElementById('member-name').value.trim(); const aka = document.getElementById('member-aka').value.trim(); const quote = document.getElementById('member-quote').value.trim();
         if(!name) { alert("⚠️ 成員名稱為必填！"); return; }
 
-        // 嚴格轉換
         const dataObj = { name, aka: aka || null, quote: quote || null, img: currentMemberImage || null, fallback: '👤' };
 
         closeModal('modal-member-edit');
@@ -2141,6 +2259,7 @@
         renderExpenses();
         renderDiary();
         renderVouchers();
+        updateHotelCardImages(); // V30 初始化住宿照片佔位圖
         setTimeout(triggerCountdownAnimation, 200); 
     };
 </script>
