@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>琳 ＆ 貓 in BUSAN</title>
+    <title>琳 ＆ 貓 in BUSAN - 旅遊 V34 雲端正式版</title>
     <!-- Firebase SDK (Compat Version) -->
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
@@ -99,9 +99,10 @@
 
         .form-label { display: block; font-size: 0.85rem; font-weight: 900; margin-bottom: 8px; color: var(--ac-brown-light); }
         
+        /* V32/V33: 更緊湊的表單輸入框 */
         .form-control, input[type="date"].form-control, input[type="time"].form-control { 
-            width: 100%; max-width: 100%; padding: 14px 15px; border-radius: 16px; border: 2px solid var(--ac-tan); 
-            font-size: 1rem; font-weight: 800; outline: none; background: #FFF; margin-bottom: 15px; color: var(--ac-brown); 
+            width: 100%; max-width: 100%; padding: 10px 12px; border-radius: 16px; border: 2px solid var(--ac-tan); 
+            font-size: 0.95rem; font-weight: 800; outline: none; background: #FFF; margin-bottom: 10px; color: var(--ac-brown); 
             transition: 0.2s; box-sizing: border-box; -webkit-appearance: none;
         }
         .form-control:focus { border-color: var(--mo-green); box-shadow: 0 0 0 3px rgba(120, 160, 131, 0.2); }
@@ -195,7 +196,6 @@
         .hc-title { font-size: 1.4rem; font-weight: 900; color: var(--ac-brown); margin: 0 0 5px 0;}
         .hc-address { font-size: 0.85rem; font-weight: 800; color: var(--ac-brown-light); margin-bottom: 20px;}
         
-        /* V16: 雙色夾擊邊框 (左藍右粉) */
         .hc-checkin-box { display: flex; justify-content: space-between; align-items: center; border: 2px solid #F4F0EA; border-left: 6px solid var(--mo-blue); border-right: 6px solid #D47A7A; border-radius: 16px; padding: 12px; margin-bottom: 20px; background: #FCFBFA; }
         .hc-ci-col { display: flex; flex-direction: column; gap: 4px; }
         .hc-ci-title { font-size: 0.7rem; font-weight: 900; color: var(--ac-brown-light); text-transform: uppercase;}
@@ -231,14 +231,15 @@
         .cur-tab { flex: 1; text-align: center; padding: 12px; border: 2px solid var(--ac-tan); border-radius: 16px; font-weight: 900; cursor: pointer; transition: 0.2s; color: var(--ac-brown-light);}
         .cur-tab.active { border-color: var(--mo-yellow-muted); color: var(--ac-brown); background: rgba(240, 213, 130, 0.3); transform: scale(1.05);}
 
-        .ava-select-group { display: flex; gap: 12px; margin-bottom: 15px; flex-wrap: wrap;}
+        /* V32/V33: 更緊湊的頭像選擇器 */
+        .ava-select-group { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;}
         .ava-opt { 
-            width: 48px; height: 48px; border-radius: 50%; display: flex; justify-content: center; align-items: center; flex-direction: column;
-            font-size: 1.3rem; background: #FFF; border: 3px solid var(--ac-tan); cursor: pointer; transition: 0.2s;
-            opacity: 0.4; filter: grayscale(100%); position: relative;
+            width: 38px; height: 38px; border-radius: 50%; display: flex; justify-content: center; align-items: center; flex-direction: column;
+            font-size: 1.1rem; background: #FFF; border: 2px solid var(--ac-tan); cursor: pointer; transition: 0.2s;
+            opacity: 0.4; filter: grayscale(100%); position: relative; flex-shrink: 0;
         }
-        .ava-opt.active { opacity: 1; filter: grayscale(0%); border-color: var(--mo-blue); transform: scale(1.1); box-shadow: 0 4px 10px rgba(114, 177, 214, 0.3); }
-        .ava-name { position: absolute; bottom: -18px; font-size: 0.7rem; font-weight: 900; color: var(--ac-brown); }
+        .ava-opt.active { opacity: 1; filter: grayscale(0%); border-color: var(--mo-blue); transform: scale(1.1); box-shadow: 0 4px 10px rgba(114, 177, 214, 0.3); border-width: 3px; z-index: 10; }
+        .ava-name { position: absolute; bottom: -16px; font-size: 0.65rem; font-weight: 900; color: var(--ac-brown); white-space: nowrap; }
 
         .method-tabs { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;}
         .m-tab { flex: 1; text-align: center; padding: 10px 15px; width: auto; display: inline-flex; justify-content: center; align-items: center; border: 2px solid var(--ac-tan); border-radius: 14px; font-weight: 900; cursor: pointer; transition: 0.2s; color: var(--ac-brown-light); font-size: 0.85rem;}
@@ -254,8 +255,8 @@
         .highlight-name { color: #FFF; background: rgba(0,0,0,0.15); padding: 2px 8px; border-radius: 8px; font-size: 1.05rem;}
         .acc-total-card .amount { font-size: 3rem; font-weight: 900; margin: 5px 0;}
         
-        .filter-tags-container { display: flex; background: #F8F6F2; border-radius: 30px; padding: 4px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid var(--ac-tan);}
-        .f-tag-pill { flex: 1; text-align: center; padding: 10px 0; border-radius: 26px; font-weight: 900; font-size: 0.9rem; cursor: pointer; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); color: var(--ac-brown-light); }
+        .filter-tags-container { display: flex; background: #F8F6F2; border-radius: 30px; padding: 4px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid var(--ac-tan); flex-wrap: wrap; justify-content: center; gap: 4px;}
+        .f-tag-pill { flex: 1; min-width: 60px; text-align: center; padding: 8px 0; border-radius: 26px; font-weight: 900; font-size: 0.85rem; cursor: pointer; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); color: var(--ac-brown-light); }
         .f-tag-pill.active { background-color: var(--mo-blue) !important; color: #FFFFFF !important; box-shadow: 0 4px 10px rgba(114, 177, 214, 0.4); transform: scale(1.02); }
 
         .bill-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 2px dashed var(--ac-tan); cursor: pointer; transition: 0.2s;}
@@ -481,7 +482,7 @@
             <div id="booking-hotel" style="display:none;">
                 <div class="hotel-card2 glowing-hover scale-btn" id="hotel-stay" onclick="openHotelDetailModal()">
                     <div class="hc-img-wrapper">
-                        <!-- V30 新增: 動態圖片取代相對路徑假圖 -->
+                        <!-- 雲端同步動態圖片容器 -->
                         <img id="hotel-stay-cover" src="" style="display:none; width: 100%; height: 100%; object-fit: cover;" alt="Hotel Cover">
                         <div id="hotel-stay-placeholder" style="width:100%; height:100%; background:#F8F6F2; display:flex; justify-content:center; align-items:center; color:var(--ac-tan); font-weight:900;"><i class="fa-solid fa-image" style="font-size:2.5rem; opacity:0.5;"></i></div>
                         <div class="hc-tag-loc"><i class="fa-solid fa-location-dot"></i> <span class="editable-field">釜山 西面</span></div>
@@ -562,53 +563,64 @@
                 </div>
             </div>
 
+            <!-- V34: 高密度記帳輸入卡片，免上下滑動，且欄位完美並排對調 -->
             <div id="acc-record">
-                <div class="ac-card">
-                    <h3 style="margin-top:0; color: var(--ac-brown); text-align: center; margin-bottom: 20px;">💰 記帳輸入</h3>
+                <div class="ac-card" style="padding: 12px;"> 
+                    <h3 style="margin-top:0; color: var(--ac-brown); text-align: center; margin-bottom: 12px; font-size:1.1rem;">💰 記帳輸入</h3>
                     
-                    <label class="form-label">日期</label>
-                    <input type="date" class="form-control" id="exp-date" value="2026-06-06">
+                    <label class="form-label" style="font-size:0.75rem; margin-bottom:4px;">日期</label>
+                    <input type="date" class="form-control" id="exp-date" value="2026-06-06" style="padding: 8px 10px; font-size:0.9rem; margin-bottom:10px;">
 
-                    <label class="form-label">幣別</label>
-                    <div class="currency-tabs" style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
-                        <div class="cur-tab active scale-btn" onclick="setExpCurrency('KRW', this)">KRW</div>
-                        <div class="cur-tab scale-btn" onclick="setExpCurrency('TWD', this)">TWD</div>
-                        <div class="cur-tab scale-btn" onclick="setExpCurrency('USD', this)">USD</div>
+                    <label class="form-label" style="font-size:0.75rem; margin-bottom:4px;">支付方式</label>
+                    <div class="method-tabs" style="display: flex; gap: 5px; margin-bottom: 10px;">
+                        <div class="m-tab active scale-btn" onclick="selectMethod(this)" style="padding: 6px 4px; font-size:0.8rem; flex:1;">現金</div>
+                        <div class="m-tab scale-btn" onclick="selectMethod(this)" style="padding: 6px 4px; font-size:0.8rem; flex:1;">信用卡</div>
+                        <div class="m-tab scale-btn" onclick="selectMethod(this)" style="padding: 6px 4px; font-size:0.8rem; flex:1;">T-money</div>
+                    </div>
+
+                    <label class="form-label" style="font-size:0.75rem; margin-bottom:4px;">幣別</label>
+                    <div class="currency-tabs" style="display: flex; gap: 4px; margin-bottom: 10px;">
+                        <div class="cur-tab active scale-btn" onclick="setExpCurrency('KRW', this)" style="padding: 6px 4px; font-size:0.85rem;">KRW</div>
+                        <div class="cur-tab scale-btn" onclick="setExpCurrency('TWD', this)" style="padding: 6px 4px; font-size:0.85rem;">TWD</div>
+                        <div class="cur-tab scale-btn" onclick="setExpCurrency('USD', this)" style="padding: 6px 4px; font-size:0.85rem;">USD</div>
                     </div>
 
                     <div style="display:flex; gap:10px;">
                         <div style="flex:1; min-width:0;">
-                            <label class="form-label"><span style="color:var(--mo-pink);">*</span> 金額</label>
-                            <input type="number" class="form-control" id="exp-amount" placeholder="0" oninput="calcApproxTwd()" style="font-size:1.2rem; font-weight:900;">
+                            <label class="form-label" style="font-size:0.75rem; margin-bottom:4px;"><span style="color:var(--mo-pink);">*</span> 金額</label>
+                            <input type="number" class="form-control" id="exp-amount" placeholder="金額 (必填)" oninput="calcApproxTwd()" style="font-size:1.1rem; font-weight:900; padding: 8px 10px; margin-bottom:10px;">
                         </div>
                         <div style="flex:1; min-width:0;">
-                            <label class="form-label">約合台幣</label>
-                            <input type="text" class="form-control" id="exp-approx-twd" value="0" disabled>
+                            <label class="form-label" style="font-size:0.75rem; margin-bottom:4px;">約合台幣</label>
+                            <input type="text" class="form-control" id="exp-approx-twd" value="≈ NT$ 0" disabled style="padding: 8px 10px; font-size:0.85rem; margin-bottom:10px; background:#F8F6F2;">
                         </div>
                     </div>
 
-                    <label class="form-label">支付方式</label>
-                    <div class="method-tabs" style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
-                        <div class="m-tab active scale-btn" onclick="selectMethod(this)">現金</div>
-                        <div class="m-tab scale-btn" onclick="selectMethod(this)">信用卡</div>
-                        <div class="m-tab scale-btn" onclick="selectMethod(this)">T-money</div>
+                    <div style="display:flex; gap:10px;">
+                        <div style="flex:1; min-width:0;">
+                            <label class="form-label" style="font-size:0.75rem; margin-bottom:4px;"><span style="color:var(--mo-pink);">*</span> 消費項目</label>
+                            <input type="text" class="form-control" id="exp-title" placeholder="例如：午餐" style="padding: 8px 10px; font-size:0.9rem; margin-bottom:10px;">
+                        </div>
+                        <div style="flex:1; min-width:0;">
+                            <label class="form-label" style="font-size:0.75rem; margin-bottom:4px;">地點 (選填)</label>
+                            <input type="text" class="form-control" id="exp-loc" placeholder="📍 例如：便利商店" style="padding: 8px 10px; font-size:0.9rem; margin-bottom:10px;">
+                        </div>
                     </div>
 
-                    <label class="form-label">地點 (選填)</label>
-                    <input type="text" class="form-control" id="exp-loc" placeholder="📍 例如：便利商店">
-
-                    <label class="form-label"><span style="color:var(--mo-pink);">*</span> 消費項目</label>
-                    <input type="text" class="form-control" id="exp-title" placeholder="例如：午餐">
-
-                    <div style="background: #FCFBFA; padding: 15px; border-radius: 16px; margin-top: 10px; border: 2px dashed var(--ac-tan);">
-                        <label class="form-label"><span style="color:var(--mo-pink);">*</span> 誰付款的？ (單選)</label>
-                        <div class="ava-select-group" id="payer-group-container" style="display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap;"></div>
-
-                        <label class="form-label" style="margin-top:15px;">誰要分攤？ (不選視為個人帳)</label>
-                        <div class="ava-select-group" id="split-group-container" style="display: flex; gap: 15px; flex-wrap: wrap;"></div>
+                    <div style="background: #FCFBFA; padding: 10px; border-radius: 12px; border: 1px dashed var(--ac-tan);">
+                        <div style="display:flex; gap:10px;">
+                            <div style="flex:1;">
+                                <label class="form-label" style="font-size:0.7rem; margin-bottom:4px;"><span style="color:var(--mo-pink);">*</span> 誰付款？ (單選)</label>
+                                <div class="ava-select-group" id="payer-group-container" style="display: flex; gap: 8px; flex-wrap: wrap;"></div>
+                            </div>
+                            <div style="flex:1;">
+                                <label class="form-label" style="font-size:0.7rem; margin-bottom:4px;">誰分攤？ (不選視為個人)</label>
+                                <div class="ava-select-group" id="split-group-container" style="display: flex; gap: 8px; flex-wrap: wrap;"></div>
+                            </div>
+                        </div>
                     </div>
 
-                    <button class="btn-q btn-add-blue-v11 scale-btn" style="width: 100%; margin-top: 20px; justify-content: center;" onclick="saveExpense()">✔ 記一筆</button>
+                    <button class="btn-q btn-add-blue-v11 scale-btn" style="width: 100%; margin-top: 12px; justify-content: center; padding: 10px; font-size:1rem;" onclick="saveExpense()">✔ 記一筆</button>
                 </div>
             </div>
 
@@ -738,7 +750,7 @@
                 <div style="flex:1;"><label class="form-label">每晚價格</label><input type="text" class="form-control" id="eh-9"></div>
             </div>
 
-            <!-- V30 新增: 圖片上傳區塊 -->
+            <!-- 住宿照片上傳區塊 -->
             <label class="form-label" style="margin-top:5px;">住宿照片 (最多4張)</label>
             <div style="display:flex; gap:15px; overflow-x:auto; scrollbar-width:none; padding: 10px 5px 15px 5px;" id="hotel-upload-preview"></div>
             <input type="file" id="hotel-file-input" accept="image/*" multiple style="display:none;" onchange="handleHotelPhotoUpload(event)">
@@ -755,7 +767,7 @@
             <div class="hd-close scale-btn" onclick="playHaptic(); closeModal('modal-hotel-detail')"><i class="fa-solid fa-xmark"></i></div>
             
             <div style="display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; width: 100%; height: 220px; border-radius: 24px 24px 0 0; position: relative; flex-shrink: 0; background: #F8F6F2;">
-                <!-- V30 新增: 動態圖片容器 -->
+                <!-- 動態圖片容器 -->
                 <div id="hotel-detail-images" style="display:flex; width:100%;">
                     <div style="flex: 0 0 100%; display:flex; justify-content:center; align-items:center; color:var(--ac-tan); font-weight:900;"><i class="fa-solid fa-image" style="font-size:3rem; opacity:0.5;"></i></div>
                 </div>
@@ -929,28 +941,46 @@
             <h2 style="margin-top:0; margin-bottom: 20px; text-align: center; color: var(--ac-brown); font-weight: 900;"><i class="fa-solid fa-pen"></i> 編輯帳務</h2>
             <input type="hidden" id="edit-exp-id">
             
-            <label class="form-label">日期</label>
-            <input type="date" class="form-control" id="edit-exp-date">
-            
+            <label class="form-label" style="font-size:0.75rem; margin-bottom:4px;">日期</label>
+            <input type="date" class="form-control" id="edit-exp-date" style="padding: 8px 10px; font-size:0.9rem; margin-bottom:10px;">
+
             <div style="display:flex; gap:10px;">
-                <div style="flex:1; min-width:0;"><label class="form-label">金額 (KRW)</label><input type="number" class="form-control" id="edit-exp-amount" oninput="calcApproxTwdEdit()"></div>
-                <div style="flex:1; min-width:0;"><label class="form-label">約合台幣 (TWD)</label><input type="text" class="form-control" id="edit-exp-twd" disabled></div>
+                <div style="flex:1; min-width:0;">
+                    <label class="form-label" style="font-size:0.75rem; margin-bottom:4px;">金額 (KRW)</label>
+                    <input type="number" class="form-control" id="edit-exp-amount" oninput="calcApproxTwdEdit()" style="font-size:1.1rem; font-weight:900; padding: 10px; margin-bottom:10px;">
+                </div>
+                <div style="flex:1; min-width:0;">
+                    <label class="form-label" style="font-size:0.75rem; margin-bottom:4px;">約合台幣 (TWD)</label>
+                    <input type="text" class="form-control" id="edit-exp-twd" disabled style="padding: 10px; font-size:0.9rem; margin-bottom:10px; background:#F8F6F2;">
+                </div>
             </div>
 
-            <label class="form-label">地點與消費項目</label>
+            <!-- V32: 編輯視窗也同步並排且消費項目在前 -->
             <div style="display:flex; gap:10px;">
-                <input type="text" class="form-control" id="edit-exp-loc" placeholder="地點">
-                <input type="text" class="form-control" id="edit-exp-title" placeholder="項目">
+                <div style="flex:1;">
+                    <label class="form-label" style="font-size:0.75rem; margin-bottom:4px;">消費項目</label>
+                    <input type="text" class="form-control" id="edit-exp-title" placeholder="項目" style="padding: 8px 10px; font-size:0.9rem; margin-bottom:10px;">
+                </div>
+                <div style="flex:1;">
+                    <label class="form-label" style="font-size:0.75rem; margin-bottom:4px;">地點 (選填)</label>
+                    <input type="text" class="form-control" id="edit-exp-loc" placeholder="地點" style="padding: 8px 10px; font-size:0.9rem; margin-bottom:10px;">
+                </div>
             </div>
 
-            <div style="background: #FCFBFA; padding: 15px; border-radius: 16px; margin-top: 10px; border: 2px dashed var(--ac-tan);">
-                <label class="form-label">付款人 (單選)</label>
-                <div class="ava-select-group" id="edit-payer-group-container"></div>
-                <label class="form-label">分攤人 (複選)</label>
-                <div class="ava-select-group" id="edit-split-group-container"></div>
+            <div style="background: #FCFBFA; padding: 10px; border-radius: 12px; border: 1px dashed var(--ac-tan);">
+                <div style="display:flex; gap:10px;">
+                    <div style="flex:1;">
+                        <label class="form-label" style="font-size:0.7rem; margin-bottom:4px;">付款人 (單選)</label>
+                        <div class="ava-select-group" id="edit-payer-group-container" style="display: flex; gap: 8px; flex-wrap: wrap;"></div>
+                    </div>
+                    <div style="flex:1;">
+                        <label class="form-label" style="font-size:0.7rem; margin-bottom:4px;">分攤人 (複選)</label>
+                        <div class="ava-select-group" id="edit-split-group-container" style="display: flex; gap: 8px; flex-wrap: wrap;"></div>
+                    </div>
+                </div>
             </div>
 
-            <div style="display: flex; gap: 15px; margin-top: 20px;">
+            <div style="display: flex; gap: 15px; margin-top: 15px;">
                 <button class="btn-q modal-btn modal-btn-cancel scale-btn" onclick="playHaptic(); closeModal('modal-expense-edit')">取消</button>
                 <button class="btn-q modal-btn modal-btn-save scale-btn" onclick="playHaptic(); saveExpenseEdit()">✔ 儲存修改</button>
             </div>
@@ -1095,26 +1125,26 @@
         { date: '2026-06-10', day: 'DAY 5', week: '三', loc: '西面' }, { date: '2026-06-11', day: 'DAY 6', week: '四', loc: '西面' }
     ];
 
-    // ================= 資料淨空 (V30 空殼化) =================
+    // ================= 資料淨空 (V34 空殼化) =================
     let membersData = [];
     let itineraryData = [];
     let expenses = [];
     let diaryData = [];
     let vouchersData = [];
+    let bookingsData = {}; // 預訂快取
     
-    // V30: 住宿照片專用記憶體陣列
+    // 住宿照片專用記憶體陣列
     let globalHotelImages = [];
     let currentHotelImages = [];
 
-    // ================= 關聯式動態對應函數 (V30 核心) =================
-    // 輸入 ID 或 Name，永遠回傳最新的 Name。找不到則回傳原值。
+    // ================= 關聯式動態對應函數 (核心) =================
     function getMemberName(val) {
-        const m = membersData.find(m => m.id === val || m.name === val);
-        return m ? m.name : (val || '未知成員');
+        const m = membersData.find(m => String(m.id) === String(val) || m.name === val);
+        // V34 防呆：若找不到且值為數字ID，回傳 '未知成員' 避免出現數字亂碼
+        return m ? m.name : '未知成員';
     }
-    // 輸入 ID 或 Name，永遠回傳穩定的 ID。找不到則回傳原值。
     function getMemberId(val) {
-        const m = membersData.find(m => m.id === val || m.name === val);
+        const m = membersData.find(m => String(m.id) === String(val) || m.name === val);
         return m ? m.id : val; 
     }
 
@@ -1130,6 +1160,11 @@
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
+
+    // 啟用離線快取同步
+    db.enablePersistence().catch(function(err) {
+        console.warn("離線快取啟用失敗:", err);
+    });
 
     db.collection("itineraries").onSnapshot(snap => {
         itineraryData = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -1154,7 +1189,15 @@
     db.collection("members").onSnapshot(snap => {
         membersData = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         renderGlobalAvatars();
-        renderExpenses(); // 成員變動時，即時重繪結算畫面以套用新名字
+        renderExpenses(); 
+    }, handleFirebaseError);
+
+    // 監聽航班與住宿的預訂資訊
+    db.collection("bookings").onSnapshot(snap => {
+        snap.forEach(doc => {
+            bookingsData[doc.id] = doc.data();
+        });
+        renderBookings();
     }, handleFirebaseError);
 
     // ================= 共用圖片壓縮函數 (Canvas) =================
@@ -1184,7 +1227,7 @@
         }
     }
 
-    // ================= 全域刪除核心 (CRUD) =================
+    // ================= 全域刪除核心 (V34 強化級聯刪除) =================
     function confirmDelete(type, id) {
         playHaptic();
         deleteTargetType = type;
@@ -1202,10 +1245,28 @@
         else if (deleteTargetType === 'voucher') col = 'vouchers';
         else if (deleteTargetType === 'expense') col = 'expenses';
         else if (deleteTargetType === 'diary') col = 'diaries';
-        else if (deleteTargetType === 'member') col = 'members';
+        else if (deleteTargetType === 'member') {
+            col = 'members';
+            // V34 強化級聯刪除 (Cascade Delete): 確保型別轉換匹配，徹底刪除帳務與日誌
+            expenses.forEach(exp => {
+                const payerIdStr = String(getMemberId(exp.payer));
+                const targetIdStr = String(itemToDelete);
+                const splittersStrs = (exp.splitters || []).map(s => String(getMemberId(s)));
+
+                if (payerIdStr === targetIdStr || splittersStrs.includes(targetIdStr)) {
+                    db.collection("expenses").doc(exp.id).delete().catch(console.error);
+                }
+            });
+            diaryData.forEach(d => {
+                const authorIdStr = String(getMemberId(d.author));
+                if (authorIdStr === String(itemToDelete)) {
+                    db.collection("diaries").doc(d.id).delete().catch(console.error);
+                }
+            });
+        }
 
         if(col && itemToDelete) {
-            db.collection(col).doc(itemToDelete).delete().catch(handleFirebaseError);
+            db.collection(col).doc(String(itemToDelete)).delete().catch(handleFirebaseError);
         }
     }
 
@@ -1216,9 +1277,9 @@
             <div class="avatar">${m.img ? `<img src="${m.img}">` : m.fallback}</div>
         `).join('');
 
-        const emptyWarning = `<div style="color:var(--mo-pink); font-weight:800; font-size:0.9rem; padding:10px 0;">⚠️ 請先至「成員」頁面新增人員</div>`;
+        const emptyWarning = `<div style="color:var(--mo-pink); font-weight:800; font-size:0.9rem; padding:10px 0;">⚠️ 請先至「成員」新增人員</div>`;
 
-        // V30: 將 dataset.val 綁定為 m.id，達成關聯式架構
+        // 將 dataset.val 綁定為 m.id，達成關聯式架構
         const renderExpenseAvatars = (isActiveAll = false, isRadio = false, baseClass = '', toggleFunc = '') => {
             return membersData.map((m, i) => {
                 const activeClass = (isActiveAll || (isRadio && i===0)) ? 'active' : '';
@@ -1258,7 +1319,7 @@
             }).join('');
         }
 
-        // V30: 明細過濾按鈕的 value 改吃 m.id，確保名字變動時不會壞掉
+        // 明細過濾按鈕的 value 改吃 m.id，確保名字變動時不會壞掉
         document.getElementById('expense-filter-container').innerHTML = `
             <div class="f-tag-pill active scale-btn" onclick="filterExpenses('all', this)">全體</div>
             ${membersData.map(m => `<div class="f-tag-pill scale-btn" onclick="filterExpenses('${m.id}', this)">${m.name}</div>`).join('')}
@@ -1519,7 +1580,26 @@
         }
     }
 
-    // ================= 預定票務表單修改 (V30: 住宿照片整合) =================
+    // ================= 預訂票務全域即時渲染 =================
+    function renderBookings() {
+        ['flight-outbound', 'flight-inbound', 'hotel-stay'].forEach(id => {
+            if (bookingsData[id] && bookingsData[id].fields) {
+                const card = document.getElementById(id);
+                if (card) {
+                    const fields = card.querySelectorAll('.editable-field');
+                    bookingsData[id].fields.forEach((val, i) => {
+                        if (fields[i]) fields[i].innerText = val;
+                    });
+                }
+            }
+        });
+
+        if (bookingsData['hotel-stay'] && bookingsData['hotel-stay'].images) {
+            globalHotelImages = bookingsData['hotel-stay'].images || [];
+            updateHotelCardImages();
+        }
+    }
+
     function requirePin(targetId) {
         document.getElementById('pin-target').value = targetId; document.getElementById('pin-input').value = '';
         document.getElementById('modal-pin').style.display = 'flex'; setTimeout(() => document.getElementById('pin-input').focus(), 100);
@@ -1552,16 +1632,16 @@
     function saveFlightEdit() {
         playHaptic();
         const id = document.getElementById('edit-flight-id').value;
-        const card = document.getElementById(id);
-        const fields = card.querySelectorAll('.editable-field');
+        let fieldsData = [];
         for (let i = 0; i < 12; i++) {
-            if (fields[i]) fields[i].innerText = document.getElementById(`ef-${i}`).value.trim();
+            fieldsData.push(document.getElementById(`ef-${i}`).value.trim());
         }
         closeModal('modal-flight-edit');
-        showToast('儲存修改成功');
+        showToast('儲存中...');
+        db.collection("bookings").doc(id).set({ fields: fieldsData }, { merge: true })
+        .catch(handleFirebaseError);
     }
 
-    // V30: 住宿編輯功能 (包含圖片)
     function openHotelEditModal(id) {
         playHaptic();
         const card = document.getElementById(id);
@@ -1603,17 +1683,17 @@
     function saveHotelEdit() {
         playHaptic();
         const id = document.getElementById('edit-hotel-id').value;
-        const card = document.getElementById(id);
-        const fields = card.querySelectorAll('.editable-field');
+        let fieldsData = [];
         for (let i = 0; i < 10; i++) {
-            if (fields[i]) fields[i].innerText = document.getElementById(`eh-${i}`).value.trim();
+            fieldsData.push(document.getElementById(`eh-${i}`).value.trim());
         }
-        
         globalHotelImages = [...currentHotelImages];
-        updateHotelCardImages();
+        updateHotelCardImages(); // 先樂觀更新
 
         closeModal('modal-hotel-edit');
-        showToast('儲存修改成功');
+        showToast('儲存中...');
+        db.collection("bookings").doc(id).set({ fields: fieldsData, images: globalHotelImages }, { merge: true })
+        .catch(handleFirebaseError);
     }
 
     function updateHotelCardImages() {
@@ -1797,7 +1877,7 @@
     }
 
 
-    // ================= 模組 3: 帳務系統核心 (V30重構動態關聯) =================
+    // ================= 模組 3: 帳務系統核心 =================
     function setExpCurrency(curr, el) {
         playHaptic();
         document.querySelectorAll('.cur-tab').forEach(e => { e.classList.remove('active'); e.style.background='transparent'; e.style.borderColor='var(--ac-tan)'; e.style.color='var(--ac-brown-light)';});
@@ -1840,8 +1920,8 @@
         if (!payerOpt) { alert('⚠️ 請選擇付款人！若下方無人員選項，請先至「成員」頁面新增。'); return; }
         
         const date = document.getElementById('exp-date').value; const loc = document.getElementById('exp-loc').value.trim(); const method = document.querySelector('.m-tab.active').innerText; 
-        const payer = payerOpt.dataset.val; 
-        const splitters = Array.from(document.querySelectorAll('.split-opt.active')).map(el => el.dataset.val); 
+        const payer = payerOpt.dataset.val; // ID
+        const splitters = Array.from(document.querySelectorAll('.split-opt.active')).map(el => el.dataset.val); // IDs
         
         let amountTwd = 0; if(currentExpCurrency === 'KRW') amountTwd = Math.round(amt * EXCHANGE_RATE); else if(currentExpCurrency === 'USD') amountTwd = Math.round(amt * EXCHANGE_RATE_USD); else amountTwd = amt;
         let amountKrw = (currentExpCurrency === 'KRW') ? amt : Math.round(amountTwd / EXCHANGE_RATE);
@@ -1866,11 +1946,11 @@
         
         document.querySelectorAll('.edit-payer-opt').forEach(opt => { 
             opt.classList.remove('active'); opt.style.borderColor="var(--ac-tan)"; opt.style.opacity="0.4"; opt.style.filter="grayscale(100%)"; opt.style.background="#FFF"; 
-            if(opt.dataset.val === pId) { opt.classList.add('active'); opt.style.borderColor="var(--mo-yellow)"; opt.style.opacity="1"; opt.style.filter="grayscale(0%)"; opt.style.background="rgba(255,208,0,0.1)"; }
+            if(opt.dataset.val === String(pId)) { opt.classList.add('active'); opt.style.borderColor="var(--mo-yellow)"; opt.style.opacity="1"; opt.style.filter="grayscale(0%)"; opt.style.background="rgba(255,208,0,0.1)"; }
         });
         document.querySelectorAll('.edit-split-opt').forEach(opt => { 
             opt.classList.remove('active'); opt.style.borderColor="var(--ac-tan)"; opt.style.opacity="0.4"; opt.style.filter="grayscale(100%)"; opt.style.background="#FFF"; 
-            if(sIds.includes(opt.dataset.val)) { opt.classList.add('active'); opt.style.borderColor="var(--mo-yellow)"; opt.style.opacity="1"; opt.style.filter="grayscale(0%)"; opt.style.background="rgba(255,208,0,0.1)"; }
+            if(sIds.map(String).includes(String(opt.dataset.val))) { opt.classList.add('active'); opt.style.borderColor="var(--mo-yellow)"; opt.style.opacity="1"; opt.style.filter="grayscale(0%)"; opt.style.background="rgba(255,208,0,0.1)"; }
         });
         document.getElementById('modal-expense-edit').style.display = 'flex';
     }
@@ -1910,14 +1990,16 @@
             if (exp.amountTwd <= 0) return;
             
             let payerId = getMemberId(exp.payer);
-            if (balances[payerId] === undefined) balances[payerId] = 0;
+            // 忽略已被刪除的成員 (防呆)
+            if (balances[payerId] === undefined) return;
             
             balances[payerId] += exp.amountTwd; 
             
             exp.splitters.forEach(s => { 
                 let sId = getMemberId(s);
-                if (balances[sId] === undefined) balances[sId] = 0;
-                balances[sId] -= exp.splitAmountTwd; 
+                if (balances[sId] !== undefined) {
+                    balances[sId] -= exp.splitAmountTwd; 
+                }
             });
         });
         
@@ -1936,7 +2018,10 @@
             let dName = getMemberName(debtor.id);
             let cName = getMemberName(creditor.id);
 
-            settlements.push(`<div class="settlement-item"><span>${dName} 需給 ${cName}</span><span class="settlement-amount">NT$ ${amount.toLocaleString()}</span></div>`);
+            // 如果名字含未知成員，表示資料殘留但沒被清乾淨，保險起見不顯示
+            if(!dName.includes('未知成員') && !cName.includes('未知成員')) {
+                settlements.push(`<div class="settlement-item"><span>${dName} 需給 ${cName}</span><span class="settlement-amount">NT$ ${amount.toLocaleString()}</span></div>`);
+            }
             
             debtor.amount -= amount; creditor.amount -= amount; 
             if (debtor.amount === 0) i++; 
@@ -1995,7 +2080,8 @@
                 const locText = exp.loc ? `<span style="font-size:0.7rem; color:var(--ac-brown-light); margin-left:5px;">📍 ${exp.loc}</span>` : '';
                 
                 const payerName = getMemberName(exp.payer);
-                
+                if(payerName.includes('未知成員')) return; // V34 防呆隱藏
+
                 let amountDisplayHtml = currentExpFilter === 'all' 
                     ? `<div style="font-weight: 900; font-size: 1.15rem; color: var(--ac-brown);">₩ ${exp.amountKrw.toLocaleString()}</div><div style="font-size: 0.85rem; color: var(--mo-orange); font-weight:800;">NT$ ${exp.amountTwd.toLocaleString()}</div>`
                     : `<div style="font-weight: 900; font-size: 1.15rem; color: var(--ac-brown);">NT$ ${(isPersonal ? exp.amountTwd : exp.splitAmountTwd).toLocaleString()}</div><div style="font-size: 0.75rem; color: var(--ac-brown-light);">原額 ₩ ${exp.amountKrw.toLocaleString()}</div>`;
@@ -2044,6 +2130,8 @@
                 const memberObj = membersData.find(m => m.id === authorId);
                 const authorName = getMemberName(authorId);
                 
+                if(authorName.includes('未知成員')) return;
+
                 const avatarImg = memberObj && memberObj.img ? `<img src="${memberObj.img}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">` : (memberObj ? memberObj.fallback : '👤');
                 const imgsHtml = item.images && item.images.length > 0 ? `<div class="diary-photos">${item.images.map(src => `<img src="${src}" class="diary-img">`).join('')}</div>` : '';
                 
@@ -2081,7 +2169,7 @@
             document.getElementById('diary-edit-id').value = entry.id; document.getElementById('diary-date').value = entry.date; document.getElementById('diary-content').value = entry.content; document.getElementById('diary-modal-title').innerHTML = '<i class="fa-solid fa-pen"></i> 編輯日誌';
             document.querySelectorAll('.diary-author-opt').forEach(opt => {
                 opt.classList.remove('active'); opt.style.borderColor="var(--ac-tan)"; opt.style.opacity="0.4"; opt.style.filter="grayscale(100%)";
-                if(opt.dataset.val === aId) { opt.classList.add('active'); opt.style.borderColor="var(--mo-blue)"; opt.style.opacity="1"; opt.style.filter="grayscale(0%)"; }
+                if(opt.dataset.val === String(aId)) { opt.classList.add('active'); opt.style.borderColor="var(--mo-blue)"; opt.style.opacity="1"; opt.style.filter="grayscale(0%)"; }
             });
             currentDiaryImages = entry.images ? [...entry.images] : [];
         } else {
@@ -2143,7 +2231,7 @@
     function openMemberModal(id = null) {
         playHaptic();
         if (id) {
-            const member = membersData.find(m => m.id === id);
+            const member = membersData.find(m => String(m.id) === String(id));
             document.getElementById('member-item-id').value = member.id; document.getElementById('member-name').value = member.name; document.getElementById('member-aka').value = member.aka || ""; document.getElementById('member-quote').value = member.quote || ""; currentMemberImage = member.img || null; document.getElementById('modal-member-title').innerText = "編輯成員";
         } else {
             document.getElementById('member-item-id').value = ""; document.getElementById('member-name').value = ""; document.getElementById('member-aka').value = ""; document.getElementById('member-quote').value = ""; currentMemberImage = null; document.getElementById('modal-member-title').innerText = "新增成員";
@@ -2259,7 +2347,7 @@
         renderExpenses();
         renderDiary();
         renderVouchers();
-        updateHotelCardImages(); // V30 初始化住宿照片佔位圖
+        updateHotelCardImages();
         setTimeout(triggerCountdownAnimation, 200); 
     };
 </script>
